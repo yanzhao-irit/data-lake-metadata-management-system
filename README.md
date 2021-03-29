@@ -13,7 +13,7 @@ we proposed a functional data lake architectur, which contains four essential zo
 
 ![data-lake-architecture](https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png){ width=60% }
 
-<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png" width="200">
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png" width="700">
 
 
 > [Data Lakes: Trends and Perspectives. DEXA (1) 2019: 304-313 Franck Ravat, Yan Zhao
@@ -34,6 +34,8 @@ We developped a matadata management application which allows users to find, acce
 In the application, users can search different elements with tags and filters.
 
 ![appli-menu](https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.png)
+
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.png" width="700">
 
 
 ## Getting started
