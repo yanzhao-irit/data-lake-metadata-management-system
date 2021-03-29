@@ -11,7 +11,8 @@ we proposed a functional data lake architectur, which contains four essential zo
 - **Access zone**: the access zone stores all the available data for data analytics and provides the access of data. This zone allows self-service data consumption for different analytics (reporting, statistical analysis, business intelligence analysis, machine learning algorithms).
 - **Governance zone**: data governance is applied on all the other zones. It is in charge of insuring data security, data quality, data life-cycle, data access and metadata management. The core of data governance in a data lake is the metadata management.
 
-![data-lake-architecture](https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png)
+![data-lake-architecture](https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png){ width=60% }
+
 
 > [Data Lakes: Trends and Perspectives. DEXA (1) 2019: 304-313 Franck Ravat, Yan Zhao
 ](https://link.springer.com/chapter/10.1007/978-3-030-27615-7_23)
