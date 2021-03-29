@@ -13,6 +13,8 @@ we proposed a functional data lake architectur, which contains four essential zo
 
 ![data-lake-architecture](https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png){ width=60% }
 
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png" width="200">
+
 
 > [Data Lakes: Trends and Perspectives. DEXA (1) 2019: 304-313 Franck Ravat, Yan Zhao
 ](https://link.springer.com/chapter/10.1007/978-3-030-27615-7_23)
