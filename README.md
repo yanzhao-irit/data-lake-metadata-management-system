@@ -12,7 +12,7 @@ we proposed a functional data lake architectur, which contains four essential zo
 - **Governance zone**: data governance is applied on all the other zones. It is in charge of insuring data security, data quality, data life-cycle, data access and metadata management. The core of data governance in a data lake is the metadata management.
 
 
-<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png" width="700" align="center">
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/data-lake-architecture.png" width="700">
 
 
 > [Data Lakes: Trends and Perspectives. DEXA (1) 2019: 304-313 Franck Ravat, Yan Zhao
@@ -32,7 +32,7 @@ We developped a matadata management application which allows users to find, acce
 
 In the application, users can search different elements with tags and filters.
 
-<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.png" width="700" align="center">
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.png" width="700">
 
 
 ## Getting started
