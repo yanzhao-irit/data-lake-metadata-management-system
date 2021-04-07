@@ -100,13 +100,13 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 function getStudies(tags, type, landmarker, algoNames, omNames) {
   var session = driver.session();
   //Classic cypher query to search for study without filter. 
-  var query = "MATCH (s:Study),(a:AnalysisEntityClass),(l:Landmarker),(al) WHERE ("
+  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:AnalysisEntityClass),(l:Landmarker),(al) WHERE ("
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
-      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR "
+      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') OR "
     }
     else {
-      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') )"
+      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') )"
     }
   }
   //Cypher query for analysis type filter
@@ -189,17 +189,10 @@ function getAnalyses(study, name, id) {
   var query = "MATCH (s:Study)-[r:hasAnalysis]->(a:AnalysisEntityClass) WHERE "
   //Cypher query if the input is Study
   if (study.length > 0) {
-    for (var i = 0; i < study.length; i++) {
-      if (i != study.length - 1) {
-        query = query + "toLower(s.name) CONTAINS toLower('" + study[i] + "') OR "
-      }
-      else {
-        query = query + "toLower(s.name) CONTAINS toLower('" + study[i] + "')"
-      }
-    }
+        query = query + " toLower(s.name) CONTAINS toLower('" + study + "') "
   } else { // Cypher query if the input is an analysis
     if (name.length > 0) {
-      query = query + "toLower(a.name) CONTAINS toLower('" + name + "') AND a.uuid = '" + id + "'"
+      query = query + " toLower(a.name) CONTAINS toLower('" + name + "') AND a.uuid = '" + id + "'"
 
     }
   }
@@ -719,13 +712,7 @@ function getRelationshipAttribute(sourceId,name='', type, relationName='', name2
 //Function to search dataset metadata, with parameters for each filter.
 function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01', quality = [], sensitivity = 0, entityAttributeNames = "") {
   var session = driver.session();
-  console.log('début session recherche bdd');
-  console.log('tags : ' + tags);
-  console.log('type :' + type);
-  console.log('date :' + creationdate);
-  console.log('quality :' + quality);
-  console.log('sensitivity :' + sensitivity);
-  console.log("EntityAttributenames :" + entityAttributeNames);
+  
   /* MATCH
     (n),(a),(e:EntityClass),(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
 WHERE
@@ -849,7 +836,6 @@ RETURN n
   }
 
   query = query + ") RETURN distinct ds"
-  console.log('requete : ' + query)
   return session
     .run(
       query)
