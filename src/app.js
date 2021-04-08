@@ -19,6 +19,7 @@ var inputECAnames = "";
 var algoNames = document.getElementById("algoNames");
 var RelationDSArray = []
 var lastSelected;
+var cypherHistoryList = [];
 
 
 //Beginning of event listener
@@ -29,6 +30,7 @@ $(function () {
   draw3()
   draw4()
   draw5()
+  draw6()
   usedOpeInit()
 
   //Variable to stock tags input
@@ -51,6 +53,7 @@ $(function () {
     draw3()
     draw4()
     draw5()
+    draw6()
     //Call for search functions with inputs
     showProcesses(tagsinput)
     showStudies(tagsinput)
@@ -78,6 +81,7 @@ $(function () {
       draw3()
       draw4()
       draw5()
+      draw6()
       showProcesses(tagsinput)
       showStudies(tagsinput)
       showDatabases(tagsinput)
@@ -93,6 +97,7 @@ $(function () {
       draw3()
       draw4()
       draw5()
+      draw6()
     }
   });
 
@@ -106,6 +111,56 @@ $(function () {
     $(".analyse").empty();
     $("#EntityClassNames").empty()
   });
+
+  $('#submitCypherRequest').on('click', function() {
+    $('#cypherHistory').empty()
+    cypherHistoryList.unshift($('#cypherrequest').val());
+    query6 = $('#cypherrequest').val()
+    if (query6.length > 3) {
+      viz6.renderWithCypher(query6);
+    } else {
+      console.log("reload");
+      viz6.reload();
+    }
+    for(var i =0; i< Math.min(10, cypherHistoryList.length); i++){
+      $('#cypherHistory').append($("<tr class='cypherRequestHistory'><td>" + cypherHistoryList[i] + "</td></tr>"))
+    }
+    $('#cypherrequest').val('');
+  });
+
+  $('#cypherHistory').on('click', "td", function(){
+    $('#cypherrequest').val($(this).text())
+    query6 = $(this).text()
+    if (query6.length > 3) {
+      viz6.renderWithCypher(query6);
+    } else {
+      console.log("reload");
+      viz6.reload();
+    }
+  });
+
+  $('#switchSearchMod').on('click', function(){
+    var display = $('#filter')[0].style.display;
+    var display2 = $('#specificSearch')[0].style.display;
+    var display3 = $('#mainSearch')[0].style.display;
+    if (display === "none") {
+      $('#filter')[0].style.display = "block";
+      $(this).html("Advanced Cypher Request");
+    } else {
+      $(this).html("Main Search");
+      $('#filter')[0].style.display = "none";
+    }
+    if (display2 === "none") {
+      $('#specificSearch')[0].style.display = "block";
+    } else {
+      $('#specificSearch')[0].style.display = "none";
+    }
+    if (display3 === "none") {
+      $('#mainSearch')[0].style.display = "block";
+    } else {
+      $('#mainSearch')[0].style.display = "none";
+    }
+  })
 
   //Function onlick on attributes and entityclass interface to show their properties
   $('.attNames').on('click', "td", function () {
@@ -1383,5 +1438,20 @@ function draw5() {
   }
   viz5 = new NeoVis.default(config);
   viz5.render();
+}
+
+function draw6() {
+  var config = {
+    container_id: "viz6",
+    server_url: "bolt://localhost",
+    server_user: "neo4j",
+    server_password: pwd.password,
+    labels: {"NominalAttribute": {
+      caption: "name",
+    }},
+    arrows: true
+  }
+  viz6 = new NeoVis.default(config);
+  viz6.render();
 }
   
