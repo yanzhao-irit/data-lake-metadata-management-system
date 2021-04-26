@@ -20,6 +20,8 @@ var algoNames = document.getElementById("algoNames");
 var RelationDSArray = []
 var lastSelected;
 var cypherHistoryList = [];
+var graphList = [];
+var similarityGraph = []
 
 
 //Beginning of event listener
@@ -32,6 +34,27 @@ $(function () {
   draw5()
   draw6()
   usedOpeInit()
+  var promisegraph = new Promise((resolve, reject) => {
+    api.graphList().then(p => {
+      console.log(p)
+      graphList = p
+      if (resolve !== undefined) {
+        resolve();
+      }
+    })
+  })
+  promisegraph.then(() => {
+    if (graphList.indexOf('graph-DDDT') == -1) {
+      api.createGraph()
+    }
+  })
+
+  promisegraph.finally(() => {
+    api.algoSimilairty().then(a => {
+      console.log(a)
+      similarityGraph = a
+    })
+  })
 
   //Variable to stock tags input
   var tagsinput = $('#tagsinput').tagsinput('items');
@@ -112,7 +135,7 @@ $(function () {
     $("#EntityClassNames").empty()
   });
 
-  $('#submitCypherRequest').on('click', function() {
+  $('#submitCypherRequest').on('click', function () {
     $('#cypherHistory').empty()
     cypherHistoryList.unshift($('#cypherrequest').val());
     query6 = $('#cypherrequest').val()
@@ -122,13 +145,13 @@ $(function () {
       console.log("reload");
       viz6.reload();
     }
-    for(var i =0; i< Math.min(10, cypherHistoryList.length); i++){
+    for (var i = 0; i < Math.min(10, cypherHistoryList.length); i++) {
       $('#cypherHistory').append($("<tr class='cypherRequestHistory'><td>" + cypherHistoryList[i] + "</td></tr>"))
     }
     $('#cypherrequest').val('');
   });
 
-  $('#cypherHistory').on('click', "td", function(){
+  $('#cypherHistory').on('click', "td", function () {
     $('#cypherrequest').val($(this).text())
     query6 = $(this).text()
     if (query6.length > 3) {
@@ -139,7 +162,7 @@ $(function () {
     }
   });
 
-  $('#switchSearchMod').on('click', function(){
+  $('#switchSearchMod').on('click', function () {
     var display = $('#filter')[0].style.display;
     var display2 = $('#specificSearch')[0].style.display;
     var display3 = $('#mainSearch')[0].style.display;
@@ -243,6 +266,7 @@ $(function () {
       $('#dsRelationButton')[0].style.display = 'none';
       $('#attRelationButton')[0].style.display = 'none';
       $('#operationButton')[0].style.display = 'block';
+      $('#similarity')[0].style.display = 'none';
 
       //Get information of the process clicked
       api
@@ -295,6 +319,8 @@ $(function () {
         $('#dsRelationButton')[0].style.display = 'none';
         $('#attRelationButton')[0].style.display = 'block';
         $('#operationButton')[0].style.display = 'none';
+        $('#similarity')[0].style.display = 'none';
+
         api
           .getStudies([$(this).text()], typeRecherche, landmarkerList, algoNames.value)
           .then(p => {
@@ -318,14 +344,14 @@ $(function () {
         api
           .getAnalyses($(this).text(), '')
           .then(p => {
-            p.sort(function(a, b){
-              var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+            p.sort(function (a, b) {
+              var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
               if (nameA < nameB) //sort string ascending
-                  return -1 
+                return -1
               if (nameA > nameB)
-                  return 1
+                return 1
               return 0 //default return value (no sorting)
-          })
+            })
             if (p) {
               $("#EntityClassNames").empty()
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
@@ -346,6 +372,7 @@ $(function () {
           $('#dsRelationButton')[0].style.display = 'block';
           $('#attRelationButton')[0].style.display = 'block';
           $('#operationButton')[0].style.display = 'none';
+          $('#similarity')[0].style.display = 'block';
 
           //Clean the different tabs used by dataset information.
           $('#relationshipOnglet').empty()
@@ -402,13 +429,13 @@ $(function () {
                 </div>`)
 
               }
-              for(var i = 0; i<relationlist.length; i++){
+              for (var i = 0; i < relationlist.length; i++) {
                 //for each relation get dataset and relation value
-                getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])  
+                getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
               }
             }, 'json')
 
-            //same for the attribute 
+          //same for the attribute 
           var relationlist = []
           $('#relationshipAttOnglet').empty()
           $('#relationshipAttContent').empty()
@@ -433,7 +460,15 @@ $(function () {
               }
             }, 'json')
 
-          console.log('idname : ' + $(this).context.id)
+          $('#similarity').empty()
+          for (var i = 0; i < similarityGraph.length; i++) {
+            console.log(similarityGraph[i])
+            if (similarityGraph[i][0] == $(this).text()) {
+              $('#similarity').append($('<p>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' : ' + similarityGraph[i][2] + '</p>'))
+            }
+          }
+
+
           if ((($(this).attr('id').split('$')[0]).toLowerCase()).includes("semi")) {
             //graph for Semi-structured dataset
             query = "MATCH path = shortestpath ((ds:DatasetSource)-[*]-(d:DLSemistructuredDataset {name:'" + $(this).text() + "'})) RETURN path"
@@ -490,6 +525,7 @@ $(function () {
             $('#dsRelationButton')[0].style.display = 'none';
             $('#attRelationButton')[0].style.display = 'block';
             $('#operationButton')[0].style.display = 'none';
+            $('#similarity')[0].style.display = 'none';
 
 
             $('#relationshipAttOnglet').empty()
@@ -598,7 +634,7 @@ $(function () {
             AND
             (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)
             RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
-            
+
 
             if (query5.length > 3) {
               viz5.renderWithCypher(query5);
@@ -957,6 +993,28 @@ $(function () {
   });
 });
 
+async function showSimilarity() {
+  var promisegraph = new Promise((resolve, reject) => {
+    api.graphList().then(p => {
+      graphList = p
+      if (resolve !== undefined) {
+        resolve();
+      }
+    })
+  })
+  promisegraph.then(() => {
+    if (graphList.indexOf('graph-DDDT') == -1) {
+      api.createGraph()
+    }
+  })
+
+  promisegraph.finally(() => {
+    api.algoSimilairty().then(a => {
+      return a
+    })
+  })
+}
+
 //Function to get entity class by analyse and build a list fo result
 async function showEntityClassByAnalyse(anUuid, anName) {
   $("#EntityClassNames").empty()
@@ -989,7 +1047,7 @@ async function showEntityClassByDataset(dsId, dsName, typeDS) {
 }
 
 //Function to get relationship value between two dataset
-async function getAnalysisRelationshipDS(ds1Uuid, ds2uuid, name, dsName, ds2Name ,mapRelationAttDS, resolve) {
+async function getAnalysisRelationshipDS(ds1Uuid, ds2uuid, name, dsName, ds2Name, mapRelationAttDS, resolve) {
   api
     .getRelationshipDSAnalysisbyDataset(ds1Uuid, ds2uuid, name)
     .then(p => {
@@ -1016,7 +1074,8 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
       console.log($listHead)
       for (var i = 0; i < p.length; i++) {
         if (p[i].uuid != dsId) {
-          promisesDS.push(new Promise ((resolve, reject) => {getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name,mapRelationAttDS, resolve); }));
+          promisesDS.push(new Promise((resolve, reject) => { getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name, mapRelationAttDS, resolve); }));
+
         }
       }
       Promise.all(promisesDS).then(() => {
@@ -1465,12 +1524,13 @@ function draw6() {
     server_url: "bolt://localhost",
     server_user: "neo4j",
     server_password: pwd.password,
-    labels: {"NominalAttribute": {
-      caption: "name",
-    }},
+    labels: {
+      "NominalAttribute": {
+        caption: "name",
+      }
+    },
     arrows: true
   }
   viz6 = new NeoVis.default(config);
   viz6.render();
 }
-  

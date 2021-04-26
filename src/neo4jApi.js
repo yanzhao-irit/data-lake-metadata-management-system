@@ -22,6 +22,7 @@ var AnalysisDSRelationship = require('./models/AnalysisDSRelationship')
 var RelationshipAtt = require('./models/RelationshipAtt')
 var Attribute = require('./models/Attribute')
 var AnalysisAttribute = require('./models/AnalysisAttribute')
+var AlgoResult = require('./models/AlgoResult')
 
 //Drivers and parameters to acces database 
 var _ = require('lodash');
@@ -852,6 +853,66 @@ RETURN n
     });
 }
 
+function graphList(){
+  var session = driver.session();
+  query='CALL gds.graph.list() YIELD graphName'
+  return session
+  .run(
+    query)
+  .then(result => {
+    return result.records.map(record => {
+      return record.get('graphName');
+    });
+  })
+  .catch(error => {
+    throw error;
+  })
+  .finally(() => {
+    return session.close();
+  });
+}
+
+function createGraph(){
+  var session = driver.session();
+  query=`CALL gds.graph.create.cypher(
+    'graph-DDDT',
+    'MATCH (n) WHERE (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset OR n:Tag) RETURN id(n) AS id',
+    'MATCH (n)-[]->(m) WHERE (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset OR n:Tag) AND (m:DLStructuredDataset OR m:DLSemistructuredDataset OR m:DLUnstructuredDataset OR m:Tag) RETURN id(n) AS source, id(m) AS target'
+    )`
+    return session
+  .run(
+    query)
+  .then()
+  .catch(error => {
+    throw error;
+  })
+  .finally(() => {
+    return session.close();
+  });
+}
+
+function algoSimilairty(){
+  var session = driver.session();
+  query = `CALL gds.nodeSimilarity.stream('graph-DDDT')
+  YIELD node1, node2, similarity
+  RETURN gds.util.asNode(node1).name AS Person1, gds.util.asNode(node2).name AS Person2, similarity
+  ORDER BY similarity DESCENDING, Person1, Person2`
+  return session
+  .run(
+    query)
+  .then(result => {
+    return result.records.map(record => {
+      return [record.get('Person1'), record.get('Person2'), record.get('similarity')];
+    });
+  })
+  .catch(error => {
+    throw error;
+  })
+  .finally(() => {
+    return session.close();
+  });
+}
+
 
 //Exports of used functions
 exports.getProcesses = getProcesses;
@@ -878,7 +939,9 @@ exports.getRelationshipDSAnalysisbyDataset = getRelationshipDSAnalysisbyDataset;
 exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
 exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
 exports.getRelationshipAttribute = getRelationshipAttribute;
-
+exports.createGraph = createGraph;
+exports.algoSimilairty = algoSimilairty;
+exports.graphList = graphList;
 
 
 /*
