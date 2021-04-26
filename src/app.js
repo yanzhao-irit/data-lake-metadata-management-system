@@ -233,7 +233,7 @@ $(function () {
       })
       //or by dataset
       api.getEntityClassByDataset($(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2]).then(ec => {
-        console.log(ec)
+        console.log('EntityClass : ' + ec)
         json = JSON.parse(JSON.stringify(ec[0]))
         $list = $('#EntityClassProperties')
         for (propriete in ec[0]) {
@@ -1019,6 +1019,7 @@ async function showSimilarity() {
 async function showEntityClassByAnalyse(anUuid, anName) {
   $("#EntityClassNames").empty()
   api.getEntityClassByAnalyse(anName, anUuid).then(ec => {
+    console.log(ec)
     $listEc = $("#EntityClassNames")
     for (var i = 0; i < ec.length; i++) {
       if (optionEntityClass.indexOf(ec[i].name) === -1) {
@@ -1526,6 +1527,99 @@ function draw6() {
     server_password: pwd.password,
     labels: {
       "NominalAttribute": {
+        caption: "name",
+      },
+      "RelationshipDS": {
+        caption: "name",
+      },
+      "AnalysisDSRelatinship": {
+        caption: "value",
+      },
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+      "DLSemistructuredDataset": {
+        caption: "name",
+      },
+      "DLUnstructuredDataset": {
+        caption: "name"
+      },
+      "Process": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#000000"
+        },
+      },
+
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+
+      "sourceData": {
+        caption: "name",
+      },
+
+      "Analysis": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#7be141"
+        },
+      },
+
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+
+      "EvaluationMeasure": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#d2e5ff"
+        },
+      },
+
+      "ModelEvaluation": {
+        caption: "value",
+        font: {
+          "size": 26,
+          "color": "#ab83e1"
+        },
+      },
+
+      "Landmarker": {
+        caption: "name",
+      },
+
+      "Implementation": {
+        caption: "name",
+      },
+
+      "AlgoSupervised": {
+        caption: "name",
+      },
+
+      "Study": {
+        caption: "name",
+      },
+
+      "Parameter": {
+        caption: "name",
+        font: {
+          "size": 25,
+          "color": "##f87d7f"
+        },
+      },
+
+      "ParameterSetting": {
+        caption: "value",
+        font: {
+          "size": 25,
+          "color": "#e87cf1"
+        },
+      },
+      "EntityClass": {
         caption: "name",
       }
     },
