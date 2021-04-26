@@ -995,7 +995,7 @@ async function getAnalysisRelationshipDS(ds1Uuid, ds2uuid, name, dsName, ds2Name
     .then(p => {
       if (p !== undefined && p.length > 0) {
         console.log('key : ' + dsName + '&' + ds2Name + '&' + name + ' ||| value : ' + p[0].value)
-        mapRelationAttDS.set(dsName + '&' + ds2Name + '&' + name, p[0].value)
+        mapRelationAttDS.set(dsName + '&' + ds2Name + '&' + name, parseFloat(p[0].value))
       } else {
         mapRelationAttDS.set(nameAtt + '&' + nameAtt2 + '&' + name, '');
       }
@@ -1017,16 +1017,25 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
       for (var i = 0; i < p.length; i++) {
         if (p[i].uuid != dsId) {
           promisesDS.push(new Promise ((resolve, reject) => {getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name,mapRelationAttDS, resolve); }));
-          
         }
       }
       Promise.all(promisesDS).then(() => {
         console.log('Promise finit : ' + mapRelationAttDS.size);
+        var valueMin = Math.min(...mapRelationAttDS.values())
+        var valueMax = Math.max(...mapRelationAttDS.values())
         for (var [key, value] of mapRelationAttDS) {
           console.log('HashMap : ' + key + ' = ' + value)
           $listBody = $('#dataset_' + key.split('&')[2])
           if (value) {
-            $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+            if(value == valueMin){
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
+            }else{
+            if(value == valueMax){
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+            }else{
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+            }
+          }
           }
         }
       });
@@ -1043,7 +1052,7 @@ async function getAnalysisRelationshipAtt(idsource, nameAtt, relationName, nameA
         console.log('key : ' + nameAtt + '&' + nameAtt2 + '&' + relationName + ' ||| value : ' + p[0].value)
         mapRelationAtt.set(nameAtt + '&' + nameAtt2 + '&' + relationName, p[0].value)
       } else {
-        mapRelationAtt.set(nameAtt + '&' + nameAtt2 + '&' + relationName, '');
+        //mapRelationAtt.set(nameAtt + '&' + nameAtt2 + '&' + relationName, '');
       }
       if (resolve !== undefined) {
         resolve();
@@ -1069,12 +1078,22 @@ async function getAnalyseOfRelationship(id, relationlist) {
 
       Promise.all(promises).then(() => {
         console.log('Promise finit : ' + mapRelationAtt.size);
+        console.log(mapRelationAtt.values())
+        var valueMin = Math.min(...mapRelationAtt.values());
+        var valueMax = Math.max(...mapRelationAtt.values())
+        console.log(valueMin +' ||| ' + valueMax)
         for (var [key, value] of mapRelationAtt) {
           //console.log('HashMap : ' + key + ' = ' + value)
           $listBody = $('#attribute_' + key.split('&')[2])
           if (value) {
-            $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
-          }
+            if(value == valueMin){
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
+            }else{
+            if(value == valueMax){
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+            }else{
+              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+          }}}
         }
       });
     }, 'json')
