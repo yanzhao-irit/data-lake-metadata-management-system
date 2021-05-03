@@ -2,7 +2,7 @@ require('file-loader?name=[name].[ext]!../node_modules/neo4j-driver/lib/browser/
 
 //Call of models file to stock responses from database.
 var Process = require('./models/Process');
-var AnalysisEntityClass = require('./models/AnalysisEntityClass')
+var Analysis = require('./models/Analysis')
 var DLStructuredDataset = require('./models/DLStructuredDataset')
 var Operation = require('./models/Operation')
 var Quality = require('./models/Quality')
@@ -101,7 +101,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 function getStudies(tags, type, landmarker, algoNames, omNames) {
   var session = driver.session();
   //Classic cypher query to search for study without filter. 
-  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:AnalysisEntityClass),(l:Landmarker),(al) WHERE ("
+  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al) WHERE ("
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
       query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') OR "
@@ -187,7 +187,7 @@ function getAnalyses(study, name, id) {
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis 
-  var query = "MATCH (s:Study)-[r:hasAnalysis]->(a:AnalysisEntityClass) WHERE "
+  var query = "MATCH (s:Study)-[r:hasAnalysis]->(a:Analysis) WHERE "
   //Cypher query if the input is Study
   if (study.length > 0) {
         query = query + " toLower(s.name) CONTAINS toLower('" + study + "') "
@@ -217,7 +217,7 @@ function getAnalyses(study, name, id) {
 //Function to get nominal features by analysis
 function getNominalFeaturesbyAnalysis(analyseId) {
   var session = driver.session();
-  query = 'Match (nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf) RETURN nf'
+  query = 'Match (nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf) RETURN nf'
   return session
     .run(
       query)
@@ -237,7 +237,7 @@ function getNominalFeaturesbyAnalysis(analyseId) {
 //Function to get numeric features by analysis
 function getNumericFeaturesbyAnalysis(analyseId) {
   var session = driver.session();
-  query = 'Match (nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf) RETURN nf'
+  query = 'Match (nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf) RETURN nf'
   return session
     .run(
       query)
@@ -257,7 +257,7 @@ function getNumericFeaturesbyAnalysis(analyseId) {
 //Function to get numeric attributes by analysis
 function getNumericAttributebyAnalysis(analyseId) {
   var session = driver.session();
-  query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
     .run(
       query)
@@ -277,7 +277,7 @@ function getNumericAttributebyAnalysis(analyseId) {
 //Function to get nominal attributes by analysis
 function getNominalAttributebyAnalysis(analyseId) {
   var session = driver.session();
-  query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
     .run(
       query)
@@ -297,7 +297,7 @@ function getNominalAttributebyAnalysis(analyseId) {
 //Function to get a specific nominal attribute by analysis
 function getNominalAttribute(name, analyseId) {
   var session = driver.session();
-  query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND na.name= "' + name + '" AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND na.name= "' + name + '" AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
     .run(
       query)
@@ -317,7 +317,7 @@ function getNominalAttribute(name, analyseId) {
 //Function to get a specific numeric attribute by analysis
 function getNumericAttribute(name, analyseId) {
   var session = driver.session();
-  query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:AnalysisEntityClass),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '" AND na.name= "' + name + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '" AND na.name= "' + name + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
     .run(
       query)
@@ -498,7 +498,7 @@ function getParameterSettings() {
 //Function to get evaluation by study to create a filter
 function getEvaluation(study) {
   var session = driver.session();
-  query = 'MATCH (s:Study)-[:hasAnalysis]->()<-[:evaluateAnalysisEntityClass]-()-[:useEvaluationMeasure]-(e:EvaluationMeasure) WHERE (toLower(s.name) CONTAINS toLower("' + study.name + '")) RETURN DISTINCT e'
+  query = 'MATCH (s:Study)-[:hasAnalysis]->()<-[:evaluateAnalysis]-()-[:useEvaluationMeasure]-(e:EvaluationMeasure) WHERE (toLower(s.name) CONTAINS toLower("' + study.name + '")) RETURN DISTINCT e'
   return session
     .run(
       query)
@@ -518,7 +518,7 @@ function getEvaluation(study) {
 //Function to get entity class by analysis
 function getEntityClassByAnalyse(analyseName, analyseId) {
   var session = driver.session();
-  query = 'MATCH (e:EntityClass)<-[:analyze]-(a:AnalysisEntityClass) WHERE a.name = "' + analyseName + '" AND a.uuid = "' + analyseId + '" RETURN DISTINCT e';
+  query = 'MATCH (e:EntityClass)-[]-(n)<-[:analyze]-(a:Analysis) WHERE a.name = "' + analyseName + '" AND a.uuid = "' + analyseId + '" AND (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset) RETURN DISTINCT e';
   return session
     .run(
       query)
