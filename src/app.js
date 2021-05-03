@@ -124,6 +124,15 @@ $(function () {
     }
   });
 
+  $(".head-link").mouseover(function() {
+    console.log('over')
+    $(this).children(".tooltip").show();
+  }).mouseout(function () {
+    console.log('out')
+    $(this).children(".tooltip").hide();
+  });
+
+  $('#tooltipsPreview').tooltip({content: 'hello'});
 
   //Function onclick to go back to the search table from the graphic interface.
   $('#back').on('click', function () {
@@ -266,7 +275,7 @@ $(function () {
       $('#dsRelationButton')[0].style.display = 'none';
       $('#attRelationButton')[0].style.display = 'none';
       $('#operationButton')[0].style.display = 'block';
-      $('#similarity')[0].style.display = 'none';
+      $('#similarityButton')[0].style.display = 'none';
 
       //Get information of the process clicked
       api
@@ -292,9 +301,10 @@ $(function () {
       query = "MATCH path =(m : DLStructuredDataset)<-[:targetData]-(c:Process {name:'" + $(this).text() + "'})<-[:sourceData]-(d:DLStructuredDataset) OPTIONAL MATCH (c)<-[q:hasSubprocess]-(w: Process) RETURN path, w,q"; //Process
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
       query3 = `MATCH (p:Process {name:'` + $(this).text() + `'}) 
-      OPTIONAL MATCH (p)-[r3:containsOp]->(c:OperationOfProcess)<-[r4:isUsedBy]-(o:Operation)
-      OPTIONAL MATCH (p)-[r5:hasSubprocess]->(p1:Process)-[r1:containsOp]->(c1:OperationOfProcess)<-[r2:isUsedBy]-(o1:Operation)
-      RETURN p,r3,c,r4,o,p1,r1,c1,r2,r5,o1`
+      OPTIONAL MATCH (p)-[r3:containsOp]->(c:OperationOfProcess)
+      OPTIONAL MATCH (p)-[r5:hasSubprocess]->(p1:Process)-[r1:containsOp]->(c1:OperationOfProcess)
+      OPTIONAL MATCH ()-[f:follow]-()
+      RETURN p,r3,c,p1,r1,c1,r5,f`
 
       //Init each graph window
       if (query2.length > 3) {
@@ -319,7 +329,7 @@ $(function () {
         $('#dsRelationButton')[0].style.display = 'none';
         $('#attRelationButton')[0].style.display = 'block';
         $('#operationButton')[0].style.display = 'none';
-        $('#similarity')[0].style.display = 'none';
+        $('#similarityButton')[0].style.display = 'none';
 
         api
           .getStudies([$(this).text()], typeRecherche, landmarkerList, algoNames.value)
@@ -337,7 +347,9 @@ $(function () {
               }
             }
           }, "json");
-        query = "MATCH path = shortestpath ((d:DLStructuredDataset)-[*]-(u:Study {name:'" + $(this).text() + "'})) RETURN path" //Study
+        query = `MATCH path = allshortestpaths ((d)-[*]-(u:Study {name:'` + $(this).text() + `'}))
+        WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset)
+        RETURN path` //Study
 
         //Get the analysis of the study clicked to create a list
         var $list = $(this).parent()
@@ -372,7 +384,7 @@ $(function () {
           $('#dsRelationButton')[0].style.display = 'block';
           $('#attRelationButton')[0].style.display = 'block';
           $('#operationButton')[0].style.display = 'none';
-          $('#similarity')[0].style.display = 'block';
+          $('#similarityButton')[0].style.display = 'block';
 
           //Clean the different tabs used by dataset information.
           $('#relationshipOnglet').empty()
@@ -460,30 +472,29 @@ $(function () {
               }
             }, 'json')
 
-          $('#similarity').empty()
+          $('#similarityResult').empty()
+
           for (var i = 0; i < similarityGraph.length; i++) {
-            console.log(similarityGraph[i])
             if (similarityGraph[i][0] == $(this).text()) {
-              $('#similarity').append($('<p>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' : ' + similarityGraph[i][2] + '</p>'))
+              $('#similarityResult').append($('<p>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' : <span>' + similarityGraph[i][2] + '</span></p>'))
             }
           }
-
-
-          if ((($(this).attr('id').split('$')[0]).toLowerCase()).includes("semi")) {
-            //graph for Semi-structured dataset
-            query = "MATCH path = shortestpath ((ds:DatasetSource)-[*]-(d:DLSemistructuredDataset {name:'" + $(this).text() + "'})) RETURN path"
-            query2 = "MATCH (d:DLSemistructuredDataset {name:'" + $(this).text() + "'}) OPTIONAL MATCH (d)-[r:sourceData]->(p:Process)-[:hasSubprocess]->(j:Process) OPTIONAL MATCH (d)<-[s:targetData]-(p1:Process)-[:hasSubprocess]->(j1:Process) with d,p,p1,r,s RETURN d,p,p1,r,s"
-          } else {
-            if ((($(this).attr('id').split('$')[0]).toLowerCase()).includes("un")) {
-              //graph for Unstructured dataset
-              query = "MATCH path = shortestpath ((ds:DatasetSource)-[*]-(d:DLUnstructuredDataset {name:'" + $(this).text() + "'})) RETURN path"
-              query2 = "MATCH (d:DLUnstructuredDataset {name:'" + $(this).text() + "'}) OPTIONAL MATCH (d)-[r:sourceData]->(p:Process)-[:hasSubprocess]->(j:Process) OPTIONAL MATCH (d)<-[s:targetData]-(p1:Process)-[:hasSubprocess]->(j1:Process) with d,p,p1,r,s RETURN d,p,p1,r,s"
-            } else {
-              //graph for strudtured dataset
-              query = "MATCH path = shortestpath ((ds:DatasetSource)-[*]-(d:DLStructuredDataset {name:'" + $(this).text() + "'})) RETURN path";
-              query2 = "MATCH (d:DLStructuredDataset {name:'" + $(this).text() + "'}) OPTIONAL MATCH (d)-[r:sourceData]->(p:Process)-[:hasSubprocess]->(j:Process) OPTIONAL MATCH (d)<-[s:targetData]-(p1:Process)-[:hasSubprocess]->(j1:Process) with d,p,p1,r,s RETURN d,p,p1,r,s"
-            }
+          if ($('#similarityResult span:first-child').first()[0]) {
+            $('#similarityResult span:first-child').first()[0].style.color = 'green'
+            $('#similarityResult span:first-child').last()[0].style.color = 'red'
           }
+
+          query2 = `MATCH (d) 
+          WHERE (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:DLUnstructuredDataset) AND d.name = "` + $(this).text() + `"
+          OPTIONAL MATCH (d)-[r:sourceData]->(p:Process)
+          WHERE NOT (p)<-[:hasSubprocess]-()
+          OPTIONAL MATCH (d)<-[s:targetData]-(p1:Process)
+          WHERE NOT (p1)<-[:hasSubprocess]-()
+          with d,p,p1,r,s 
+          RETURN d,p,p1,r,s`
+          query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
+          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.name = "` + $(this).text() + `"
+          RETURN path`
           //query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
           WHERE dl.name CONTAINS '`+ $(this).attr('id').split('$')[1] + `' and dl.uuid = '` + $(this).attr('id').split('$')[2] + `'
@@ -525,7 +536,7 @@ $(function () {
             $('#dsRelationButton')[0].style.display = 'none';
             $('#attRelationButton')[0].style.display = 'block';
             $('#operationButton')[0].style.display = 'none';
-            $('#similarity')[0].style.display = 'none';
+            $('#similarityButton')[0].style.display = 'none';
 
 
             $('#relationshipAttOnglet').empty()
@@ -618,7 +629,9 @@ $(function () {
 
 
             //Query part
-            query = "MATCH path = shortestpath ((d:DLStructuredDataset)-[*]-(u:AnalysisEntityClass {name:'" + $(this).attr('id').split('$')[0] + "',uuid:'" + $(this).attr('id').split('$')[1] + "'})) RETURN path" //Analyse
+            query = `MATCH path = allshortestpaths ((d)-[*]-(u:Analysis {name:"` + $(this).attr('id').split('$')[0] + `",uuid:"` + $(this).attr('id').split('$')[1] + `"}))
+            WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.name = 'Lung cancer'
+            RETURN path` //Analyse
             query2 = `MATCH (a:AnalysisEntityClass)
             MATCH (a)<-[r1:hasAnalysis]-(s:Study)
             MATCH (a)<-[r2:evaluateAnalysisEntityClass]-(me:ModelEvaluation)-[r3:useEvaluationMeasure]->(em:EvaluationMeasure)
@@ -1087,15 +1100,15 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
           console.log('HashMap : ' + key + ' = ' + value)
           $listBody = $('#dataset_' + key.split('&')[2])
           if (value) {
-            if(value == valueMin){
+            if (value == valueMin) {
               $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
-            }else{
-            if(value == valueMax){
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
-            }else{
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+            } else {
+              if (value == valueMax) {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+              } else {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+              }
             }
-          }
           }
         }
       });
@@ -1141,19 +1154,21 @@ async function getAnalyseOfRelationship(id, relationlist) {
         console.log(mapRelationAtt.values())
         var valueMin = Math.min(...mapRelationAtt.values());
         var valueMax = Math.max(...mapRelationAtt.values())
-        console.log(valueMin +' ||| ' + valueMax)
+        console.log(valueMin + ' ||| ' + valueMax)
         for (var [key, value] of mapRelationAtt) {
           //console.log('HashMap : ' + key + ' = ' + value)
           $listBody = $('#attribute_' + key.split('&')[2])
           if (value) {
-            if(value == valueMin){
+            if (value == valueMin) {
               $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
-            }else{
-            if(value == valueMax){
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
-            }else{
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
-          }}}
+            } else {
+              if (value == valueMax) {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+              } else {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+              }
+            }
+          }
         }
       });
     }, 'json')
@@ -1307,6 +1322,30 @@ function draw() {
     server_user: "neo4j",
     server_password: pwd.password,
     labels: {
+      "NominalAttribute": {
+        caption: "name",
+      },
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
+      },
+      "NumericAttribute": {
+        caption: "name"
+      },
+      "RelationshipDS": {
+        caption: "name",
+      },
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+      "DLSemistructuredDataset": {
+        caption: "name",
+      },
+      "DLUnstructuredDataset": {
+        caption: "name"
+      },
       "Process": {
         caption: "name",
         font: {
@@ -1314,27 +1353,81 @@ function draw() {
           "color": "#000000"
         },
       },
-
-      "DLStructuredDataset": {
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
+      "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
         caption: "name",
       },
-
-      "sourceData": {
+      "Analysis": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#7be141"
+        },
+      },
+      "AnalysisDSRelationship": {
+        caption: "value"
+      },
+      "EvaluationMeasure": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#d2e5ff"
+        },
+      },
+      "ModelEvaluation": {
+        caption: "value",
+        font: {
+          "size": 26,
+          "color": "#ab83e1"
+        },
+      },
+      "Landmarker": {
         caption: "name",
       },
-
-      "AnalysisEntityClass": {
+      "Implementation": {
         caption: "name",
       },
-
-      "DLStructuredDataset": {
+      "AlgoSupervised": {
         caption: "name",
       },
       "Study": {
         caption: "name",
       },
+      "Parameter": {
+        caption: "name",
+        font: {
+          "size": 25,
+          "color": "##f87d7f"
+        },
+      },
+      "ParameterSetting": {
+        caption: "value",
+        font: {
+          "size": 25,
+          "color": "#e87cf1"
+        },
+      },
       "EntityClass": {
         caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true
@@ -1351,6 +1444,30 @@ function draw2() {
     server_user: "neo4j",
     server_password: pwd.password,
     labels: {
+      "NominalAttribute": {
+        caption: "name",
+      },
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
+      },
+      "NumericAttribute": {
+        caption: "name"
+      },
+      "RelationshipDS": {
+        caption: "name",
+      },
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+      "DLSemistructuredDataset": {
+        caption: "name",
+      },
+      "DLUnstructuredDataset": {
+        caption: "name"
+      },
       "Process": {
         caption: "name",
         font: {
@@ -1358,27 +1475,25 @@ function draw2() {
           "color": "#000000"
         },
       },
-
-      "DLStructuredDataset": {
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
+      "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
         caption: "name",
       },
-
-      "sourceData": {
-        caption: "name",
-      },
-
-      "AnalysisEntityClass": {
+      "Analysis": {
         caption: "name",
         font: {
           "size": 26,
           "color": "#7be141"
         },
       },
-
-      "DLStructuredDataset": {
-        caption: "name",
+      "AnalysisDSRelationship": {
+        caption: "value"
       },
-
       "EvaluationMeasure": {
         caption: "name",
         font: {
@@ -1386,7 +1501,6 @@ function draw2() {
           "color": "#d2e5ff"
         },
       },
-
       "ModelEvaluation": {
         caption: "value",
         font: {
@@ -1394,23 +1508,18 @@ function draw2() {
           "color": "#ab83e1"
         },
       },
-
       "Landmarker": {
         caption: "name",
       },
-
       "Implementation": {
         caption: "name",
       },
-
       "AlgoSupervised": {
         caption: "name",
       },
-
       "Study": {
         caption: "name",
       },
-
       "Parameter": {
         caption: "name",
         font: {
@@ -1418,13 +1527,29 @@ function draw2() {
           "color": "##f87d7f"
         },
       },
-
       "ParameterSetting": {
         caption: "value",
         font: {
           "size": 25,
           "color": "#e87cf1"
         },
+      },
+      "EntityClass": {
+        caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true
@@ -1440,6 +1565,30 @@ function draw3() {
     server_user: "neo4j",
     server_password: pwd.password,
     labels: {
+      "NominalAttribute": {
+        caption: "name",
+      },
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
+      },
+      "NumericAttribute": {
+        caption: "name"
+      },
+      "RelationshipDS": {
+        caption: "name",
+      },
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+      "DLSemistructuredDataset": {
+        caption: "name",
+      },
+      "DLUnstructuredDataset": {
+        caption: "name"
+      },
       "Process": {
         caption: "name",
         font: {
@@ -1447,13 +1596,81 @@ function draw3() {
           "color": "#000000"
         },
       },
-
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
       "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
         caption: "name",
       },
-
-      "OperationOfProcess": {
-        caption: "label",
+      "Analysis": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#7be141"
+        },
+      },
+      "AnalysisDSRelationship": {
+        caption: "value"
+      },
+      "EvaluationMeasure": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#d2e5ff"
+        },
+      },
+      "ModelEvaluation": {
+        caption: "value",
+        font: {
+          "size": 26,
+          "color": "#ab83e1"
+        },
+      },
+      "Landmarker": {
+        caption: "name",
+      },
+      "Implementation": {
+        caption: "name",
+      },
+      "AlgoSupervised": {
+        caption: "name",
+      },
+      "Study": {
+        caption: "name",
+      },
+      "Parameter": {
+        caption: "name",
+        font: {
+          "size": 25,
+          "color": "##f87d7f"
+        },
+      },
+      "ParameterSetting": {
+        caption: "value",
+        font: {
+          "size": 25,
+          "color": "#e87cf1"
+        },
+      },
+      "EntityClass": {
+        caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true
@@ -1469,11 +1686,20 @@ function draw4() {
     server_user: "neo4j",
     server_password: pwd.password,
     labels: {
-      "RelationshipDS": {
+      "NominalAttribute": {
         caption: "name",
       },
-      "AnalysisDSRelatinship": {
-        caption: "value",
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
+      },
+      "NumericAttribute": {
+        caption: "name"
+      },
+      "RelationshipDS": {
+        caption: "name",
       },
       "DLStructuredDataset": {
         caption: "name",
@@ -1483,6 +1709,89 @@ function draw4() {
       },
       "DLUnstructuredDataset": {
         caption: "name"
+      },
+      "Process": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#000000"
+        },
+      },
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
+      "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
+        caption: "name",
+      },
+      "Analysis": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#7be141"
+        },
+      },
+      "AnalysisDSRelationship": {
+        caption: "value"
+      },
+      "EvaluationMeasure": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#d2e5ff"
+        },
+      },
+      "ModelEvaluation": {
+        caption: "value",
+        font: {
+          "size": 26,
+          "color": "#ab83e1"
+        },
+      },
+      "Landmarker": {
+        caption: "name",
+      },
+      "Implementation": {
+        caption: "name",
+      },
+      "AlgoSupervised": {
+        caption: "name",
+      },
+      "Study": {
+        caption: "name",
+      },
+      "Parameter": {
+        caption: "name",
+        font: {
+          "size": 25,
+          "color": "##f87d7f"
+        },
+      },
+      "ParameterSetting": {
+        caption: "value",
+        font: {
+          "size": 25,
+          "color": "#e87cf1"
+        },
+      },
+      "EntityClass": {
+        caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true
@@ -1500,17 +1809,109 @@ function draw5() {
       "NominalAttribute": {
         caption: "name",
       },
-      "AnalysisAttribute": {
-        caption: "value",
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
       },
       "NumericAttribute": {
+        caption: "name"
+      },
+      "RelationshipDS": {
         caption: "name",
       },
-      "RelationshipAtt": {
+      "DLStructuredDataset": {
+        caption: "name",
+      },
+      "DLSemistructuredDataset": {
         caption: "name",
       },
       "DLUnstructuredDataset": {
         caption: "name"
+      },
+      "Process": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#000000"
+        },
+      },
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
+      "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
+        caption: "name",
+      },
+      "Analysis": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#7be141"
+        },
+      },
+      "AnalysisDSRelationship": {
+        caption: "value"
+      },
+      "EvaluationMeasure": {
+        caption: "name",
+        font: {
+          "size": 26,
+          "color": "#d2e5ff"
+        },
+      },
+      "ModelEvaluation": {
+        caption: "value",
+        font: {
+          "size": 26,
+          "color": "#ab83e1"
+        },
+      },
+      "Landmarker": {
+        caption: "name",
+      },
+      "Implementation": {
+        caption: "name",
+      },
+      "AlgoSupervised": {
+        caption: "name",
+      },
+      "Study": {
+        caption: "name",
+      },
+      "Parameter": {
+        caption: "name",
+        font: {
+          "size": 25,
+          "color": "##f87d7f"
+        },
+      },
+      "ParameterSetting": {
+        caption: "value",
+        font: {
+          "size": 25,
+          "color": "#e87cf1"
+        },
+      },
+      "EntityClass": {
+        caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true
@@ -1529,11 +1930,17 @@ function draw6() {
       "NominalAttribute": {
         caption: "name",
       },
+      "Tag": {
+        caption: "name"
+      },
+      "User": {
+        caption: "id"
+      },
+      "NumericAttribute": {
+        caption: "name"
+      },
       "RelationshipDS": {
         caption: "name",
-      },
-      "AnalysisDSRelatinship": {
-        caption: "value",
       },
       "DLStructuredDataset": {
         caption: "name",
@@ -1551,15 +1958,15 @@ function draw6() {
           "color": "#000000"
         },
       },
-
-      "DLStructuredDataset": {
+      "OperationOfProcess": {
+        caption: "operationType"
+      },
+      "Operation": {
+        caption: "name"
+      },
+      "DatasetSource": {
         caption: "name",
       },
-
-      "sourceData": {
-        caption: "name",
-      },
-
       "Analysis": {
         caption: "name",
         font: {
@@ -1567,11 +1974,9 @@ function draw6() {
           "color": "#7be141"
         },
       },
-
-      "DLStructuredDataset": {
-        caption: "name",
+      "AnalysisDSRelationship": {
+        caption: "value"
       },
-
       "EvaluationMeasure": {
         caption: "name",
         font: {
@@ -1579,7 +1984,6 @@ function draw6() {
           "color": "#d2e5ff"
         },
       },
-
       "ModelEvaluation": {
         caption: "value",
         font: {
@@ -1587,23 +1991,18 @@ function draw6() {
           "color": "#ab83e1"
         },
       },
-
       "Landmarker": {
         caption: "name",
       },
-
       "Implementation": {
         caption: "name",
       },
-
       "AlgoSupervised": {
         caption: "name",
       },
-
       "Study": {
         caption: "name",
       },
-
       "Parameter": {
         caption: "name",
         font: {
@@ -1611,7 +2010,6 @@ function draw6() {
           "color": "##f87d7f"
         },
       },
-
       "ParameterSetting": {
         caption: "value",
         font: {
@@ -1621,6 +2019,20 @@ function draw6() {
       },
       "EntityClass": {
         caption: "name",
+      },
+      "RelationshipAtt": {
+        caption: "name"
+      },
+      "Ingest": {
+      },
+      "Attribute": {
+        caption: "name"
+      },
+      "AnalysisTarget": {
+        caption: "name"
+      },
+      "AnalysisAttribute": {
+        caption: "value"
       }
     },
     arrows: true

@@ -37,7 +37,7 @@
                             for="Unstructured">Unstructured</label>
                         <br />
                         <div id="moreDSFilter" style='display: none'>
-                            <label for='dsDate'>Creation Date atfer : </label><input type='date' class='inputDate'
+                            <label for='dsDate'>Creation Date after : </label><input type='date' class='inputDate'
                                 id='dsDate' name="dsDate" value="0001-01-01">
                             <button class="dropbtn" id="qualityLevel">Quality Level</button>
                             <div class="dropdown">
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div id="morePFilter" style='display: none'>
-                            <label for='pDate'>Creation Date atfer : </label><input type='date' class='inputDateProcess'
+                            <label for='pDate'>Creation Date after : </label><input type='date' class='inputDateProcess'
                                 id='pDate' name="pDate" value="0001-01-01">
 
                             <button class="dropbtn" id="usedOpe">Used Operations</button>
@@ -208,7 +208,7 @@
                         </li>
                         <li id='attRelationButton'><a data-toggle="tab" href="#viz5_attribute">Relationship
                                 Attribute</a></li>
-                        <li><a data-toggle="tab" href="#similarity">Similarity</a></li>
+                        <li id='similarityButton'><a data-toggle="tab" href="#similarity">Similarity*</a></li>
                     </ul>
                     <div class="tab-content">
                         <div id="properties" class="tab-pane fade  in active"></div>
@@ -278,7 +278,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="similarity" class="tab-pane fade"></div>
+                        <div id="similarity" class="tab-pane fade">
+                            <i>* : Similarity use <a
+                                    href='https://neo4j.com/docs/graph-data-science/current/algorithms/node-similarity/'
+                                    data-toggle="tooltip" data-placement="top" id='tooltipsPreview' title="">Node
+                                    Similarity</a>
+                                algorithm from Neo4j Graph Data Science (gds)</i>
+                            <div id='similarityResult'></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -292,7 +299,7 @@
         <br />
         <textarea name="ameliorer" id="cypherrequest" style='width: 50%;'></textarea>
         <br />
-    </br>
+        </br>
         <div class='row'>
             <div class='col-md-4'>
                 <div class="panel panel-default">
@@ -379,36 +386,7 @@
             </div>
         </div>
     </div>
-    <!-- <div class="modal fade" id="cypherModal" tabindex="-1" role="dialog" aria-labelledby="cypherModal"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cypher Request</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <label for="ameliorer">
-                        Specific cypher Request :
-                    </label>
-                    <button id='submitCypherRequest' style="width: 100%;">Submit</button>
-                    <br />
-                    <textarea name="ameliorer" id="cypherrequest" style='width : 100%;'></textarea>
-                    <br />
-                    <div class="container-fluid">
-                        <div class='row'>
-                            <div id="viz6" class="tab-pane fade"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
+
     <style type="text/css">
         .node {
             stroke: #222;
@@ -435,6 +413,10 @@
 
         #specificSearch {
             text-align: center;
+        }
+
+        #similarity i {
+            font-size: 75%;
         }
 
         #viz,
