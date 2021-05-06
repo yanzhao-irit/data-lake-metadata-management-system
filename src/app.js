@@ -22,6 +22,7 @@ var lastSelected;
 var cypherHistoryList = [];
 var graphList = [];
 var similarityGraph = []
+var betweennessGraph = []
 
 
 //Beginning of event listener
@@ -47,12 +48,19 @@ $(function () {
     if (graphList.indexOf('graph-DDDT') == -1) {
       api.createGraph()
     }
+    if (graphList.indexOf('graph-All') == -1) {
+      api.createGraphAll()
+    }
   })
 
   promisegraph.finally(() => {
     api.algoSimilairty().then(a => {
       console.log(a)
       similarityGraph = a
+    })
+    api.algoBetweennessCentrality().then(a => {
+      console.log(a)
+      betweennessGraph = a
     })
   })
 
@@ -124,15 +132,30 @@ $(function () {
     }
   });
 
-  $(".head-link").mouseover(function() {
-    console.log('over')
-    $(this).children(".tooltip").show();
-  }).mouseout(function () {
-    console.log('out')
-    $(this).children(".tooltip").hide();
-  });
-
-  $('#tooltipsPreview').tooltip({content: 'hello'});
+  $('#sortDataset').on('click', function (){
+    var listChild = $('#dbNames').children().toArray()
+    if($(this).text() == 'Importance'){
+      listChild.sort((a,b) => {
+        var textA = a.innerText.toUpperCase();
+        var textB = b.innerText.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      })
+      listChild.forEach(a => {
+        $('#dbNames').append(a)
+      })
+      $(this).text('Name')
+    }else{
+      listChild.sort((a,b) => {
+        var textA = _.findIndex(betweennessGraph, function(el) { return el[0] == a.innerText; });
+        var textB = _.findIndex(betweennessGraph, function(el) { return el[0] == b.innerText; });
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      })
+      listChild.forEach(a => {
+        $('#dbNames').append(a)
+      })
+      $(this).text('Importance')
+    }
+  })
 
   //Function onclick to go back to the search table from the graphic interface.
   $('#back').on('click', function () {
