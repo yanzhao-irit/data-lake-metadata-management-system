@@ -14,7 +14,7 @@ In this database, we ingseted metadata of datasets, processes and analyses.
     - [Lung Cancer DataSet](https://www.kaggle.com/yusufdede/lung-cancer-dataset): lung cancer dataset with four indicators.
     - [Breast Cancer Wisconsin (Diagnostic) Data Set](https://www.kaggle.com/uciml/breast-cancer-wisconsin-data): Predict whether the cancer is benign or malignant. (Dataset owner: UCI Machine Learning, License: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/))
     - [COVID-19 World Vaccination Progress](https://www.kaggle.com/gpreda/covid-world-vaccination-progress): Daily and Total Vaccination for COVID-19 in the World. (Dataset owner: Gabriel Preda, License: [CC0: Public Domain](https://creativecommons.org/publicdomain/zero/1.0/))
-    - [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia): Chest X-Rays in Patients with Pneumonia. ([Dataset source](https://data.mendeley.com/datasets/rscbjbr9sj/2) , License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
+    - [Chest X-Ray Images (Pneumonia)](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia): Chest X-ray images (anterior-posterior) selected from retrospective cohorts of pediatric patients of one to five years old from Guangzhou Women and Children’s Medical Center ([Dataset source](https://data.mendeley.com/datasets/rscbjbr9sj/2) , License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
 
 
 - **Preparation processes**
