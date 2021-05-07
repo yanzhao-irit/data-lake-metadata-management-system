@@ -891,6 +891,25 @@ function createGraph(){
   });
 }
 
+function createGraphAll(){
+  var session = driver.session();
+  query = `CALL gds.graph.create.cypher(
+    'graph-All',
+    'MATCH (n) RETURN id(n) AS id',
+    'MATCH (n)-[]->(m) RETURN id(n) AS source, id(m) AS target'
+    )`
+    return session
+  .run(
+    query)
+  .then()
+  .catch(error => {
+    throw error;
+  })
+  .finally(() => {
+    return session.close();
+  });
+}
+
 function algoSimilairty(){
   var session = driver.session();
   query = `CALL gds.nodeSimilarity.stream('graph-DDDT')
@@ -903,6 +922,29 @@ function algoSimilairty(){
   .then(result => {
     return result.records.map(record => {
       return [record.get('Person1'), record.get('Person2'), record.get('similarity')];
+    });
+  })
+  .catch(error => {
+    throw error;
+  })
+  .finally(() => {
+    return session.close();
+  });
+}
+
+function algoBetweennessCentrality(){
+  var session = driver.session();
+  query = `CALL gds.betweenness.stream('graph-All')
+  YIELD nodeId, score
+  WHERE (labels(gds.util.asNode(nodeId))=["DLStructuredDataset"] OR labels(gds.util.asNode(nodeId))=["DLUnstructuredDataset"] OR labels(gds.util.asNode(nodeId))=["DLSemistructuredDataset"])
+  RETURN gds.util.asNode(nodeId).name AS name, score, labels(gds.util.asNode(nodeId)) AS label
+  ORDER BY score DESC`
+  return session
+  .run(
+    query)
+  .then(result => {
+    return result.records.map(record => {
+      return [record.get('name'), record.get('score'), record.get('label')];
     });
   })
   .catch(error => {
@@ -940,8 +982,11 @@ exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
 exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
 exports.getRelationshipAttribute = getRelationshipAttribute;
 exports.createGraph = createGraph;
+exports.createGraphAll = createGraphAll;
 exports.algoSimilairty = algoSimilairty;
 exports.graphList = graphList;
+exports.algoBetweennessCentrality = algoBetweennessCentrality;
+
 
 
 /*
