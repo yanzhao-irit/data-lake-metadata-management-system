@@ -955,6 +955,37 @@ function algoBetweennessCentrality(){
   });
 }
 
+//------------------------------------------ADD-----------------------------
+var Tag = require('./models/Tag')
+//-------------------------------------ADD start----------------------------
+//Function to search for analysis metadata by study id or analysis
+function getTags(tag) {
+  //console.log(tag);
+  var session = driver.session();
+  //partie cypher de base pour récupérer les analyses
+  //Classic cypher request to get analysis
+  var query = "match (t:Tag) where t.name =~'"+ tag +".*' return t"
+
+  return session
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        return new Tag(record.get('t'))
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
+}
+//-------------------------------------ADD end----------------------------
+//----------------------------------ADD-----------------------------------
+exports.getTags = getTags;
+
+
 
 //Exports of used functions
 exports.getProcesses = getProcesses;

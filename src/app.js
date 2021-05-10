@@ -2063,3 +2063,131 @@ function draw6() {
   viz6 = new NeoVis.default(config);
   viz6.render();
 }
+
+//----------------------------------------ADD-------------------------------------------------
+document.addEventListener("DOMContentLoaded",() => {
+        document.getElementById('add').addEventListener("click",addTag);
+        document.getElementById('ingestMode').addEventListener("change",seeIngestMode);
+        //document.getElementById('delete').addEventListener("click",affTagTest);
+        document.getElementById("zone0").addEventListener("input",printTags);
+
+    });
+
+    var NumberTags = 0;
+
+    var elem = document.getElementById('files');
+    elem.onchange = function (event) {
+        var files = event.target.files;
+        for (var i = 0; i < files.length; i++) {
+
+            var ldot = files[i].name.lastIndexOf(".");
+            var type = files[i].name.substring(ldot + 1);
+            //var objURL = getObjectURL(files[i]);
+            //alert(objURL);
+            console.log(type);
+
+            //if (type == 'csv'){
+
+            //}
+        }
+    }
+
+    function printTags(){
+
+        console.log(NumberTags);
+        var zone = "zone" + NumberTags;
+        var zoneaff = "zoneaff" + NumberTags;
+        var lien = "lien"  + NumberTags;
+
+        var elt2 = document.getElementById(zoneaff);
+               elt2.innerHTML = "";
+               //To receive result of BD
+               var length = 0;
+               var tag = document.getElementById(zone).value;
+               console.log(tag);
+               api.getTags(tag).then(p => {
+                    //console.log(p.length);
+                    length = p.length;
+                    if (length === 0){
+
+                        elt2.style.display = "none";
+                    }else{
+
+                        if(length >= 5){
+                            elt2.style.height="95px";
+                        }else{
+                            elt2.style.height="auto";
+                        }
+                        elt2.style.display = "block";
+                        for(x=0; x<length; x++){
+                           //console.log(p[x].name);
+                           elt2.insertAdjacentHTML('beforeend',"<a name='"+lien+"'>"+p[x].name+"</a><br />");
+                        }
+
+                        var elt3 = document.getElementsByName(lien);
+                        for(j=0; j<elt3.length; j++){
+                            elt3[j].addEventListener("click",changerInputText);
+                        }
+                    }
+               })
+
+    }
+
+    function changerInputText(){
+        var zone = "zone" + NumberTags;
+        var zoneaff = "zoneaff" + NumberTags;
+
+        //alert(this.innerText);
+        document.getElementById(zone).value=this.innerText;
+        document.getElementById(zoneaff).style.display = "none";
+    }
+
+    function addTag(){
+        var elt = document.getElementById('Tags');
+        NumberTags = NumberTags+1;
+        elt.insertAdjacentHTML("beforeend","<div><span>Tag : </span><div><input type='text' name='tags' id='zone"+ NumberTags +"' /><div id='zoneaff"+NumberTags+"'  class='boite'></div></div></div>");
+        var zone = "zone" + NumberTags;
+        document.getElementById(zone).addEventListener("input",printTags);
+        //alert(NumberTags);
+
+    }
+
+    function seeIngestMode(){
+      var elt = document.getElementById("ingestMode");
+      var select=elt.value;
+      if(select=="batch"){
+        document.getElementById("ingestionTime").style.display="none";
+      }else{
+        document.getElementById("ingestionTime").style.display="";
+      }
+    }
+
+    window.onload = setMaxDate();
+    function setMaxDate(){
+
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth()+1; //January is 0!
+      var yyyy = today.getFullYear();
+      var hh = today.getHours();
+      var minute = today.getMinutes();
+        if(dd<10){
+         dd='0'+dd
+        }
+        if(mm<10){
+         mm='0'+mm
+        }
+        if(hh<10){
+         hh='0'+hh
+        }
+        if(minute<10){
+         minute='0'+minute
+        }
+
+      today = yyyy+'-'+mm+'-'+dd+'T'+hh+':'+minute;
+
+      document.getElementById("ingestionStartTime").setAttribute("max",today);
+      document.getElementById("ingestionEndTime").setAttribute("max",today);
+
+    }
+

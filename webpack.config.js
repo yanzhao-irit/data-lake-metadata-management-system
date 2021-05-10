@@ -9,7 +9,8 @@ const buildDirectory = path.join(__dirname, 'build');
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/app.js'
+    app: './src/app.js',
+	upload: './src/app.js'
   },
   output: {
     filename: 'app.js',
@@ -27,7 +28,8 @@ module.exports = {
   },
 
   plugins: [
-    new HtmlWebpackPlugin({template: 'src/assets/index.html'})
+	new HtmlWebpackPlugin({filename:'upload.html',template: 'src/assets/upload.html', chunks: ['upload']}),
+    new HtmlWebpackPlugin({filename:'index.html',template: 'src/assets/index.html', chunks: ['app']})
   ],
 
   resolve: {
