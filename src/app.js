@@ -308,7 +308,7 @@ $(function () {
             json = JSON.parse(JSON.stringify(p[0]))
             var $p = $("#properties")
             for (propriete in p[0]) {
-              if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+              if (propriete == 'creationDate' || propriete == "executionDate") {
                 $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
                 $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
@@ -321,7 +321,13 @@ $(function () {
       //query is for lineage
       //query2 is for hyper-graph
       //query3 is for Operation
-      query = "MATCH path =(m : DLStructuredDataset)<-[:targetData]-(c:Process {name:'" + $(this).text() + "'})<-[:sourceData]-(d:DLStructuredDataset) OPTIONAL MATCH (c)<-[q:hasSubprocess]-(w: Process) RETURN path, w,q"; //Process
+      query = `MATCH path =(m : DLStructuredDataset)<-[:targetData]-(c:Process {uuid:'`+ $(this).attr('id').split('$')[1] +`'})<-[:sourceData]-(d:DLStructuredDataset) 
+      OPTIONAL MATCH (c)<-[q:hasSubprocess]-(w: Process) 
+      RETURN path,w,q
+      UNION ALL
+      MATCH path2=((dl)-[]-(i:Ingest)-[]-(p:Process {uuid:'`+ $(this).attr('id').split('$')[1] +`'})-[]-(d:DatasetSource)-[]-(sos:SourceOfSteam))
+      WHERE (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
+      RETURN path2 AS path, null as w, null as q`; //Process
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
       query3 = `MATCH (p:Process {name:'` + $(this).text() + `'}) 
       OPTIONAL MATCH (p)-[r3:containsOp]->(c:OperationOfProcess)
@@ -427,9 +433,11 @@ $(function () {
             }
           }
           //get dataset informations
+          console.log([$(this).text()] + ' |||| ' + typeDS)
           api
             .getDatabases([$(this).text()], typeDS)
             .then(p => {
+              console.log(p)
               if (p) {
                 console.log(p[0]);
                 json = JSON.parse(JSON.stringify(p[0]))
@@ -1289,7 +1297,7 @@ function showProcesses(tags, language = "", date = "0001-01-01", type = [], exec
         //var $list = $(".names").empty();
         var $list = $("#processNames")
         for (var i = 0; i < p.length; i++) {
-          $list.append($("<tr><td class='Process' id='" + p[i].name + "$" + p[i].id + "'>" + p[i].name + "</td></tr>"));
+          $list.append($("<tr><td class='Process' id='" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
         }
         console.log('nb items liste : ' + p.length)
       }
@@ -2063,3 +2071,5 @@ function draw6() {
   viz6 = new NeoVis.default(config);
   viz6.render();
 }
+
+
