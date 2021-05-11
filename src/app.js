@@ -1,6 +1,5 @@
 var api = require('./neo4jApi');
 var pwd = require("../store-password.json")
-var viz;
 
 //Some variable used in all function
 var typeRecherche = [];
@@ -28,7 +27,7 @@ var betweennessGraph = []
 //Beginning of event listener
 $(function () {
   //Initialisation of graphic interface
-  draw()
+  //draw()
   draw2()
   draw3()
   draw4()
@@ -79,7 +78,7 @@ $(function () {
     //Clean column to let the new results appear from the query (dataset, process, analyse)
     $(".names").empty()
     //refresh graphic interface
-    draw()
+    //draw()
     draw2()
     draw3()
     draw4()
@@ -107,7 +106,7 @@ $(function () {
     $('#graphco').collapse('hide');
     if (!tagsinput.length == 0) {
       $(".names").empty()
-      draw()
+      //draw()
       draw2()
       draw3()
       draw4()
@@ -123,7 +122,7 @@ $(function () {
     }
     else {
       $(".names").empty();
-      draw()
+      //draw()
       draw2()
       draw3()
       draw4()
@@ -328,6 +327,27 @@ $(function () {
       MATCH path2=((dl)-[]-(i:Ingest)-[]-(p:Process {uuid:'`+ $(this).attr('id').split('$')[1] +`'})-[]-(d:DatasetSource)-[]-(sos:SourceOfSteam))
       WHERE (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
       RETURN path2 AS path, null as w, null as q`; //Process
+      console.log('coucou')
+      api.getGraph(query).then(result => {
+        console.log(result[0][0])
+        console.log(result[0][1])
+        var nodes = new vis.DataSet(result[0][0])
+        var edges = new vis.DataSet(result[0][1])
+        var container = document.getElementById('viz')
+        var data = { nodes: nodes, edges: edges};
+        var options = {
+        nodes: {
+          scaling: {
+            min: 16,
+            max: 32,
+          },
+        },
+        edges: {
+          color: 'gray',
+          smooth: false,
+        }};
+        var network = new vis.Network(container,data,options);
+      })
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
       query3 = `MATCH (p:Process {name:'` + $(this).text() + `'}) 
       OPTIONAL MATCH (p)-[r3:containsOp]->(c:OperationOfProcess)
@@ -524,7 +544,11 @@ $(function () {
           with d,p,p1,r,s 
           RETURN d,p,p1,r,s`
           query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
-          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.name = "` + $(this).text() + `"
+          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+          RETURN path
+          UNION ALL
+          MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
+          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path`
           //query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
@@ -696,13 +720,13 @@ $(function () {
         }
       }
     }
-    console.log(query);
-    if (query.length > 3) {
-      viz.renderWithCypher(query);
-    } else {
-      console.log("reload");
-      viz.reload();
-    }
+    // console.log(query);
+    // if (query.length > 3) {
+    //   viz.renderWithCypher(query);
+    // } else {
+    //   console.log("reload");
+    //   viz.reload();
+    // }
 
   });
 
@@ -1153,7 +1177,7 @@ async function getAnalysisRelationshipAtt(idsource, nameAtt, relationName, nameA
     .getRelationshipAttribute(idsource, nameAtt, 'relationValue', relationName, nameAtt2)
     .then(p => {
       if (p !== undefined && p.length > 0) {
-        console.log('key : ' + nameAtt + '&' + nameAtt2 + '&' + relationName + ' ||| value : ' + p[0].value)
+        //console.log('key : ' + nameAtt + '&' + nameAtt2 + '&' + relationName + ' ||| value : ' + p[0].value)
         mapRelationAtt.set(nameAtt + '&' + nameAtt2 + '&' + relationName, p[0].value)
       } else {
         //mapRelationAtt.set(nameAtt + '&' + nameAtt2 + '&' + relationName, '');
@@ -1346,127 +1370,130 @@ function showDatabases(tags, type = 'defaultValue', date = '0001-01-01', quality
 
 
 //Fucntion to init graph interface
-function draw() {
-  var config = {
-    container_id: "viz",
-    server_url: "bolt://localhost",
-    server_user: "neo4j",
-    server_password: pwd.password,
-    labels: {
-      "NominalAttribute": {
-        caption: "name",
-      },
-      "Tag": {
-        caption: "name"
-      },
-      "User": {
-        caption: "id"
-      },
-      "NumericAttribute": {
-        caption: "name"
-      },
-      "RelationshipDS": {
-        caption: "name",
-      },
-      "DLStructuredDataset": {
-        caption: "name",
-      },
-      "DLSemistructuredDataset": {
-        caption: "name",
-      },
-      "DLUnstructuredDataset": {
-        caption: "name"
-      },
-      "Process": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#000000"
-        },
-      },
-      "OperationOfProcess": {
-        caption: "operationType"
-      },
-      "Operation": {
-        caption: "name"
-      },
-      "DatasetSource": {
-        caption: "name",
-      },
-      "Analysis": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#7be141"
-        },
-      },
-      "AnalysisDSRelationship": {
-        caption: "value"
-      },
-      "EvaluationMeasure": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#d2e5ff"
-        },
-      },
-      "ModelEvaluation": {
-        caption: "value",
-        font: {
-          "size": 26,
-          "color": "#ab83e1"
-        },
-      },
-      "Landmarker": {
-        caption: "name",
-      },
-      "Implementation": {
-        caption: "name",
-      },
-      "AlgoSupervised": {
-        caption: "name",
-      },
-      "Study": {
-        caption: "name",
-      },
-      "Parameter": {
-        caption: "name",
-        font: {
-          "size": 25,
-          "color": "##f87d7f"
-        },
-      },
-      "ParameterSetting": {
-        caption: "value",
-        font: {
-          "size": 25,
-          "color": "#e87cf1"
-        },
-      },
-      "EntityClass": {
-        caption: "name",
-      },
-      "RelationshipAtt": {
-        caption: "name"
-      },
-      "Ingest": {
-      },
-      "Attribute": {
-        caption: "name"
-      },
-      "AnalysisTarget": {
-        caption: "name"
-      },
-      "AnalysisAttribute": {
-        caption: "value"
-      }
-    },
-    arrows: true
-  }
+// function draw() {
+//   var config = {
+//     container_id: "viz",
+//     server_url: "bolt://localhost",
+//     server_user: "neo4j",
+//     server_password: pwd.password,
+//     labels: {
+//       "NominalAttribute": {
+//         caption: "name",
+//       },
+//       "Tag": {
+//         caption: "name"
+//       },
+//       "User": {
+//         caption: "id"
+//       },
+//       "NumericAttribute": {
+//         caption: "name"
+//       },
+//       "RelationshipDS": {
+//         caption: "name",
+//       },
+//       "DLStructuredDataset": {
+//         caption: "name",
+//       },
+//       "DLSemistructuredDataset": {
+//         caption: "name",
+//       },
+//       "DLUnstructuredDataset": {
+//         caption: "name"
+//       },
+//       "Process": {
+//         caption: "name",
+//         font: {
+//           "size": 26,
+//           "color": "#000000"
+//         },
+//       },
+//       "OperationOfProcess": {
+//         caption: "operationType"
+//       },
+//       "Operation": {
+//         caption: "name"
+//       },
+//       "DatasetSource": {
+//         caption: "name",
+//       },
+//       "Analysis": {
+//         caption: "name",
+//         font: {
+//           "size": 26,
+//           "color": "#7be141"
+//         },
+//       },
+//       "AnalysisDSRelationship": {
+//         caption: "value"
+//       },
+//       "EvaluationMeasure": {
+//         caption: "name",
+//         font: {
+//           "size": 26,
+//           "color": "#d2e5ff"
+//         },
+//       },
+//       "ModelEvaluation": {
+//         caption: "value",
+//         font: {
+//           "size": 26,
+//           "color": "#ab83e1"
+//         },
+//       },
+//       "Landmarker": {
+//         caption: "name",
+//       },
+//       "Implementation": {
+//         caption: "name",
+//       },
+//       "AlgoSupervised": {
+//         caption: "name",
+//       },
+//       "Study": {
+//         caption: "name",
+//       },
+//       "Parameter": {
+//         caption: "name",
+//         font: {
+//           "size": 25,
+//           "color": "##f87d7f"
+//         },
+//       },
+//       "ParameterSetting": {
+//         caption: "value",
+//         font: {
+//           "size": 25,
+//           "color": "#e87cf1"
+//         },
+//       },
+//       "EntityClass": {
+//         caption: "name",
+//       },
+//       "RelationshipAtt": {
+//         caption: "name"
+//       },
+//       "Ingest": {
+//       },
+//       "Attribute": {
+//         caption: "name"
+//       },
+//       "AnalysisTarget": {
+//         caption: "name"
+//       },
+//       "AnalysisAttribute": {
+//         caption: "value"
+//       },
+//       "SourceOfSteam": {
+//         caption: "name"
+//       }
+//     },
+//     arrows: true
+//   }
 
-  viz = new NeoVis.default(config);
-  viz.render();
-}
+//   viz = new NeoVis.default(config);
+//   viz.render();
+// }
 
 function draw2() {
   var config = {
@@ -1581,6 +1608,9 @@ function draw2() {
       },
       "AnalysisAttribute": {
         caption: "value"
+      },
+      "SourceOfSteam": {
+        caption: "name"
       }
     },
     arrows: true

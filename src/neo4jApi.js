@@ -23,6 +23,8 @@ var RelationshipAtt = require('./models/RelationshipAtt')
 var Attribute = require('./models/Attribute')
 var AnalysisAttribute = require('./models/AnalysisAttribute')
 var AlgoResult = require('./models/AlgoResult')
+var Nodes = require('./models/Nodes')
+var Relationship = require('./models/Relationship')
 
 //Drivers and parameters to acces database 
 var _ = require('lodash');
@@ -67,7 +69,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     }
   }
   //Cypher query for dates filter
-  //query = query + ' AND (date(p.creationDate) >= date("' + date + '"))'
+  query = query + ' AND (datetime(p.creationDate) >= datetime("' + date + '"))'
   //Cypher query for used operation filter
   if (typeOpe.length > 0) {
     query += " AND (p)-[]-()-[]-(o:Operation) AND ("
@@ -158,14 +160,14 @@ function getStudies(tags, type, landmarker, algoNames, omNames) {
     //Cypher query to search a particular algo names.
     query += ') AND (toLower(al.name) CONTAINS toLower("' + algoNames + '") OR toLower(al.description) CONTAINS toLower("' + algoNames + '") ) '
   }
-  
+
   //Cyper query for outpu models filter, they are not implemented in the database.
   // if(omNames>0){
   //   query += ' AND (s)-[:hasAnalysis]->(a)-[:hasOutputModel]->(opm:OutputModel) AND opm.name CONTAINS "' + omNames + '"';
   // }
 
   query = query + " RETURN DISTINCT s"
-  
+
   //We get only study here, which are used later to get analysis
   return session
     .run(
@@ -191,7 +193,7 @@ function getAnalyses(study, name, id) {
   var query = "MATCH (s:Study)-[r:hasAnalysis]->(a:Analysis) WHERE "
   //Cypher query if the input is Study
   if (study.length > 0) {
-        query = query + " toLower(s.name) CONTAINS toLower('" + study + "') "
+    query = query + " toLower(s.name) CONTAINS toLower('" + study + "') "
   } else { // Cypher query if the input is an analysis
     if (name.length > 0) {
       query = query + " toLower(a.name) CONTAINS toLower('" + name + "') AND a.uuid = '" + id + "'"
@@ -570,7 +572,7 @@ function getEntityClassByDataset(datasetName, datasetId, typeDS) {
 }
 
 //function to search for dataset relationship with other datasets 
-function getRelationshipDSbyDataset(dsName, dsId, type, relationName='') {
+function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
   query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelatinship)
@@ -579,10 +581,10 @@ function getRelationshipDSbyDataset(dsName, dsId, type, relationName='') {
     (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
     AND
     (autreDS)<-[]-(adrR:AnalysisDSRelatinship)-[]->(rDS:RelationshipDS)`
-    if(relationName != ''){
-      query += ' AND rDS.name = "'+ relationName +'"'
-    }    
-    query += ` RETURN DISTINCT`
+  if (relationName != '') {
+    query += ' AND rDS.name = "' + relationName + '"'
+  }
+  query += ` RETURN DISTINCT`
   switch (type) {
     //Case to get relations
     case 'RelationshipDS':
@@ -622,7 +624,7 @@ function getRelationshipDSbyDataset(dsName, dsId, type, relationName='') {
 }
 
 //Function to get relationship value between two datasets
-function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship){
+function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
   var session = driver.session();
   query = `MATCH (ds1)-[]-(adsr:AnalysisDSRelatinship)-[]-(ds2), (adsr)-[]-(rds:RelationshipDS) 
               WHERE rds.name = "` + Relationship + `" AND ds1.uuid = "` + dataset1 + `" AND ds2.uuid = "` + dataset2 + `" 
@@ -630,34 +632,34 @@ function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship){
                 AND (ds2:DLStructuredDataset OR ds2:DLSemistructuredDataset OR ds2:DLUnstructuredDataset)
                 RETURN DISTINCT adsr`
   return session
-        .run(
-          query)
-        .then(result => {
-          return result.records.map(record => {
-            return new AnalysisDSRelationship(record.get('adsr'))
-          });
-        })
-        .catch(error => {
-          throw error;
-        })
-        .finally(() => {
-          return session.close();
-        });
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        return new AnalysisDSRelationship(record.get('adsr'))
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
 }
 
 //Function to search for relationships between attribute by datasets or analysis. allow to get relationship name,value and others attributes linked to the target.
-function getRelationshipAttribute(sourceId,name='', type, relationName='', name2='') {
+function getRelationshipAttribute(sourceId, name = '', type, relationName = '', name2 = '') {
   var session = driver.session();
   query = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
-  WHERE dl.uuid = '`+sourceId+`'
+  WHERE dl.uuid = '`+ sourceId + `'
   AND
   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)`
-  if(relationName != ''){
+  if (relationName != '') {
     query += ' AND RA.name ="' + relationName + '"'
   }
-  
+
   switch (type) {
-    case 'relation' :
+    case 'relation':
       query += ` RETURN DISTINCT RA`
       return session
         .run(
@@ -690,7 +692,7 @@ function getRelationshipAttribute(sourceId,name='', type, relationName='', name2
           return session.close();
         });
     case 'relationValue':
-      query += ` AND toLower(a2.name) CONTAINS toLower('`+ name2 +`') AND toLower(a.name) CONTAINS toLower('` +name+ `') RETURN DISTINCT AA`
+      query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
       return session
         .run(
           query)
@@ -707,14 +709,14 @@ function getRelationshipAttribute(sourceId,name='', type, relationName='', name2
         });
 
   }
-  
+
 }
 
 //fonction de recherches des datasets avec les différents paramètres pour chaque filtre.
 //Function to search dataset metadata, with parameters for each filter.
 function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01', quality = [], sensitivity = 0, entityAttributeNames = "") {
   var session = driver.session();
-  
+
   /* MATCH
     (n),(a),(e:EntityClass),(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
 WHERE
@@ -748,7 +750,7 @@ WHERE
 RETURN n
  */
 
-//Cypher query with ifs to have the dataset type filter used.
+  //Cypher query with ifs to have the dataset type filter used.
   var query = "MATCH (ds),(a),(e:EntityClass) WHERE ("; //,(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
   if (!type.includes("Structured") && !type.includes("Semi-Structured") && !type.includes("Unstructured")) {
     query += " ds:DLStructuredDataset OR ds:DLSemistructuredDataset OR ds:DLUnstructuredDataset ";
@@ -793,10 +795,8 @@ RETURN n
       query = query + "toLower(ds.name) CONTAINS toLower('" + tags[i] + "') OR toLower(ds.description) CONTAINS toLower('" + tags[i] + "')"
     }
   }
-
-  query += ')'
   //Cypher query for dates filter
-  //query = query + ' (date(ds.creationDate) >= date("' + creationdate + '"))'
+  query = query + ' ) AND (datetime(ds.creationDate) >= datetime("' + creationdate + '"))'
 
   //Cypher query for the quality filter
   // if(quality.lenght>0){
@@ -855,86 +855,86 @@ RETURN n
     });
 }
 
-function graphList(){
+function graphList() {
   var session = driver.session();
-  query='CALL gds.graph.list() YIELD graphName'
+  query = 'CALL gds.graph.list() YIELD graphName'
   return session
-  .run(
-    query)
-  .then(result => {
-    return result.records.map(record => {
-      return record.get('graphName');
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        return record.get('graphName');
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
     });
-  })
-  .catch(error => {
-    throw error;
-  })
-  .finally(() => {
-    return session.close();
-  });
 }
 
-function createGraph(){
+function createGraph() {
   var session = driver.session();
-  query=`CALL gds.graph.create.cypher(
+  query = `CALL gds.graph.create.cypher(
     'graph-DDDT',
     'MATCH (n) WHERE (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset OR n:Tag) RETURN id(n) AS id',
     'MATCH (n)-[]->(m) WHERE (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset OR n:Tag) AND (m:DLStructuredDataset OR m:DLSemistructuredDataset OR m:DLUnstructuredDataset OR m:Tag) RETURN id(n) AS source, id(m) AS target'
     )`
-    return session
-  .run(
-    query)
-  .then()
-  .catch(error => {
-    throw error;
-  })
-  .finally(() => {
-    return session.close();
-  });
+  return session
+    .run(
+      query)
+    .then()
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
 }
 
-function createGraphAll(){
+function createGraphAll() {
   var session = driver.session();
   query = `CALL gds.graph.create.cypher(
     'graph-All',
     'MATCH (n) RETURN id(n) AS id',
     'MATCH (n)-[]->(m) RETURN id(n) AS source, id(m) AS target'
     )`
-    return session
-  .run(
-    query)
-  .then()
-  .catch(error => {
-    throw error;
-  })
-  .finally(() => {
-    return session.close();
-  });
+  return session
+    .run(
+      query)
+    .then()
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
 }
 
-function algoSimilairty(){
+function algoSimilairty() {
   var session = driver.session();
   query = `CALL gds.nodeSimilarity.stream('graph-DDDT')
   YIELD node1, node2, similarity
   RETURN gds.util.asNode(node1).name AS Person1, gds.util.asNode(node2).name AS Person2, similarity
   ORDER BY similarity DESCENDING, Person1, Person2`
   return session
-  .run(
-    query)
-  .then(result => {
-    return result.records.map(record => {
-      return [record.get('Person1'), record.get('Person2'), record.get('similarity')];
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        return [record.get('Person1'), record.get('Person2'), record.get('similarity')];
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
     });
-  })
-  .catch(error => {
-    throw error;
-  })
-  .finally(() => {
-    return session.close();
-  });
 }
 
-function algoBetweennessCentrality(){
+function algoBetweennessCentrality() {
   var session = driver.session();
   query = `CALL gds.betweenness.stream('graph-All')
   YIELD nodeId, score
@@ -942,19 +942,77 @@ function algoBetweennessCentrality(){
   RETURN gds.util.asNode(nodeId).name AS name, score, labels(gds.util.asNode(nodeId)) AS label
   ORDER BY score DESC`
   return session
-  .run(
-    query)
-  .then(result => {
-    return result.records.map(record => {
-      return [record.get('name'), record.get('score'), record.get('label')];
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        return [record.get('name'), record.get('score'), record.get('label')];
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
     });
-  })
-  .catch(error => {
-    throw error;
-  })
-  .finally(() => {
-    return session.close();
-  });
+}
+
+function getGraph(query) {
+  var session = driver.session();
+  console.log(query)
+  var nodes = []
+  var edges = []
+  return session
+    .run(
+      query)
+    .then(result => {
+      return result.records.map(record => {
+        console.log(record)
+        var data = record._fields
+        
+        for (var i = 0; i < data.length; i++) {
+          //nodes.push(record._fields[0].segments[i].end) 
+          //edges.push(record._fields[0].segments[i].relationship)
+          if (record._fields[i] != null) {
+            if (record._fields[i].labels) {
+              console.log(record._fields[i].identity.low)
+              nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].labels[0] })
+            }
+            if (record._fields[i].type) {
+              console.log("relationship")
+              edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type })
+            }
+            if (record._fields[i].segments) {
+              for (var j = 0; j < record._fields[i].segments.length; j++) {
+                nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.labels[0] })
+                nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.labels[0] })
+                edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+              }
+            }
+
+          }
+        }
+
+        var uniqueNodes = Array.from(new Set(nodes.map(a => a.id)))
+          .map(id => {
+            return nodes.find(a => a.id === id)
+          })
+          var uniqueEdges = Array.from(new Set(edges.map(a => a.id)))
+          .map(id => {
+            return edges.find(a => a.id === id)
+          })
+        console.log(nodes)
+        console.log(edges)
+        console.log(uniqueNodes)
+        return [uniqueNodes, uniqueEdges];
+      });
+    })
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
 }
 
 //------------------------------------------ADD-----------------------------
@@ -966,7 +1024,7 @@ function getTags(tag) {
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis
-  var query = "match (t:Tag) where t.name =~'"+ tag +".*' return t"
+  var query = "match (t:Tag) where t.name =~'" + tag + ".*' return t"
 
   return session
     .run(
@@ -1019,7 +1077,7 @@ exports.createGraphAll = createGraphAll;
 exports.algoSimilairty = algoSimilairty;
 exports.graphList = graphList;
 exports.algoBetweennessCentrality = algoBetweennessCentrality;
-
+exports.getGraph = getGraph;
 
 
 /*
