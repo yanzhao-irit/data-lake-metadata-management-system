@@ -67,7 +67,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     }
   }
   //Cypher query for dates filter
-  query = query + ' AND (date(p.creationDate) >= date("' + date + '"))'
+  //query = query + ' AND (date(p.creationDate) >= date("' + date + '"))'
   //Cypher query for used operation filter
   if (typeOpe.length > 0) {
     query += " AND (p)-[]-()-[]-(o:Operation) AND ("
@@ -80,6 +80,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     }
   }
   query = query + " RETURN distinct p"
+  console.log(query)
   // Query return is kept and stocked within a model with the same name to avoid confusion. Note that only one parameter of return can be stocked.
   return session
     .run(
@@ -793,8 +794,9 @@ RETURN n
     }
   }
 
+  query += ')'
   //Cypher query for dates filter
-  query = query + ') AND (date(ds.creationDate) >= date("' + creationdate + '"))'
+  //query = query + ' (date(ds.creationDate) >= date("' + creationdate + '"))'
 
   //Cypher query for the quality filter
   // if(quality.lenght>0){
