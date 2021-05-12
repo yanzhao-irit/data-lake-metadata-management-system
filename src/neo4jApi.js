@@ -969,24 +969,21 @@ function getGraph(query) {
       return result.records.map(record => {
         console.log(record)
         var data = record._fields
-        
         for (var i = 0; i < data.length; i++) {
-          //nodes.push(record._fields[0].segments[i].end) 
-          //edges.push(record._fields[0].segments[i].relationship)
           if (record._fields[i] != null) {
             if (record._fields[i].labels) {
               console.log(record._fields[i].identity.low)
-              nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].labels[0] })
+              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label : record._fields[i].properties.name || record._fields[i].properties.description})
             }
             if (record._fields[i].type) {
               console.log("relationship")
-              edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type })
+              edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), id: record._fields[i].identity.low })
             }
             if (record._fields[i].segments) {
               for (var j = 0; j < record._fields[i].segments.length; j++) {
-                nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.labels[0] })
-                nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.labels[0] })
-                edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+                nodes.push({ id: record._fields[i].segments[j].end.identity.low, group: record._fields[i].segments[j].end.labels[0], properties: record._fields[i].segments[j].end.properties, title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].end.properties.name || record._fields[i].segments[j].end.properties.description})
+                nodes.push({ id: record._fields[i].segments[j].start.identity.low, group: record._fields[i].segments[j].start.labels[0], properties: record._fields[i].segments[j].start.properties, title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].start.properties.name || record._fields[i].segments[j].start.properties.description })
+                edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low, properties: record._fields[i].segments[j].relationship.properties, title: JSON.stringify(record._fields[i].segments[j].relationship.properties).replaceAll('","', '"\n"') })
               }
             }
 
