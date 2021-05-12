@@ -650,7 +650,7 @@ $(function () {
           },
           layout: {
             hierarchical: {
-              direction: "LR",
+              direction: "RL",
             },
           },
           groups: {
@@ -775,7 +775,11 @@ $(function () {
               // shape: "diamond",
             },
           },
-          physics: false,
+          physics: {
+            hierarchicalRepulsion: {
+              avoidOverlap: 1,
+            },
+          }
         };
         var network = new vis.Network(container, data, options);
         network.body.emitter.emit('_dataChanged')
@@ -998,7 +1002,7 @@ $(function () {
             },
             layout: {
               hierarchical: {
-                direction: "LR",
+                direction: "RL",
               },
             },
             groups: {
@@ -1123,7 +1127,11 @@ $(function () {
                 // shape: "diamond",
               },
             },
-            physics: false,
+            physics: {
+              hierarchicalRepulsion: {
+                avoidOverlap: 1,
+              },
+            },
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
@@ -1303,7 +1311,7 @@ $(function () {
               },
               layout: {
                 hierarchical: {
-                  direction: "LR",
+                  direction: "RL",
                 },
               },
               groups: {
@@ -1428,7 +1436,10 @@ $(function () {
                   // shape: "diamond",
                 },
               },
-              physics: false,
+              physics: {hierarchicalRepulsion: {
+                avoidOverlap: 1,
+              },
+            },
             };
             var network = new vis.Network(container, data, options);
             network.body.emitter.emit('_dataChanged')
@@ -1595,7 +1606,7 @@ $(function () {
                 },
                 layout: {
                   hierarchical: {
-                    direction: "LR",
+                    direction: "RL",
                   },
                 },
                 groups: {
@@ -1720,7 +1731,11 @@ $(function () {
                     // shape: "diamond",
                   },
                 },
-                physics: false,
+                physics: {
+                  hierarchicalRepulsion: {
+                    avoidOverlap: 1,
+                  },
+                },
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
