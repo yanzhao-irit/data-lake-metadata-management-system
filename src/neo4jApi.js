@@ -1019,6 +1019,246 @@ exports.graphList = graphList;
 exports.algoBetweennessCentrality = algoBetweennessCentrality;
 
 
+//-------------------------------------ADD start relationship dataset----------------------------
+//Function to search result of relationship dataset
+function getRelationshipDataset(query) {
+
+  var session = driver.session();
+  const seen = new Set()
+  var nodes = []
+  var edges = []
+  // var fois = 0
+  return session
+      .run(
+          query)
+      .then(result => {
+        return result.records.map(record => {
+          /*console.log("fois")
+          fois = fois+1
+          console.log(fois)*/
+          var data = record._fields
+
+          for(var i=0; i< data.length; i++){
+            if (record._fields[i] != null) {
+              if (record._fields[i].labels) {
+
+                nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].properties.name ,title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), group :record._fields[i].labels[0]} )
+              }
+              if (record._fields[i].type) {
+
+                edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, id:record._fields[i].identity.low })
+
+              }
+              if (record._fields[i].segments) {
+                for (var j = 0; j < record._fields[i].segments.length; j++) {
+                  nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.properties.name ,title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), group :record._fields[i].segments[j].end.labels[0] })
+                  nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.properties.name ,title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"') , group :record._fields[i].segments[j].start.labels[0]})
+                  edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+                }
+              }
+
+            }
+          }
+
+          var uniquenodes = Array.from(new Set(nodes.map(a => a.id))).map(id=>{
+            return nodes.find(a => a.id ===id);
+          })
+          var uniqueedges = Array.from(new Set(edges.map(a => a.id))).map(id=>{
+            return edges.find(a => a.id ===id);
+          })
+
+          return [uniquenodes,uniqueedges]
+
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+
+  /*var session = driver.session();
+  const seen = new Set()
+  var nodes = []
+  var edges = []
+
+  return session
+      .run(
+          query)
+      .then(result => {
+        return result.records.map(record => {
+
+          var data = record._fields
+
+          for(var i=0; i< data.length; i++){
+            if (record._fields[i] != null) {
+              if (record._fields[i].labels) {
+
+                nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].labels[0],title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), group :record._fields[i].labels[0] })
+
+              }
+              if (record._fields[i].type) {
+
+                edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, id:record._fields[i].identity.low })
+
+              }
+              if (record._fields[i].segments) {
+                for (var j = 0; j < record._fields[i].segments.length; j++) {
+                  nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.labels[0],title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), group :record._fields[i].segments[j].end.labels[0]  })
+                  nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.labels[0] ,title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), group :record._fields[i].segments[j].start.labels[0] })
+                  edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+                }
+              }
+
+            }
+          }
+
+          var uniquenodes = Array.from(new Set(nodes.map(a => a.id))).map(id=>{
+            return nodes.find(a => a.id ===id);
+          })
+          var uniqueedges = Array.from(new Set(edges.map(a => a.id))).map(id=>{
+            return edges.find(a => a.id ===id);
+          })
+
+          return [uniquenodes,uniqueedges]
+
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });*/
+}
+exports.getRelationshipDataset = getRelationshipDataset;
+//-------------------------------------ADD end relationship dataset----------------------------
+
+//-------------------------------------ADD start Hyper Graphe ----------------------------
+//Function to search for Hyper Graphe
+function getHyperGraphe(query) {
+  var session = driver.session();
+  const seen = new Set()
+  var nodes = []
+  var edges = []
+  // var fois = 0
+  return session
+      .run(
+          query)
+      .then(result => {
+        return result.records.map(record => {
+          /*console.log("fois")
+          fois = fois+1
+          console.log(fois)*/
+          var data = record._fields
+
+          for(var i=0; i< data.length; i++){
+            if (record._fields[i] != null) {
+              if (record._fields[i].labels) {
+
+                nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].properties.name ,title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), group :record._fields[i].labels[0]} )
+              }
+              if (record._fields[i].type) {
+
+                edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, id:record._fields[i].identity.low })
+
+              }
+              if (record._fields[i].segments) {
+                for (var j = 0; j < record._fields[i].segments.length; j++) {
+                  nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.properties.name ,title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), group :record._fields[i].segments[j].end.labels[0] })
+                  nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.properties.name ,title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"') , group :record._fields[i].segments[j].start.labels[0]})
+                  edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+                }
+              }
+
+            }
+          }
+
+          var uniquenodes = Array.from(new Set(nodes.map(a => a.id))).map(id=>{
+            return nodes.find(a => a.id ===id);
+          })
+          var uniqueedges = Array.from(new Set(edges.map(a => a.id))).map(id=>{
+            return edges.find(a => a.id ===id);
+          })
+
+          return [uniquenodes,uniqueedges]
+
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+
+}
+exports.getHyperGraphe = getHyperGraphe;
+//-------------------------------------ADD start Hyper Graphe ----------------------------
+
+//-------------------------------------ADD start Relationship Attribute----------------------------
+//Function to search result of relationship dataset
+function getRelationshipAttribute(query) {
+
+  var session = driver.session();
+  const seen = new Set()
+  var nodes = []
+  var edges = []
+  // var fois = 0
+  return session
+      .run(
+          query)
+      .then(result => {
+        return result.records.map(record => {
+          /*console.log("fois")
+          fois = fois+1
+          console.log(fois)*/
+          var data = record._fields
+
+          for(var i=0; i< data.length; i++){
+            if (record._fields[i] != null) {
+              if (record._fields[i].labels) {
+
+                nodes.push({ id: record._fields[i].identity.low, label: record._fields[i].properties.name ,title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), group :record._fields[i].labels[0]} )
+              }
+              if (record._fields[i].type) {
+
+                edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, id:record._fields[i].identity.low })
+
+              }
+              if (record._fields[i].segments) {
+                for (var j = 0; j < record._fields[i].segments.length; j++) {
+                  nodes.push({ id: record._fields[i].segments[j].end.identity.low, label: record._fields[i].segments[j].end.properties.name ,title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), group :record._fields[i].segments[j].end.labels[0] })
+                  nodes.push({ id: record._fields[i].segments[j].start.identity.low, label: record._fields[i].segments[j].start.properties.name ,title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"') , group :record._fields[i].segments[j].start.labels[0]})
+                  edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low })
+                }
+              }
+
+            }
+          }
+
+          var uniquenodes = Array.from(new Set(nodes.map(a => a.id))).map(id=>{
+            return nodes.find(a => a.id ===id);
+          })
+          var uniqueedges = Array.from(new Set(edges.map(a => a.id))).map(id=>{
+            return edges.find(a => a.id ===id);
+          })
+
+          return [uniquenodes,uniqueedges]
+
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+exports.getRelationshipAttribute = getRelationshipAttribute;
+//-------------------------------------ADD end relationship dataset----------------------------
+
 
 /*
 

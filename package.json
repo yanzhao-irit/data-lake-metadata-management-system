@@ -8,7 +8,8 @@
     "bootstrap-tagsinput": "^0.7.1",
     "lodash": "^4.15.0",
     "neo4j-driver": "^1.7.7",
-    "neovis.js": "^1.5.0"
+    "neovis.js": "^1.5.0",
+    "vis-network": "^9.0.4"
   },
   "devDependencies": {
     "css-loader": "^5.0.0",
