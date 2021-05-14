@@ -669,8 +669,26 @@ $(function () {
         console.log(ec)
         json = JSON.parse(JSON.stringify(ec[0]))
         $list = $('#EntityClassProperties')
-        for (propriete in ec[0]) {
+
+        /*for (propriete in ec[0]) {
           $list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+        }*/
+
+        let arr=[];
+        for (propriete in ec[0]) {
+          //$list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+          arr.push(propriete);
+        }
+        arr.sort();
+        let str='';
+        for(var i in arr){
+          if (arr[i] ==="name"){
+            // console.log("name--------------------")
+            $list.prepend("<p>" + arr[i]+":"+ec[0][arr[i]] + "</p>");
+          }else{
+            $list.append("<p>" + arr[i]+":"+ec[0][arr[i]] + "</p>");
+          }
+          //str +=arr[i]+"="+ec[0][arr[i]]+"&"
         }
       })
       //or by dataset
@@ -678,8 +696,26 @@ $(function () {
         console.log('EntityClass : ' + ec)
         json = JSON.parse(JSON.stringify(ec[0]))
         $list = $('#EntityClassProperties')
-        for (propriete in ec[0]) {
+
+        /*for (propriete in ec[0]) {
           $list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+        }*/
+
+        let arr=[];
+        for (propriete in ec[0]) {
+          //$list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+          arr.push(propriete);
+        }
+        arr.sort();
+        let str='';
+        for(var i in arr){
+          if (arr[i] ==="name"){
+            // console.log("name--------------------")
+            $list.prepend("<p>" + arr[i]+":"+ec[0][arr[i]] + "</p>");
+          }else{
+            $list.append("<p>" + arr[i]+":"+ec[0][arr[i]] + "</p>");
+          }
+          //str +=arr[i]+"="+ec[0][arr[i]]+"&"
         }
       })
     }
