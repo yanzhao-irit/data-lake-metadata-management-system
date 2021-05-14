@@ -1963,9 +1963,9 @@ $(function () {
             })
             api.getGraph(query2).then(p =>{
                 // create an array with nodes
-                var nodes = new vis.DataSet(p[0][0]);
+                var nodes = new vis.DataSet(p[p.length - 1][0]);
                 // create an array with edges
-                var edges = new vis.DataSet(p[0][1]);
+                var edges = new vis.DataSet(p[p.length - 1][1]);
 
                 // create a network
                 var container = document.getElementById("viz2");
