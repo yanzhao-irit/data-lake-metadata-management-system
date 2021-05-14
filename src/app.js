@@ -23,20 +23,151 @@ var graphList = [];
 var similarityGraph = []
 var betweennessGraph = []
 
+var options = {
+  nodes: {
+    shape: "dot",
+    size: 10,
+  },
+  edges: {
+    color: 'gray',
+    smooth: false,
+    font: {
+      size: 10,
+    },    
+    arrows: 'to'
+  },
+  groups: {
+    Process: {
+      color: { background: "#00F5FF", border: "black"},
+      // shape: "diamond",
+    },
+    Analysis: {
+      color: { background: "#FFFACD", border: "black"},
+      // shape: "diamond",
+    },
+    AlgoSupervised: {
+      color: { background: "#FFE4B5", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisAttribute: {
+      color: { background: "#696969", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisDSRelationship: {
+      color: { background: "#708090", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisFeatures: {
+      color: { background: "#000080", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisNominalFeatures: {
+      color: { background: "#008B00", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisNumericFeatures: {
+      color: { background: "#EEDC82", border: "black"},
+      // shape: "diamond",
+    },
+    AnalysisTarget: {
+      color: { background: "#EEEE00", border: "black"},
+      // shape: "diamond",
+    },
+    DLSemistructuredDataset: {
+      color: { background: "#FFC1C1", border: "black"},
+      // shape: "diamond",
+    },
+    DLStructuredDataset: {
+      color: { background: "#8B658B", border: "black"},
+      // shape: "diamond",
+    },
+    DLUnstructuredDataset: {
+      color: { background: "#EE6363", border: "black"},
+      // shape: "diamond",
+    },
+    DatasetSource: {
+      color: { background: "#FFA500", border: "black"},
+      // shape: "diamond",
+    },
+    EntityClass: {
+      color: { background: "#DDA0DD", border: "black"},
+      // shape: "diamond",
+    },
+    EvaluationMeasure: {
+      color: { background: "#D8BFD8", border: "black"},
+      // shape: "diamond",
+    },
+    Implementation: {
+      color: { background: "#EE7600", border: "black"},
+      // shape: "diamond",
+    },
+    Landmarker: {
+      color: { background: "#EEDFCC", border: "black"},
+      // shape: "diamond",
+    },
+    Ingest: {
+      color: { background: "#8B8378", border: "black"},
+      // shape: "diamond",
+    },
+    JobTitle: {
+      color: { background: "#EE5C42", border: "black"},
+      // shape: "diamond",
+    },
+    ModelEvaluation: {
+      color: { background: "#8B3626", border: "black"},
+      // shape: "diamond",
+    },
+    Tag: {
+      color: { background: "#FF1493", border: "black"},
+      // shape: "diamond",
+    },
+    RelationshipDS: {
+      color: { background: "#00BFFF", border: "black"},
+      // shape: "diamond",
+    },
+    RelationshipAtt: {
+      color: { background: "#00688B", border: "black"},
+      // shape: "diamond",
+    },
+    ParameterSetting: {
+      color: { background: "#551A8B", border: "black"},
+      // shape: "diamond",
+    },
+    Operation: {
+      color: { background: "#1C1C1C", border: "black"},
+      // shape: "diamond",
+    },
+    OperationOfProcess: {
+      color: { background: "#BCD2EE", border: "black"},
+      // shape: "diamond",
+    },
+    Parameter: {
+      color: { background: "#008B8B", border: "black"},
+      // shape: "diamond",
+    },
+    NominalAttribute: {
+      color: { background: "#E0FFFF", border: "black"},
+      // shape: "diamond",
+    },
+    NumericAttribute: {
+      color: { background: "#D1EEEE", border: "black"},
+      // shape: "diamond",
+    },
+    Study: {
+      color: { background: "#7EC0EE", border: "black"},
+      // shape: "diamond",
+    },
+  },
+};
+
 
 //Beginning of event listener
 $(function () {
   //Initialisation of graphic interface
-  //draw()
-  draw2()
-  ////draw3()
-  draw4()
-  draw5()
-  //draw6()
   usedOpeInit()
   var promisegraph = new Promise((resolve, reject) => {
     api.graphList().then(p => {
-      console.log(p)
+      // console.log(p)
       graphList = p
       if (resolve !== undefined) {
         resolve();
@@ -78,12 +209,6 @@ $(function () {
     //Clean column to let the new results appear from the query (dataset, process, analyse)
     $(".names").empty()
     //refresh graphic interface
-    //draw()
-    draw2()
-    ////draw3()
-    draw4()
-    draw5()
-    //draw6()
     //Call for search functions with inputs
     showProcesses(tagsinput)
     showStudies(tagsinput)
@@ -106,12 +231,6 @@ $(function () {
     $('#graphco').collapse('hide');
     if (!tagsinput.length == 0) {
       $(".names").empty()
-      //draw()
-      draw2()
-      ////draw3()
-      draw4()
-      draw5()
-      //draw6()
       showProcesses(tagsinput)
       showStudies(tagsinput)
       showDatabases(tagsinput)
@@ -122,12 +241,6 @@ $(function () {
     }
     else {
       $(".names").empty();
-      //draw()
-      draw2()
-      ////draw3()
-      draw4()
-      draw5()
-      //draw6()
     }
   });
 
@@ -190,7 +303,7 @@ $(function () {
           font: {
             size: 10,
           },
-          arrows: 'from'
+          arrows: 'to'
         },
         groups: {
           Process: {
@@ -354,7 +467,7 @@ $(function () {
           font: {
             size: 10,
           },
-          arrows: 'from'
+          arrows: 'to'
         },
         groups: {
           Process: {
@@ -599,20 +712,20 @@ $(function () {
 
       //Get information of the process clicked
       api
-        .getProcesses([$(this).text()])
-        .then(p => {
-          if (p) {
-            json = JSON.parse(JSON.stringify(p[0]))
-            var $p = $("#properties")
-            for (propriete in p[0]) {
-              if (propriete == 'creationDate' || propriete == "executionDate") {
-                $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
-              } else {
-                $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+          .getProcesses([$(this).text()])
+          .then(p => {
+            if (p) {
+              json = JSON.parse(JSON.stringify(p[0]))
+              var $p = $("#properties")
+              for (propriete in p[0]) {
+                if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+                  $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+                } else {
+                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                }
               }
             }
-          }
-        }, "json");
+          }, "json");
 
       //Graph variable
       //query is for lineage
@@ -627,8 +740,8 @@ $(function () {
       RETURN path2 AS path, null as w, null as q`; //Process
       api.getGraph(query).then(result => {
         console.log(result)
-        var nodes = new vis.DataSet(result[0][0])
-        var edges = new vis.DataSet(result[0][1])
+        var nodes = new vis.DataSet(result[result.length-1][0])
+        var edges = new vis.DataSet(result[result.length-1][1])
         var container = document.getElementById('viz')
         var data = { nodes: nodes, edges: edges };
         var options = {
@@ -646,7 +759,7 @@ $(function () {
             font: {
               size: 10,
             },
-            arrows: 'from'
+            arrows: 'to'
           },
           layout: {
             hierarchical: {
@@ -811,7 +924,7 @@ $(function () {
             font: {
               size: 10,
             },
-            arrows: 'from'
+            arrows: 'to'
           },
           groups: {
             Process: {
@@ -940,13 +1053,22 @@ $(function () {
         network.body.emitter.emit('_dataChanged')
         network.redraw()
       })
-      //Init each graph window
-      if (query2.length > 3) {
-        viz2.renderWithCypher(query2);
-      } else {
-        console.log("reload");
-        viz2.reload();
-      }
+      api.getGraph(query2).then(p =>{
+          // create an array with nodes
+          var nodes = new vis.DataSet(p[p.length - 1][0]);
+          // create an array with edges
+          var edges = new vis.DataSet(p[p.length - 1][1]);
+
+          // create a network
+          var container = document.getElementById("viz2");
+          var data = {
+            nodes: nodes,
+            edges: edges,
+          };
+          var network = new vis.Network(container, data, options);
+          network.body.emitter.emit('_dataChanged')
+          network.redraw()
+      })
 
       //Show the table of process
       setTimeout(() => { $("#processNames").closest(".collapse").collapse('show') }, 500);
@@ -960,21 +1082,21 @@ $(function () {
         $('#similarityButton')[0].style.display = 'none';
 
         api
-          .getStudies([$(this).text()], typeRecherche, landmarkerList, algoNames.value)
-          .then(p => {
-            if (p) {
-              console.log(p);
-              json = JSON.parse(JSON.stringify(p[0]))
-              var $p = $("#properties")
-              for (propriete in p[0]) {
-                if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
-                  $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
-                } else {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+            .getStudies([$(this).text()], typeRecherche, landmarkerList, algoNames.value)
+            .then(p => {
+              if (p) {
+                console.log(p);
+                json = JSON.parse(JSON.stringify(p[0]))
+                var $p = $("#properties")
+                for (propriete in p[0]) {
+                  if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+                    $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+                  } else {
+                    $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  }
                 }
               }
-            }
-          }, "json");
+            }, "json");
         query = `MATCH path = allshortestpaths ((d)-[*]-(u:Study {name:'` + $(this).text() + `'}))
         WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset)
         RETURN path` //Study
@@ -998,7 +1120,7 @@ $(function () {
               font: {
                 size: 10,
               },
-              arrows: 'from'
+              arrows: 'to'
             },
             layout: {
               hierarchical: {
@@ -1140,25 +1262,25 @@ $(function () {
         //Get the analysis of the study clicked to create a list
         var $list = $(this).parent()
         api
-          .getAnalyses($(this).text(), '')
-          .then(p => {
-            p.sort(function (a, b) {
-              var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
-              if (nameA < nameB) //sort string ascending
-                return -1
-              if (nameA > nameB)
-                return 1
-              return 0 //default return value (no sorting)
-            })
-            if (p) {
-              $("#EntityClassNames").empty()
-              $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
-              for (var i = 0; i < p.length; i++) {
-                $list.append($("<tr class ='analyse'><td class ='analyse' id='" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
-                showEntityClassByAnalyse(p[i].uuid, p[i].name)
+            .getAnalyses($(this).text(), '')
+            .then(p => {
+              p.sort(function (a, b) {
+                var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
+                if (nameA < nameB) //sort string ascending
+                  return -1
+                if (nameA > nameB)
+                  return 1
+                return 0 //default return value (no sorting)
+              })
+              if (p) {
+                $("#EntityClassNames").empty()
+                $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
+                for (var i = 0; i < p.length; i++) {
+                  $list.append($("<tr class ='analyse'><td class ='analyse' id='" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
+                  showEntityClassByAnalyse(p[i].uuid, p[i].name)
+                }
               }
-            }
-          }, "json");
+            }, "json");
 
 
 
@@ -1192,73 +1314,72 @@ $(function () {
           //get dataset informations
           console.log([$(this).text()] + ' |||| ' + typeDS)
           api
-            .getDatabases([$(this).text()], typeDS)
-            .then(p => {
-              console.log(p)
-              if (p) {
-                console.log(p[0]);
-                json = JSON.parse(JSON.stringify(p[0]))
-                var $p = $("#properties")
-                for (propriete in p[0]) {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+              .getDatabases([$(this).text()], typeDS)
+              .then(p => {
+                if (p) {
+                  console.log(p[0]);
+                  json = JSON.parse(JSON.stringify(p[0]))
+                  var $p = $("#properties")
+                  for (propriete in p[0]) {
+                    $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  }
+                  $('#EntityClassProperties').empty()
+                  //get entity class by dataset to create a list
+                  showEntityClassByDataset(p[0].uuid, p[0].name, typeDS)
                 }
-                $('#EntityClassProperties').empty()
-                //get entity class by dataset to create a list
-                showEntityClassByDataset(p[0].uuid, p[0].name, typeDS)
-              }
-            }, "json");
+              }, "json");
 
 
           var relationlist = []
           //Get the relation between this dataset and others
           api
-            .getRelationshipDSbyDataset($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], 'RelationshipDS')
-            .then(p => {
-              console.log(p)
-              $listTab = $('#relationshipOnglet')
-              $listContent = $('#relationshipContent')
-              //Create tabs for each relation
-              for (var i = 0; i < p.length; i++) {
-                relationlist.push(p[i].name)
-                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
-                $listContent.append(`
+              .getRelationshipDSbyDataset($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], 'RelationshipDS')
+              .then(p => {
+                console.log(p)
+                $listTab = $('#relationshipOnglet')
+                $listContent = $('#relationshipContent')
+                //Create tabs for each relation
+                for (var i = 0; i < p.length; i++) {
+                  relationlist.push(p[i].name)
+                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                  $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                     <tbody id='dataset_` + p[i].name + `'><tbody>
                     </table>
                 </div>`)
 
-              }
-              for (var i = 0; i < relationlist.length; i++) {
-                //for each relation get dataset and relation value
-                getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
-              }
-            }, 'json')
+                }
+                for (var i = 0; i < relationlist.length; i++) {
+                  //for each relation get dataset and relation value
+                  getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
+                }
+              }, 'json')
 
-          //same for the attribute 
+          //same for the attribute
           var relationlist = []
           $('#relationshipAttOnglet').empty()
           $('#relationshipAttContent').empty()
           api
-            .getRelationshipAttribute($(this).attr('id').split('$')[2], '', 'relation')
-            .then(p => {
-              console.log(p)
-              $listTab = $('#relationshipAttOnglet')
-              $listContent = $('#relationshipAttContent')
-              for (var i = 0; i < p.length; i++) {
-                relationlist.push(p[i].name)
-                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
-                $listContent.append(`
+              .getRelationshipAttribute($(this).attr('id').split('$')[2], '', 'relation')
+              .then(p => {
+                console.log(p)
+                $listTab = $('#relationshipAttOnglet')
+                $listContent = $('#relationshipAttContent')
+                for (var i = 0; i < p.length; i++) {
+                  relationlist.push(p[i].name)
+                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                  $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>
                 </div>`)
-              }
-              for (var i = 0; i < relationlist.length; i++) {
-                getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlist[i]);
-              }
-            }, 'json')
+                }
+                for (var i = 0; i < relationlist.length; i++) {
+                  getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlist[i]);
+                }
+              }, 'json')
 
           $('#similarityResult').empty()
 
@@ -1307,7 +1428,7 @@ $(function () {
                 font: {
                   size: 10,
                 },
-                arrows: 'from'
+                arrows: 'to'
               },
               layout: {
                 hierarchical: {
@@ -1457,26 +1578,56 @@ $(function () {
             AND
             (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)
             RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
-          console.log(query5)
-          //refresh graph window with the new query
-          if (query5.length > 3) {
-            viz5.renderWithCypher(query5);
-          } else {
-            console.log("reload");
-            viz5.reload();
-          }
-          if (query2.length > 3) {
-            viz2.renderWithCypher(query2);
-          } else {
-            console.log("reload");
-            viz2.reload();
-          }
-          if (query4.length > 3) {
-            viz4.renderWithCypher(query4);
-          } else {
-            console.log("reload");
-            viz4.reload();
-          }
+          api.getGraph(query5).then(p =>{
+              // create an array with nodes
+              var nodes = new vis.DataSet(p[p.length - 1][0]);
+              // create an array with edges
+              var edges = new vis.DataSet(p[p.length - 1][1]);
+
+              // create a network
+              var container = document.getElementById("viz5");
+              var data = {
+                nodes: nodes,
+                edges: edges,
+              };
+              var network = new vis.Network(container, data, options);
+              network.body.emitter.emit('_dataChanged')
+              network.redraw()
+          })
+          console.log(query2)
+          api.getGraph(query2).then(p =>{
+              // create an array with nodes
+              var nodes = new vis.DataSet(p[p.length - 1][0]);
+              // create an array with edges
+              var edges = new vis.DataSet(p[p.length - 1][1]);
+
+              // create a network
+              var container = document.getElementById("viz2");
+              var data = {
+                nodes: nodes,
+                edges: edges,
+              };
+              var network = new vis.Network(container, data, options);
+              network.body.emitter.emit('_dataChanged')
+              network.redraw()
+          })
+          api.getGraph(query4).then(p =>{
+              // create an array with nodes
+              var nodes = new vis.DataSet(p[p.length -1][0]);
+              // create an array with edges
+              var edges = new vis.DataSet(p[p.length -1][1]);
+
+              // create a network
+              var container = document.getElementById("viz4");
+              var data = {
+                nodes: nodes,
+                edges: edges,
+              };
+
+              var network = new vis.Network(container, data, options);
+              network.body.emitter.emit('_dataChanged')
+              network.redraw()
+          })
 
           setTimeout(() => { $("#dbNames").closest(".collapse").collapse('show') }, 500);
 
@@ -1494,16 +1645,16 @@ $(function () {
             $('#attributeList').empty()
 
             api
-              .getAnalyses('', $(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1])
-              .then(p => {
-                console.log(p)
-                json = JSON.parse(JSON.stringify(p[0]))
-                var $p = $("#properties")
-                for (propriete in p[0]) {
+                .getAnalyses('', $(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1])
+                .then(p => {
+                  console.log(p)
+                  json = JSON.parse(JSON.stringify(p[0]))
+                  var $p = $("#properties")
+                  for (propriete in p[0]) {
 
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
-                }
-              }, "json");
+                    $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  }
+                }, "json");
 
             setTimeout(() => { $("#analyseNames").closest(".collapse").collapse('show') }, 500);
 
@@ -1552,30 +1703,30 @@ $(function () {
             }, 'json');
 
 
-            //Part for the relationship between attribute 
+            //Part for the relationship between attribute
             var relationlist = []
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             api
-              .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
-              .then(p => {
-                console.log(p)
-                $listTab = $('#relationshipAttOnglet')
-                $listContent = $('#relationshipAttContent')
-                for (var i = 0; i < p.length; i++) {
-                  relationlist.push(p[i].name)
-                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
-                  $listContent.append(`
+                .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
+                .then(p => {
+                  console.log(p)
+                  $listTab = $('#relationshipAttOnglet')
+                  $listContent = $('#relationshipAttContent')
+                  for (var i = 0; i < p.length; i++) {
+                    relationlist.push(p[i].name)
+                    $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                    $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>
                 </div>`)
-                }
-                for (var i = 0; i < relationlist.length; i++) {
-                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlist[i]);
-                }
-              }, 'json')
+                  }
+                  for (var i = 0; i < relationlist.length; i++) {
+                    getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlist[i]);
+                  }
+                }, 'json')
 
 
             //Query part
@@ -1602,7 +1753,7 @@ $(function () {
                   font: {
                     size: 10,
                   },
-                  arrows: 'from'
+                  arrows: 'to'
                 },
                 layout: {
                   hierarchical: {
@@ -1756,37 +1907,52 @@ $(function () {
             AND
             (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)
             RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+            api.getGraph(query5).then(p =>{
+                // create an array with nodes
+                var nodes = new vis.DataSet(p[p.length -1][0]);
+                // create an array with edges
+                var edges = new vis.DataSet(p[p.length -1][1]);
 
+                // create a network
+                var container = document.getElementById("viz5");
+                var data = {
+                  nodes: nodes,
+                  edges: edges,
+                };
 
-            if (query5.length > 3) {
-              viz5.renderWithCypher(query5);
-            } else {
-              console.log("reload");
-              viz5.reload();
-            }
-            if (query2.length > 3) {
-              viz2.renderWithCypher(query2);
-            } else {
-              console.log("reload");
-              viz2.reload();
-            }
+                var network = new vis.Network(container, data, options);
+                network.body.emitter.emit('_dataChanged')
+                network.redraw()
+              
+            })
+            api.getGraph(query2).then(p =>{
+                // create an array with nodes
+                var nodes = new vis.DataSet(p[0][0]);
+                // create an array with edges
+                var edges = new vis.DataSet(p[0][1]);
+
+                // create a network
+                var container = document.getElementById("viz2");
+                var data = {
+                  nodes: nodes,
+                  edges: edges,
+                };
+
+                var network = new vis.Network(container, data, options);
+                network.body.emitter.emit('_dataChanged')
+                network.redraw()
+              
+            })
           }
         }
       }
     }
-    // console.log(query);
-    // if (query.length > 3) {
-    //   viz.renderWithCypher(query);
-    // } else {
-    //   console.log("reload");
-    //   viz.reload();
-    // }
 
   });
 
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
-    // this will contain a reference to the checkbox   
+    // this will contain a reference to the checkbox
     if (this.checked) {
       typeRecherche.push(this.id);
       console.log("cases cochées : " + typeRecherche);
@@ -2172,18 +2338,18 @@ async function showEntityClassByDataset(dsId, dsName, typeDS) {
 //Function to get relationship value between two dataset
 async function getAnalysisRelationshipDS(ds1Uuid, ds2uuid, name, dsName, ds2Name, mapRelationAttDS, resolve) {
   api
-    .getRelationshipDSAnalysisbyDataset(ds1Uuid, ds2uuid, name)
-    .then(p => {
-      if (p !== undefined && p.length > 0) {
-        console.log('key : ' + dsName + '&' + ds2Name + '&' + name + ' ||| value : ' + p[0].value)
-        mapRelationAttDS.set(dsName + '&' + ds2Name + '&' + name, parseFloat(p[0].value))
-      } else {
-        mapRelationAttDS.set(nameAtt + '&' + nameAtt2 + '&' + name, '');
-      }
-      if (resolve !== undefined) {
-        resolve();
-      }
-    }, 'json')
+      .getRelationshipDSAnalysisbyDataset(ds1Uuid, ds2uuid, name)
+      .then(p => {
+        if (p !== undefined && p.length > 0) {
+          console.log('key : ' + dsName + '&' + ds2Name + '&' + name + ' ||| value : ' + p[0].value)
+          mapRelationAttDS.set(dsName + '&' + ds2Name + '&' + name, parseFloat(p[0].value))
+        } else {
+          mapRelationAttDS.set(nameAtt + '&' + nameAtt2 + '&' + name, '');
+        }
+        if (resolve !== undefined) {
+          resolve();
+        }
+      }, 'json')
 }
 
 //Function to get all dataset linked by a relation with the target
@@ -2191,37 +2357,37 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
   var promisesDS = [];
   var mapRelationAttDS = new Map;
   api
-    .getRelationshipDSbyDataset(dsName, dsId, 'Dataset', relationlist)
-    .then(p => {
-      $listHead = $('#dataset_' + relationlist)
-      console.log($listHead)
-      for (var i = 0; i < p.length; i++) {
-        if (p[i].uuid != dsId) {
-          promisesDS.push(new Promise((resolve, reject) => { getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name, mapRelationAttDS, resolve); }));
+      .getRelationshipDSbyDataset(dsName, dsId, 'Dataset', relationlist)
+      .then(p => {
+        $listHead = $('#dataset_' + relationlist)
+        console.log($listHead)
+        for (var i = 0; i < p.length; i++) {
+          if (p[i].uuid != dsId) {
+            promisesDS.push(new Promise((resolve, reject) => { getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name, mapRelationAttDS, resolve); }));
 
+          }
         }
-      }
-      Promise.all(promisesDS).then(() => {
-        console.log('Promise finit : ' + mapRelationAttDS.size);
-        var valueMin = Math.min(...mapRelationAttDS.values())
-        var valueMax = Math.max(...mapRelationAttDS.values())
-        for (var [key, value] of mapRelationAttDS) {
-          console.log('HashMap : ' + key + ' = ' + value)
-          $listBody = $('#dataset_' + key.split('&')[2])
-          if (value) {
-            if (value == valueMin) {
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
-            } else {
-              if (value == valueMax) {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+        Promise.all(promisesDS).then(() => {
+          console.log('Promise finit : ' + mapRelationAttDS.size);
+          var valueMin = Math.min(...mapRelationAttDS.values())
+          var valueMax = Math.max(...mapRelationAttDS.values())
+          for (var [key, value] of mapRelationAttDS) {
+            console.log('HashMap : ' + key + ' = ' + value)
+            $listBody = $('#dataset_' + key.split('&')[2])
+            if (value) {
+              if (value == valueMin) {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
               } else {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+                if (value == valueMax) {
+                  $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+                } else {
+                  $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+                }
               }
             }
           }
-        }
-      });
-    }, 'json')
+        });
+      }, 'json')
 }
 
 //Function to get relationship value between two attribute
@@ -2247,40 +2413,40 @@ async function getAnalyseOfRelationship(id, relationlist) {
   var promises = [];
   var mapRelationAtt = new Map;
   api
-    .getRelationshipAttribute(id, '', 'analyse', relationlist)
-    .then(p => {
-      $listBody = $('#attribute_' + relationlist)
-      for (var i = 0; i < p.length; i++) {
-        for (var j = i; j < p.length; j++) {
-          if (p[j].name != p[i].name) {
-            promises.push(new Promise((resolve, reject) => { getAnalysisRelationshipAtt(id, p[i].name, $listBody.closest('div').attr('id'), p[j].name, mapRelationAtt, resolve) }));
-          }
-        }
-      }
-
-      Promise.all(promises).then(() => {
-        console.log('Promise finit : ' + mapRelationAtt.size);
-        console.log(mapRelationAtt.values())
-        var valueMin = Math.min(...mapRelationAtt.values());
-        var valueMax = Math.max(...mapRelationAtt.values())
-        console.log(valueMin + ' ||| ' + valueMax)
-        for (var [key, value] of mapRelationAtt) {
-          //console.log('HashMap : ' + key + ' = ' + value)
-          $listBody = $('#attribute_' + key.split('&')[2])
-          if (value) {
-            if (value == valueMin) {
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
-            } else {
-              if (value == valueMax) {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
-              } else {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
-              }
+      .getRelationshipAttribute(id, '', 'analyse', relationlist)
+      .then(p => {
+        $listBody = $('#attribute_' + relationlist)
+        for (var i = 0; i < p.length; i++) {
+          for (var j = i; j < p.length; j++) {
+            if (p[j].name != p[i].name) {
+              promises.push(new Promise((resolve, reject) => { getAnalysisRelationshipAtt(id, p[i].name, $listBody.closest('div').attr('id'), p[j].name, mapRelationAtt, resolve) }));
             }
           }
         }
-      });
-    }, 'json')
+
+        Promise.all(promises).then(() => {
+          console.log('Promise finit : ' + mapRelationAtt.size);
+          console.log(mapRelationAtt.values())
+          var valueMin = Math.min(...mapRelationAtt.values());
+          var valueMax = Math.max(...mapRelationAtt.values())
+          console.log(valueMin + ' ||| ' + valueMax)
+          for (var [key, value] of mapRelationAtt) {
+            //console.log('HashMap : ' + key + ' = ' + value)
+            $listBody = $('#attribute_' + key.split('&')[2])
+            if (value) {
+              if (value == valueMin) {
+                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
+              } else {
+                if (value == valueMax) {
+                  $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+                } else {
+                  $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+                }
+              }
+            }
+          }
+        });
+      }, 'json')
 }
 
 //function to create a list of filter
@@ -2369,794 +2535,59 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
 //Function to get process
 function showProcesses(tags, language = "", date = "0001-01-01", type = [], execuEnv = []) {
   api
-    .getProcesses(tags, language, date, type, execuEnv)
-    .then(p => {
-      if (p) {
-        //var $list = $(".names").empty();
-        var $list = $("#processNames")
-        for (var i = 0; i < p.length; i++) {
-          $list.append($("<tr><td class='Process' id='" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
+      .getProcesses(tags, language, date, type, execuEnv)
+      .then(p => {
+        if (p) {
+          //var $list = $(".names").empty();
+          var $list = $("#processNames")
+          for (var i = 0; i < p.length; i++) {
+            $list.append($("<tr><td class='Process' id='" + p[i].name + "$" + p[i].id + "'>" + p[i].name + "</td></tr>"));
+          }
+          console.log('nb items liste : ' + p.length)
         }
-        console.log('nb items liste : ' + p.length)
-      }
-    }, "json");
+      }, "json");
 }
 
 //fucnction to get studies
 function showStudies(tags, type = '', landmarker = '', algoNames = '', omNames = '') {
   api
-    .getStudies(tags, type, landmarker, algoNames, omNames = '')
-    .then(p => {
-      if (p) {
-        //var $list = $(".names").empty();
-        var $list = $("#analyseNames")
-        var landList = []
-        for (var i = 0; i < p.length; i++) {
+      .getStudies(tags, type, landmarker, algoNames, omNames = '')
+      .then(p => {
+        if (p) {
+          //var $list = $(".names").empty();
+          var $list = $("#analyseNames")
+          var landList = []
+          for (var i = 0; i < p.length; i++) {
 
-          $list.append($("<tr><td class='Study'>" + p[i].name + "</td></tr>"));
-          if (!landList.includes(p[i].name)) {
-            parameterInit(p[i])
-            evaluationInit(p[i]);
-            landmarkersInit(p[i]);
-            landList.push(p[i].name);
+            $list.append($("<tr><td class='Study'>" + p[i].name + "</td></tr>"));
+            if (!landList.includes(p[i].name)) {
+              parameterInit(p[i])
+              evaluationInit(p[i]);
+              landmarkersInit(p[i]);
+              landList.push(p[i].name);
+            }
           }
+          console.log('nb items liste : ' + p.length)
         }
-        console.log('nb items liste : ' + p.length)
-      }
-    }, "json");
+      }, "json");
 }
 
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01', quality = "", sensitivity = "", ECANames = "") {
   api
-    .getDatabases(tags, type, date, quality, sensitivity, ECANames)
-    .then(p => {
-      if (p) {
-        //var $list = $(".names").empty();
-        var $list = $("#dbNames")
-        for (var i = 0; i < p.length; i++) {
-          $list.append($("<tr><td class='Database' id='" + p[i].type + "$" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
+      .getDatabases(tags, type, date, quality, sensitivity, ECANames)
+      .then(p => {
+        if (p) {
+          //var $list = $(".names").empty();
+          var $list = $("#dbNames")
+          for (var i = 0; i < p.length; i++) {
+            $list.append($("<tr><td class='Database' id='" + p[i].type + "$" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
+          }
+          console.log('nb items liste : ' + p.length)
         }
-        console.log('nb items liste : ' + p.length)
-      }
-    }, "json");
+      }, "json");
 }
 
-
-//Fucntion to init graph interface
-// function draw() {
-//   var config = {
-//     container_id: "viz",
-//     server_url: "bolt://localhost",
-//     server_user: "neo4j",
-//     server_password: pwd.password,
-//     labels: {
-//       "NominalAttribute": {
-//         caption: "name",
-//       },
-//       "Tag": {
-//         caption: "name"
-//       },
-//       "User": {
-//         caption: "id"
-//       },
-//       "NumericAttribute": {
-//         caption: "name"
-//       },
-//       "RelationshipDS": {
-//         caption: "name",
-//       },
-//       "DLStructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLSemistructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLUnstructuredDataset": {
-//         caption: "name"
-//       },
-//       "Process": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#000000"
-//         },
-//       },
-//       "OperationOfProcess": {
-//         caption: "operationType"
-//       },
-//       "Operation": {
-//         caption: "name"
-//       },
-//       "DatasetSource": {
-//         caption: "name",
-//       },
-//       "Analysis": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#7be141"
-//         },
-//       },
-//       "AnalysisDSRelationship": {
-//         caption: "value"
-//       },
-//       "EvaluationMeasure": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#d2e5ff"
-//         },
-//       },
-//       "ModelEvaluation": {
-//         caption: "value",
-//         font: {
-//           "size": 26,
-//           "color": "#ab83e1"
-//         },
-//       },
-//       "Landmarker": {
-//         caption: "name",
-//       },
-//       "Implementation": {
-//         caption: "name",
-//       },
-//       "AlgoSupervised": {
-//         caption: "name",
-//       },
-//       "Study": {
-//         caption: "name",
-//       },
-//       "Parameter": {
-//         caption: "name",
-//         font: {
-//           "size": 25,
-//           "color": "##f87d7f"
-//         },
-//       },
-//       "ParameterSetting": {
-//         caption: "value",
-//         font: {
-//           "size": 25,
-//           "color": "#e87cf1"
-//         },
-//       },
-//       "EntityClass": {
-//         caption: "name",
-//       },
-//       "RelationshipAtt": {
-//         caption: "name"
-//       },
-//       "Ingest": {
-//       },
-//       "Attribute": {
-//         caption: "name"
-//       },
-//       "AnalysisTarget": {
-//         caption: "name"
-//       },
-//       "AnalysisAttribute": {
-//         caption: "value"
-//       },
-//       "SourceOfSteam": {
-//         caption: "name"
-//       }
-//     },
-//     arrows: true
-//   }
-
-//   viz = new NeoVis.default(config);
-//   viz.render();
-// }
-
-function draw2() {
-  var config = {
-    container_id: "viz2",
-    server_url: "bolt://localhost",
-    server_user: "neo4j",
-    server_password: pwd.password,
-    labels: {
-      "NominalAttribute": {
-        caption: "name",
-      },
-      "Tag": {
-        caption: "name"
-      },
-      "User": {
-        caption: "id"
-      },
-      "NumericAttribute": {
-        caption: "name"
-      },
-      "RelationshipDS": {
-        caption: "name",
-      },
-      "DLStructuredDataset": {
-        caption: "name",
-      },
-      "DLSemistructuredDataset": {
-        caption: "name",
-      },
-      "DLUnstructuredDataset": {
-        caption: "name"
-      },
-      "Process": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#000000"
-        },
-      },
-      "OperationOfProcess": {
-        caption: "operationType"
-      },
-      "Operation": {
-        caption: "name"
-      },
-      "DatasetSource": {
-        caption: "name",
-      },
-      "Analysis": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#7be141"
-        },
-      },
-      "AnalysisDSRelationship": {
-        caption: "value"
-      },
-      "EvaluationMeasure": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#d2e5ff"
-        },
-      },
-      "ModelEvaluation": {
-        caption: "value",
-        font: {
-          "size": 26,
-          "color": "#ab83e1"
-        },
-      },
-      "Landmarker": {
-        caption: "name",
-      },
-      "Implementation": {
-        caption: "name",
-      },
-      "AlgoSupervised": {
-        caption: "name",
-      },
-      "Study": {
-        caption: "name",
-      },
-      "Parameter": {
-        caption: "name",
-        font: {
-          "size": 25,
-          "color": "##f87d7f"
-        },
-      },
-      "ParameterSetting": {
-        caption: "value",
-        font: {
-          "size": 25,
-          "color": "#e87cf1"
-        },
-      },
-      "EntityClass": {
-        caption: "name",
-      },
-      "RelationshipAtt": {
-        caption: "name"
-      },
-      "Ingest": {
-      },
-      "Attribute": {
-        caption: "name"
-      },
-      "AnalysisTarget": {
-        caption: "name"
-      },
-      "AnalysisAttribute": {
-        caption: "value"
-      },
-      "SourceOfSteam": {
-        caption: "name"
-      }
-    },
-    arrows: true
-  }
-  viz2 = new NeoVis.default(config);
-  viz2.render();
-}
-
-// function draw3() {
-//   var config = {
-//     container_id: "viz3",
-//     server_url: "bolt://localhost",
-//     server_user: "neo4j",
-//     server_password: pwd.password,
-//     labels: {
-//       "NominalAttribute": {
-//         caption: "name",
-//       },
-//       "Tag": {
-//         caption: "name"
-//       },
-//       "User": {
-//         caption: "id"
-//       },
-//       "NumericAttribute": {
-//         caption: "name"
-//       },
-//       "RelationshipDS": {
-//         caption: "name",
-//       },
-//       "DLStructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLSemistructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLUnstructuredDataset": {
-//         caption: "name"
-//       },
-//       "Process": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#000000"
-//         },
-//       },
-//       "OperationOfProcess": {
-//         caption: "operationType"
-//       },
-//       "Operation": {
-//         caption: "name"
-//       },
-//       "DatasetSource": {
-//         caption: "name",
-//       },
-//       "Analysis": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#7be141"
-//         },
-//       },
-//       "AnalysisDSRelationship": {
-//         caption: "value"
-//       },
-//       "EvaluationMeasure": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#d2e5ff"
-//         },
-//       },
-//       "ModelEvaluation": {
-//         caption: "value",
-//         font: {
-//           "size": 26,
-//           "color": "#ab83e1"
-//         },
-//       },
-//       "Landmarker": {
-//         caption: "name",
-//       },
-//       "Implementation": {
-//         caption: "name",
-//       },
-//       "AlgoSupervised": {
-//         caption: "name",
-//       },
-//       "Study": {
-//         caption: "name",
-//       },
-//       "Parameter": {
-//         caption: "name",
-//         font: {
-//           "size": 25,
-//           "color": "##f87d7f"
-//         },
-//       },
-//       "ParameterSetting": {
-//         caption: "value",
-//         font: {
-//           "size": 25,
-//           "color": "#e87cf1"
-//         },
-//       },
-//       "EntityClass": {
-//         caption: "name",
-//       },
-//       "RelationshipAtt": {
-//         caption: "name"
-//       },
-//       "Ingest": {
-//       },
-//       "Attribute": {
-//         caption: "name"
-//       },
-//       "AnalysisTarget": {
-//         caption: "name"
-//       },
-//       "AnalysisAttribute": {
-//         caption: "value"
-//       }
-//     },
-//     arrows: true
-//   }
-//   viz3 = new NeoVis.default(config);
-//   viz3.render();
-// }
-
-function draw4() {
-  var config = {
-    container_id: "viz4",
-    server_url: "bolt://localhost",
-    server_user: "neo4j",
-    server_password: pwd.password,
-    labels: {
-      "NominalAttribute": {
-        caption: "name",
-      },
-      "Tag": {
-        caption: "name"
-      },
-      "User": {
-        caption: "id"
-      },
-      "NumericAttribute": {
-        caption: "name"
-      },
-      "RelationshipDS": {
-        caption: "name",
-      },
-      "DLStructuredDataset": {
-        caption: "name",
-      },
-      "DLSemistructuredDataset": {
-        caption: "name",
-      },
-      "DLUnstructuredDataset": {
-        caption: "name"
-      },
-      "Process": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#000000"
-        },
-      },
-      "OperationOfProcess": {
-        caption: "operationType"
-      },
-      "Operation": {
-        caption: "name"
-      },
-      "DatasetSource": {
-        caption: "name",
-      },
-      "Analysis": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#7be141"
-        },
-      },
-      "AnalysisDSRelationship": {
-        caption: "value"
-      },
-      "EvaluationMeasure": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#d2e5ff"
-        },
-      },
-      "ModelEvaluation": {
-        caption: "value",
-        font: {
-          "size": 26,
-          "color": "#ab83e1"
-        },
-      },
-      "Landmarker": {
-        caption: "name",
-      },
-      "Implementation": {
-        caption: "name",
-      },
-      "AlgoSupervised": {
-        caption: "name",
-      },
-      "Study": {
-        caption: "name",
-      },
-      "Parameter": {
-        caption: "name",
-        font: {
-          "size": 25,
-          "color": "##f87d7f"
-        },
-      },
-      "ParameterSetting": {
-        caption: "value",
-        font: {
-          "size": 25,
-          "color": "#e87cf1"
-        },
-      },
-      "EntityClass": {
-        caption: "name",
-      },
-      "RelationshipAtt": {
-        caption: "name"
-      },
-      "Ingest": {
-      },
-      "Attribute": {
-        caption: "name"
-      },
-      "AnalysisTarget": {
-        caption: "name"
-      },
-      "AnalysisAttribute": {
-        caption: "value"
-      }
-    },
-    arrows: true
-  }
-  viz4 = new NeoVis.default(config);
-  viz4.render();
-}
-function draw5() {
-  var config = {
-    container_id: "viz5",
-    server_url: "bolt://localhost",
-    server_user: "neo4j",
-    server_password: pwd.password,
-    labels: {
-      "NominalAttribute": {
-        caption: "name",
-      },
-      "Tag": {
-        caption: "name"
-      },
-      "User": {
-        caption: "id"
-      },
-      "NumericAttribute": {
-        caption: "name"
-      },
-      "RelationshipDS": {
-        caption: "name",
-      },
-      "DLStructuredDataset": {
-        caption: "name",
-      },
-      "DLSemistructuredDataset": {
-        caption: "name",
-      },
-      "DLUnstructuredDataset": {
-        caption: "name"
-      },
-      "Process": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#000000"
-        },
-      },
-      "OperationOfProcess": {
-        caption: "operationType"
-      },
-      "Operation": {
-        caption: "name"
-      },
-      "DatasetSource": {
-        caption: "name",
-      },
-      "Analysis": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#7be141"
-        },
-      },
-      "AnalysisDSRelationship": {
-        caption: "value"
-      },
-      "EvaluationMeasure": {
-        caption: "name",
-        font: {
-          "size": 26,
-          "color": "#d2e5ff"
-        },
-      },
-      "ModelEvaluation": {
-        caption: "value",
-        font: {
-          "size": 26,
-          "color": "#ab83e1"
-        },
-      },
-      "Landmarker": {
-        caption: "name",
-      },
-      "Implementation": {
-        caption: "name",
-      },
-      "AlgoSupervised": {
-        caption: "name",
-      },
-      "Study": {
-        caption: "name",
-      },
-      "Parameter": {
-        caption: "name",
-        font: {
-          "size": 25,
-          "color": "##f87d7f"
-        },
-      },
-      "ParameterSetting": {
-        caption: "value",
-        font: {
-          "size": 25,
-          "color": "#e87cf1"
-        },
-      },
-      "EntityClass": {
-        caption: "name",
-      },
-      "RelationshipAtt": {
-        caption: "name"
-      },
-      "Ingest": {
-      },
-      "Attribute": {
-        caption: "name"
-      },
-      "AnalysisTarget": {
-        caption: "name"
-      },
-      "AnalysisAttribute": {
-        caption: "value"
-      }
-    },
-    arrows: true
-  }
-  viz5 = new NeoVis.default(config);
-  viz5.render();
-}
-
-// function draw6() {
-//   var config = {
-//     container_id: "viz6",
-//     server_url: "bolt://localhost",
-//     server_user: "neo4j",
-//     server_password: pwd.password,
-//     labels: {
-//       "NominalAttribute": {
-//         caption: "name",
-//       },
-//       "Tag": {
-//         caption: "name"
-//       },
-//       "User": {
-//         caption: "id"
-//       },
-//       "NumericAttribute": {
-//         caption: "name"
-//       },
-//       "RelationshipDS": {
-//         caption: "name",
-//       },
-//       "DLStructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLSemistructuredDataset": {
-//         caption: "name",
-//       },
-//       "DLUnstructuredDataset": {
-//         caption: "name"
-//       },
-//       "Process": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#000000"
-//         },
-//       },
-//       "OperationOfProcess": {
-//         caption: "operationType"
-//       },
-//       "Operation": {
-//         caption: "name"
-//       },
-//       "DatasetSource": {
-//         caption: "name",
-//       },
-//       "Analysis": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#7be141"
-//         },
-//       },
-//       "AnalysisDSRelationship": {
-//         caption: "value"
-//       },
-//       "EvaluationMeasure": {
-//         caption: "name",
-//         font: {
-//           "size": 26,
-//           "color": "#d2e5ff"
-//         },
-//       },
-//       "ModelEvaluation": {
-//         caption: "value",
-//         font: {
-//           "size": 26,
-//           "color": "#ab83e1"
-//         },
-//       },
-//       "Landmarker": {
-//         caption: "name",
-//       },
-//       "Implementation": {
-//         caption: "name",
-//       },
-//       "AlgoSupervised": {
-//         caption: "name",
-//       },
-//       "Study": {
-//         caption: "name",
-//       },
-//       "Parameter": {
-//         caption: "name",
-//         font: {
-//           "size": 25,
-//           "color": "##f87d7f"
-//         },
-//       },
-//       "ParameterSetting": {
-//         caption: "value",
-//         font: {
-//           "size": 25,
-//           "color": "#e87cf1"
-//         },
-//       },
-//       "EntityClass": {
-//         caption: "name",
-//       },
-//       "RelationshipAtt": {
-//         caption: "name"
-//       },
-//       "Ingest": {
-//       },
-//       "Attribute": {
-//         caption: "name"
-//       },
-//       "AnalysisTarget": {
-//         caption: "name"
-//       },
-//       "AnalysisAttribute": {
-//         caption: "value"
-//       }
-//     },
-//     arrows: true
-//   }
-//   viz6 = new NeoVis.default(config);
-//   viz6.render();
-// }
-
-//----------------------------------------ADD-------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('add').addEventListener("click", addTag);
   document.getElementById('ingestMode').addEventListener("change", seeIngestMode);
@@ -3184,12 +2615,12 @@ elem.onchange = function (event) {
   }
 }
 
-function printTags() {
+function printTags(){
 
   console.log(NumberTags);
   var zone = "zone" + NumberTags;
   var zoneaff = "zoneaff" + NumberTags;
-  var lien = "lien" + NumberTags;
+  var lien = "lien"  + NumberTags;
 
   var elt2 = document.getElementById(zoneaff);
   elt2.innerHTML = "";
@@ -3200,86 +2631,85 @@ function printTags() {
   api.getTags(tag).then(p => {
     //console.log(p.length);
     length = p.length;
-    if (length === 0) {
+    if (length === 0){
 
       elt2.style.display = "none";
-    } else {
+    }else{
 
-      if (length >= 5) {
-        elt2.style.height = "95px";
-      } else {
-        elt2.style.height = "auto";
+      if(length >= 5){
+        elt2.style.height="95px";
+      }else{
+        elt2.style.height="auto";
       }
       elt2.style.display = "block";
-      for (x = 0; x < length; x++) {
+      for(x=0; x<length; x++){
         //console.log(p[x].name);
-        elt2.insertAdjacentHTML('beforeend', "<a name='" + lien + "'>" + p[x].name + "</a><br />");
+        elt2.insertAdjacentHTML('beforeend',"<a name='"+lien+"'>"+p[x].name+"</a><br />");
       }
 
       var elt3 = document.getElementsByName(lien);
-      for (j = 0; j < elt3.length; j++) {
-        elt3[j].addEventListener("click", changerInputText);
+      for(j=0; j<elt3.length; j++){
+        elt3[j].addEventListener("click",changerInputText);
       }
     }
   })
 
 }
-
-function changerInputText() {
+function changerInputText(){
   var zone = "zone" + NumberTags;
   var zoneaff = "zoneaff" + NumberTags;
 
   //alert(this.innerText);
-  document.getElementById(zone).value = this.innerText;
+  document.getElementById(zone).value=this.innerText;
   document.getElementById(zoneaff).style.display = "none";
 }
 
-function addTag() {
+function addTag(){
   var elt = document.getElementById('Tags');
-  NumberTags = NumberTags + 1;
-  elt.insertAdjacentHTML("beforeend", "<div><span>Tag : </span><div><input type='text' name='tags' id='zone" + NumberTags + "' /><div id='zoneaff" + NumberTags + "'  class='boite'></div></div></div>");
+  NumberTags = NumberTags+1;
+  elt.insertAdjacentHTML("beforeend","<div><span>Tag : </span><div><input type='text' name='tags' id='zone"+ NumberTags +"' /><div id='zoneaff"+NumberTags+"'  class='boite'></div></div></div>");
   var zone = "zone" + NumberTags;
-  document.getElementById(zone).addEventListener("input", printTags);
+  document.getElementById(zone).addEventListener("input",printTags);
   //alert(NumberTags);
 
 }
 
-function seeIngestMode() {
+function seeIngestMode(){
   var elt = document.getElementById("ingestMode");
-  var select = elt.value;
-  if (select == "batch") {
-    document.getElementById("ingestionTime").style.display = "none";
-  } else {
-    document.getElementById("ingestionTime").style.display = "";
+  var select=elt.value;
+  if(select=="batch"){
+    document.getElementById("ingestionTime").style.display="none";
+  }else{
+    document.getElementById("ingestionTime").style.display="";
   }
 }
 
 window.onload = setMaxDate();
-function setMaxDate() {
+function setMaxDate(){
 
   var today = new Date();
   var dd = today.getDate();
-  var mm = today.getMonth() + 1; //January is 0!
+  var mm = today.getMonth()+1; //January is 0!
   var yyyy = today.getFullYear();
   var hh = today.getHours();
   var minute = today.getMinutes();
-  if (dd < 10) {
-    dd = '0' + dd
+  if(dd<10){
+    dd='0'+dd
   }
-  if (mm < 10) {
-    mm = '0' + mm
+  if(mm<10){
+    mm='0'+mm
   }
-  if (hh < 10) {
-    hh = '0' + hh
+  if(hh<10){
+    hh='0'+hh
   }
-  if (minute < 10) {
-    minute = '0' + minute
+  if(minute<10){
+    minute='0'+minute
   }
 
-  today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minute;
+  today = yyyy+'-'+mm+'-'+dd+'T'+hh+':'+minute;
 
-  document.getElementById("ingestionStartTime").setAttribute("max", today);
-  document.getElementById("ingestionEndTime").setAttribute("max", today);
+  document.getElementById("ingestionStartTime").setAttribute("max",today);
+  document.getElementById("ingestionEndTime").setAttribute("max",today);
 
 }
 

@@ -973,7 +973,7 @@ function getGraph(query) {
           if (record._fields[i] != null) {
             if (record._fields[i].labels) {
               console.log(record._fields[i].identity.low)
-              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label : record._fields[i].properties.name || record._fields[i].properties.description})
+              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label : record._fields[i].properties.name || record._fields[i].properties.description || record._fields[i].properties.descriptionAnalysis})
             }
             if (record._fields[i].type) {
               console.log("relationship")
@@ -1038,8 +1038,6 @@ function getTags(tag) {
       return session.close();
     });
 }
-//-------------------------------------ADD end----------------------------
-//----------------------------------ADD-----------------------------------
 exports.getTags = getTags;
 
 
@@ -1075,45 +1073,3 @@ exports.algoSimilairty = algoSimilairty;
 exports.graphList = graphList;
 exports.algoBetweennessCentrality = algoBetweennessCentrality;
 exports.getGraph = getGraph;
-
-
-/*
-
-function getGraph() {
-  var session = driver.session();
-  return session.run(
-    'MATCH (m:Movie)<-[:ACTED_IN]-(a:Person) \
-    RETURN m.title AS movie, collect(a.name) AS cast \
-    LIMIT $limit', {limit: neo4j.int(100)})
-    .then(results => {
-      var nodes = [], rels = [], i = 0;
-      results.records.forEach(res => {
-        nodes.push({title: res.get('movie'), label: 'movie'});
-        var target = i;
-        i++;
-
-        res.get('cast').forEach(name => {
-          var actor = {title: name, label: 'actor'};
-          var source = _.findIndex(nodes, actor);
-          if (source === -1) {
-            nodes.push(actor);
-            source = i;
-            i++;
-          }
-          rels.push({source, target})
-        })
-      });
-
-      return {nodes, links: rels};
-    })
-    .catch(error => {
-      throw error;
-    })
-    .finally(() => {
-      return session.close();
-    });
-}
-
-exports.searchMovies = searchMovies;
-exports.getMovie = getMovie;
-exports.getGraph = getGraph;*/
