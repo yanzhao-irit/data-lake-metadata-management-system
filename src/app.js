@@ -430,10 +430,9 @@ $(function () {
       };
       var network = new vis.Network(container, data, options);
       network.body.emitter.emit('_dataChanged')
-      setInterval(function() {
-        network.fit();
-      }, 300);
-      network.redraw()
+      network.fit();
+      network.redraw();
+      network.fit();
     })
     // if (query6.length > 3) {
     //   viz6.renderWithCypher(query6);
@@ -597,10 +596,9 @@ $(function () {
       };
       var network = new vis.Network(container, data, options);
       network.body.emitter.emit('_dataChanged')
-      setInterval(function() {
-        network.fit();
-      }, 300);
-      network.redraw()
+      network.fit();
+      network.redraw();
+      network.fit();
     })
     // if (query6.length > 3) {
     //   viz6.renderWithCypher(query6);
@@ -938,10 +936,9 @@ $(function () {
         };
         var network = new vis.Network(container, data, options);
         network.body.emitter.emit('_dataChanged')
-        setInterval(function() {
-          network.fit();
-        }, 300);
-        network.redraw()
+        network.fit();
+        network.redraw();
+        network.fit();
       })
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
       query3 = `MATCH (p:Process {name:'` + $(this).text() + `'}) 
@@ -1096,10 +1093,9 @@ $(function () {
         };
         var network = new vis.Network(container, data, options);
         network.body.emitter.emit('_dataChanged')
-        setInterval(function() {
-          network.fit();
-        }, 300);
-        network.redraw()
+        network.fit();
+        network.redraw();
+        network.fit();
       })
       api.getGraph(query2).then(p =>{
           // create an array with nodes
@@ -1115,10 +1111,9 @@ $(function () {
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
-        setInterval(function() {
-          network.fit();
-        }, 300);
-        network.redraw()
+        network.fit();
+        network.redraw();
+        network.fit();
       })
 
       //Show the table of process
@@ -1308,10 +1303,9 @@ $(function () {
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
-          setInterval(function() {
-            network.fit();
-          }, 300);
-          network.redraw()
+          network.fit();
+          network.redraw();
+          network.fit();
         })
         //Get the analysis of the study clicked to create a list
         var $list = $(this).parent()
@@ -1619,10 +1613,9 @@ $(function () {
             };
             var network = new vis.Network(container, data, options);
             network.body.emitter.emit('_dataChanged')
-            setInterval(function() {
-              network.fit();
-            }, 300);
-            network.redraw()
+            network.fit();
+            network.redraw();
+            network.fit();
           })
           //query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
@@ -1650,10 +1643,9 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-            setInterval(function() {
-              network.fit();
-            }, 300);
-            network.redraw()
+            network.fit();
+            network.redraw();
+            network.fit();
           })
           console.log(query2)
           api.getGraph(query2).then(p =>{
@@ -1670,10 +1662,9 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-              setInterval(function() {
-                network.fit();
-              }, 300);
-              network.redraw()
+            network.fit();
+            network.redraw();
+            network.fit();
           })
           api.getGraph(query4).then(p =>{
               // create an array with nodes
@@ -1690,10 +1681,9 @@ $(function () {
 
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-            setInterval(function() {
-              network.fit();
-            }, 300);
-            network.redraw()
+            network.fit();
+            network.redraw();
+            network.fit();
           })
 
           setTimeout(() => { $("#dbNames").closest(".collapse").collapse('show') }, 500);
@@ -1957,10 +1947,9 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-              setInterval(function() {
-                network.fit();
-              }, 300);
-              network.redraw()
+              network.fit();
+              network.redraw();
+              network.fit();
             })
             query2 = `MATCH (a:AnalysisEntityClass)
             MATCH (a)<-[r1:hasAnalysis]-(s:Study)
@@ -1992,10 +1981,9 @@ $(function () {
 
                 var network = new vis.Network(container, data, options);
                 network.body.emitter.emit('_dataChanged')
-              setInterval(function() {
-                network.fit();
-              }, 300);
-              network.redraw()
+              network.fit();
+              network.redraw();
+              network.fit();
               
             })
             api.getGraph(query2).then(p =>{
@@ -2013,10 +2001,9 @@ $(function () {
 
                 var network = new vis.Network(container, data, options);
                 network.body.emitter.emit('_dataChanged')
-              setInterval(function() {
-                network.fit();
-              }, 300);
-              network.redraw()
+              network.fit();
+              network.redraw();
+              network.fit();
               
             })
           }
