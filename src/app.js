@@ -430,6 +430,9 @@ $(function () {
       };
       var network = new vis.Network(container, data, options);
       network.body.emitter.emit('_dataChanged')
+      setInterval(function() {
+        network.fit();
+      }, 300);
       network.redraw()
     })
     // if (query6.length > 3) {
@@ -594,6 +597,9 @@ $(function () {
       };
       var network = new vis.Network(container, data, options);
       network.body.emitter.emit('_dataChanged')
+      setInterval(function() {
+        network.fit();
+      }, 300);
       network.redraw()
     })
     // if (query6.length > 3) {
@@ -932,6 +938,9 @@ $(function () {
         };
         var network = new vis.Network(container, data, options);
         network.body.emitter.emit('_dataChanged')
+        setInterval(function() {
+          network.fit();
+        }, 300);
         network.redraw()
       })
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
@@ -1087,6 +1096,9 @@ $(function () {
         };
         var network = new vis.Network(container, data, options);
         network.body.emitter.emit('_dataChanged')
+        setInterval(function() {
+          network.fit();
+        }, 300);
         network.redraw()
       })
       api.getGraph(query2).then(p =>{
@@ -1103,7 +1115,10 @@ $(function () {
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
-          network.redraw()
+        setInterval(function() {
+          network.fit();
+        }, 300);
+        network.redraw()
       })
 
       //Show the table of process
@@ -1293,6 +1308,9 @@ $(function () {
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
+          setInterval(function() {
+            network.fit();
+          }, 300);
           network.redraw()
         })
         //Get the analysis of the study clicked to create a list
@@ -1349,6 +1367,7 @@ $(function () {
           }
           //get dataset informations
           console.log([$(this).text()] + ' |||| ' + typeDS)
+          document.getElementById("EntityClassButtonDataset").style.display = 'block';
           api
               .getDatabases([$(this).text()], typeDS)
               .then(p => {
@@ -1600,6 +1619,9 @@ $(function () {
             };
             var network = new vis.Network(container, data, options);
             network.body.emitter.emit('_dataChanged')
+            setInterval(function() {
+              network.fit();
+            }, 300);
             network.redraw()
           })
           //query4 for dataset relationship
@@ -1628,7 +1650,10 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-              network.redraw()
+            setInterval(function() {
+              network.fit();
+            }, 300);
+            network.redraw()
           })
           console.log(query2)
           api.getGraph(query2).then(p =>{
@@ -1645,6 +1670,9 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
+              setInterval(function() {
+                network.fit();
+              }, 300);
               network.redraw()
           })
           api.getGraph(query4).then(p =>{
@@ -1662,7 +1690,10 @@ $(function () {
 
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
-              network.redraw()
+            setInterval(function() {
+              network.fit();
+            }, 300);
+            network.redraw()
           })
 
           setTimeout(() => { $("#dbNames").closest(".collapse").collapse('show') }, 500);
@@ -1926,6 +1957,9 @@ $(function () {
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
+              setInterval(function() {
+                network.fit();
+              }, 300);
               network.redraw()
             })
             query2 = `MATCH (a:AnalysisEntityClass)
@@ -1958,7 +1992,10 @@ $(function () {
 
                 var network = new vis.Network(container, data, options);
                 network.body.emitter.emit('_dataChanged')
-                network.redraw()
+              setInterval(function() {
+                network.fit();
+              }, 300);
+              network.redraw()
               
             })
             api.getGraph(query2).then(p =>{
@@ -1976,7 +2013,10 @@ $(function () {
 
                 var network = new vis.Network(container, data, options);
                 network.body.emitter.emit('_dataChanged')
-                network.redraw()
+              setInterval(function() {
+                network.fit();
+              }, 300);
+              network.redraw()
               
             })
           }
