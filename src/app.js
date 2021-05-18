@@ -206,6 +206,8 @@ $(function () {
     console.log('item added : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
     document.getElementById("EntityClassButtonDataset").style.display = 'none';
+    document.getElementById("EntityClassButtonAnalyse").style.display = 'none';
+
     //For each new keywords added, it reinitialize the interface to show the three search table and it hide the graphic interface.
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
@@ -231,6 +233,7 @@ $(function () {
     console.log('item removed : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
     document.getElementById("EntityClassButtonDataset").style.display = 'none';
+    document.getElementById("EntityClassButtonAnalyse").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
     $("#analyseNames").closest(".collapse").collapse('show');
@@ -277,6 +280,8 @@ $(function () {
 
   //Function onclick to go back to the search table from the graphic interface.
   $('#back').on('click', function () {
+    document.getElementById("EntityClassButtonAnalyse").style.display = 'none';
+    document.getElementById("EntityClassButtonDataset").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
     $("#analyseNames").closest(".collapse").collapse('show');
@@ -1133,7 +1138,7 @@ $(function () {
         $('#attRelationButton')[0].style.display = 'block';
         $('#operationButton')[0].style.display = 'none';
         $('#similarityButton')[0].style.display = 'none';
-
+        document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
         api
           .getStudies([$(this).text()], typeRecherche, landmarkerList, algoNames.value)
           .then(p => {
@@ -1731,7 +1736,9 @@ $(function () {
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             $('#attributeList').empty()
-
+            console.log("123")
+            console.log([$(this).text()])
+            document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
             api
               .getAnalyses('', $(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1])
               .then(p => {
