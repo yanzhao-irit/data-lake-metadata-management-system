@@ -199,6 +199,7 @@ $(function () {
 
   //Function on itemAdded for each key words input
   $("#tagsinput").on('itemAdded', function (event) {
+    document.getElementById("EntityClassButtonDataset").style.display = 'none';
     console.log('item added : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
     //For each new keywords added, it reinitialize the interface to show the three search table and it hide the graphic interface.
@@ -225,6 +226,7 @@ $(function () {
   $("#tagsinput").on('itemRemoved', function (event) {
     console.log('item removed : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
+    document.getElementById("EntityClassButtonDataset").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
     $("#analyseNames").closest(".collapse").collapse('show');
@@ -2064,6 +2066,7 @@ $(function () {
 
   //Event for checkbox in dropdown menu (mainly for filter)
   $('#usedOpeDropdown').on('click', 'input', function () {
+
     $("#processNames").empty();
     if (this.checked) {
       typeOpe.push(this.id)
