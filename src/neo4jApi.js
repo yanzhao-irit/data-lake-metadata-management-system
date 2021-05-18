@@ -82,7 +82,6 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     }
   }
   query = query + " RETURN distinct p"
-  console.log(query)
   // Query return is kept and stocked within a model with the same name to avoid confusion. Note that only one parameter of return can be stocked.
   return session
     .run(
@@ -102,6 +101,11 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 
 //Function to search study metadata
 function getStudies(tags, type, landmarker, algoNames, omNames) {
+  console.log("tags : " + tags)
+  console.log("type : " + type)
+  console.log("landmarker : " + landmarker)
+  console.log("algoNames : " + algoNames)
+  console.log("omNames : " + omNames)
   var session = driver.session();
   //Classic cypher query to search for study without filter. 
   var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al) WHERE ("
@@ -138,24 +142,24 @@ function getStudies(tags, type, landmarker, algoNames, omNames) {
   //Cypher query for algo filter. The database does not have all the algo type implemented so this part of query is commented.
   if (algoNames.length > 0) {
     query += ' AND (s)-[:hasAnalysis]->(a)-[:hasImplementation]->()-[:usesAlgo]->(al) AND (al:AlgoSupervised'
-    // if (!type.includes("AlgoSupervised") && !type.includes("AlgoUnsupervised") && !type.includes("AlgoReinforcement")) {
-    //   query += " al:AlgoSupervised OR al:AlgoUnsupervised OR al:AlgoReinforcement ";
-    // } else {
-    //   if (type.includes("AlgoSupervised")) {
-    //     query = query + "al:AlgoSupervised";
-    //     console.log('Semi : ' + query);
-    //   } else {
-    //     if (type.includes("AlgoUnsupervised")) {
-    //       query = query + "al:AlgoUnsupervised";
-    //       console.log('Unstru : ' + query);
-    //     } else {
-    //       if (type.includes("AlgoReinforcement")) {
-    //         query = query + "al:AlgoReinforcement";
-    //         console.log('Structured : ' + query);
-    //       }
-    //     }
-    //   }
-    // }
+    if (!type.includes("AlgoSupervised") && !type.includes("AlgoUnsupervised") && !type.includes("AlgoReinforcement")) {
+      query += " al:AlgoSupervised OR al:AlgoUnsupervised OR al:AlgoReinforcement ";
+    } else {
+      if (type.includes("AlgoSupervised")) {
+        query = query + "al:AlgoSupervised";
+        console.log('Semi : ' + query);
+      } else {
+        if (type.includes("AlgoUnsupervised")) {
+          query = query + "al:AlgoUnsupervised";
+          console.log('Unstru : ' + query);
+        } else {
+          if (type.includes("AlgoReinforcement")) {
+            query = query + "al:AlgoReinforcement";
+            console.log('Structured : ' + query);
+          }
+        }
+      }
+    }
 
     //Cypher query to search a particular algo names.
     query += ') AND (toLower(al.name) CONTAINS toLower("' + algoNames + '") OR toLower(al.description) CONTAINS toLower("' + algoNames + '") ) '
@@ -167,7 +171,7 @@ function getStudies(tags, type, landmarker, algoNames, omNames) {
   // }
 
   query = query + " RETURN DISTINCT s"
-
+  console.log(query)
   //We get only study here, which are used later to get analysis
   return session
     .run(
@@ -575,12 +579,12 @@ function getEntityClassByDataset(datasetName, datasetId, typeDS) {
 function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
-  query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelatinship)
+  query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
     WHERE dl.name CONTAINS '` + dsName + `' and dl.uuid = '` + dsId + `'
     AND
     (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
     AND
-    (autreDS)<-[]-(adrR:AnalysisDSRelatinship)-[]->(rDS:RelationshipDS)`
+    (autreDS)<-[]-(adrR:AnalysisDSRelationship)-[]->(rDS:RelationshipDS)`
   if (relationName != '') {
     query += ' AND rDS.name = "' + relationName + '"'
   }
@@ -626,7 +630,7 @@ function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
 //Function to get relationship value between two datasets
 function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
   var session = driver.session();
-  query = `MATCH (ds1)-[]-(adsr:AnalysisDSRelatinship)-[]-(ds2), (adsr)-[]-(rds:RelationshipDS) 
+  query = `MATCH (ds1)-[]-(adsr:AnalysisDSRelationship)-[]-(ds2), (adsr)-[]-(rds:RelationshipDS) 
               WHERE rds.name = "` + Relationship + `" AND ds1.uuid = "` + dataset1 + `" AND ds2.uuid = "` + dataset2 + `" 
                 AND (ds1:DLStructuredDataset OR ds1:DLSemistructuredDataset OR ds1:DLUnstructuredDataset) 
                 AND (ds2:DLStructuredDataset OR ds2:DLSemistructuredDataset OR ds2:DLUnstructuredDataset)
@@ -769,15 +773,12 @@ RETURN n
           } else {
             if (type.includes("Semi-Structured")) {
               query = query + "ds:DLSemistructuredDataset";
-              console.log('Semi : ' + query);
             } else {
               if (type.includes("Unstructured")) {
                 query = query + "ds:DLUnstructuredDataset ";
-                console.log('Unstru : ' + query);
               } else {
                 if (type.includes("Structured")) {
                   query = query + "ds:DLStructuredDataset";
-                  console.log('Structured : ' + query);
                 }
               }
             }
@@ -959,28 +960,27 @@ function algoBetweennessCentrality() {
 
 function getGraph(query) {
   var session = driver.session();
-  console.log(query)
   var nodes = []
   var edges = []
+  var count = 0
   return session
     .run(
       query)
     .then(result => {
       return result.records.map(record => {
-        // console.log(record)
         var data = record._fields
         for (var i = 0; i < data.length; i++) {
           if (record._fields[i] != null) {
             if (record._fields[i].labels) {
-              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label :  record._fields[i].properties.value || record._fields[i].labels[0]+" \n "+ (record._fields[i].properties.name || record._fields[i].properties.operationType || record._fields[i].properties.description || record._fields[i].properties.descriptionAnalysis)})
+              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label :  record._fields[i].properties.value || record._fields[i].labels[0]+" \n "+ (record._fields[i].properties.name || record._fields[i].properties.operationType || record._fields[i].properties.description || record._fields[i].properties.descriptionAnalysis)})              
             }
             if (record._fields[i].type) {
               edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), id: record._fields[i].identity.low })
             }
             if (record._fields[i].segments) {
               for (var j = 0; j < record._fields[i].segments.length; j++) {
-                nodes.push({ id: record._fields[i].segments[j].end.identity.low, group: record._fields[i].segments[j].end.labels[0], properties: record._fields[i].segments[j].end.properties, title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].end.properties.value || (record._fields[i].segments[j].end.labels[0]+"\n"+(record._fields[i].segments[j].end.properties.name || record._fields[i].segments[j].end.properties.description || record._fields[i].segments[j].end.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType))})
-                nodes.push({ id: record._fields[i].segments[j].start.identity.low, group: record._fields[i].segments[j].start.labels[0], properties: record._fields[i].segments[j].start.properties, title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].start.properties.value || (record._fields[i].segments[j].start.labels[0]+"\n"+(record._fields[i].segments[j].start.properties.name || record._fields[i].segments[j].start.properties.description || record._fields[i].segments[j].start.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType))})
+                nodes.push({ id: record._fields[i].segments[j].end.identity.low, group: record._fields[i].segments[j].end.labels[0], properties: record._fields[i].segments[j].end.properties, title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].end.properties.value || (record._fields[i].segments[j].end.labels[0]+"\n"+record._fields[i].segments[j].end.properties.name || record._fields[i].segments[j].end.properties.description || record._fields[i].segments[j].end.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType)})
+                nodes.push({ id: record._fields[i].segments[j].start.identity.low, group: record._fields[i].segments[j].start.labels[0], properties: record._fields[i].segments[j].start.properties, title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].start.properties.value || (record._fields[i].segments[j].start.labels[0]+"\n"+record._fields[i].segments[j].start.properties.name || record._fields[i].segments[j].start.properties.description || record._fields[i].segments[j].start.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType)})
                 edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low, properties: record._fields[i].segments[j].relationship.properties, title: JSON.stringify(record._fields[i].segments[j].relationship.properties).replaceAll('","', '"\n"') })
               }
             }
@@ -996,9 +996,6 @@ function getGraph(query) {
           .map(id => {
             return edges.find(a => a.id === id)
           })
-        console.log(nodes)
-        console.log(edges)
-        console.log(uniqueNodes)
         return [uniqueNodes, uniqueEdges];
       });
     })
