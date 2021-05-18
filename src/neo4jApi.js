@@ -996,9 +996,9 @@ function getGraph(query) {
           .map(id => {
             return edges.find(a => a.id === id)
           })
-        /*console.log(nodes)
+        console.log(nodes)
         console.log(edges)
-        console.log(uniqueNodes)*/
+        console.log(uniqueNodes)
         return [uniqueNodes, uniqueEdges];
       });
     })
