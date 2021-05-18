@@ -1,9 +1,9 @@
 
 # Data Lake Metadata Management System
 
-Data lake management aims to improve the Findability, Accessibility, Interoperatability and Reuability of data, data preparation processes and analyses that are stored in a data lake.
+Data lake management aims to improve the Findability, Accessibility, Interoperatability and Reusability of data, data preparation processes and analyses that are stored in a data lake.
 
-## Data lake funcitonal architecture
+## Data lake functional architecture
 we proposed a functional data lake architectur, which contains four essential zones, and each zone has a task area (dotted rectangle) and a data storage area (gray rectangle) :
 
 - **Raw data zone**: all types of data are ingested without processing and stored in their native format. The ingestion can be batch, real-time or hybrid. This zone allows users to find the original version of data for their analytics to facilitate subsequent treatments. The stored raw data format can be different from the source format.
