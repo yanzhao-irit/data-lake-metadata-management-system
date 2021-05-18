@@ -205,6 +205,7 @@ $(function () {
   $("#tagsinput").on('itemAdded', function (event) {
     console.log('item added : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
+    document.getElementById("EntityClassButtonDataset").style.display = 'none';
     //For each new keywords added, it reinitialize the interface to show the three search table and it hide the graphic interface.
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
@@ -229,6 +230,7 @@ $(function () {
   $("#tagsinput").on('itemRemoved', function (event) {
     console.log('item removed : ' + event.item);
     console.log('tagsinput : ' + tagsinput)
+    document.getElementById("EntityClassButtonDataset").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
     $("#analyseNames").closest(".collapse").collapse('show');
