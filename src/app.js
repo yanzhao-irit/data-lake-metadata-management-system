@@ -2603,9 +2603,11 @@ function languageProcessInit(tagsinput, language = "", date = "0001-01-01", type
       var $list2 = $("#languageDropDown");
       var listLanguage = [];
       for (var i = 0; i < p.length; i++) {
-        if (listLanguage.indexOf(p[i].programmationLanguage) === -1) {
-          $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].programmationLanguage + " ' id='" + p[i].programmationLanguage + "'> <label for='language" + p[i].programmationLanguage + "'>" + p[i].programmationLanguage + "</label></div>"));
-          listLanguage.push(p[i].programmationLanguage)
+        if (listLanguage.indexOf(p[i].programLanguage) === -1) {
+          if(p[i].programLanguage) {
+            $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].programLanguage + " ' id='" + p[i].programLanguage + "'> <label for='language" + p[i].programLanguage + "'>" + p[i].programLanguage + "</label></div>"));
+            listLanguage.push(p[i].programLanguage)
+          }
         }
       }
     }
@@ -2621,8 +2623,10 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
       var listexeEnv = [];
       for (var i = 0; i < p.length; i++) {
         if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
-          $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='language" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</label></div>"));
-          listexeEnv.push(p[i].executionEnvironment)
+          if(p[i].programLanguage) {
+            $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].programLanguage + " ' id='" + p[i].programLanguage + "'> <label for='language" + p[i].programLanguage + "'>" + p[i].programLanguage + "</label></div>"));
+            listLanguage.push(p[i].programLanguage)
+          }
         }
       }
     }
