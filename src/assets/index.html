@@ -119,10 +119,14 @@
                         <br />
                         <div id="moreAFilter" style='display: none'>
                             <button class="dropbtn" id="landmarker">Landmarker</button>
+                            <center><button id="landmarkerClear" style="display: none">Clear Landmarker</button></center>
                             <div class="dropdown">
                                 <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
-                                    <input type="text" placeholder="Search.." id="landmarkerInput"
-                                        class="dropdown-contente">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="landmarkerInput"
+                                            class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu" id="DropdownMenulandmarker" style="height:100px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
 
@@ -471,6 +475,20 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        .boite {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            display: none;
+            width: 198px;
+            border-width: 1px;
+            border-style: solid;
+            margin-top: 1px;
+            padding: 2px;
+            overflow: auto;
+        }
+    </style>
 </body>
 
 <script type="text/javascript">

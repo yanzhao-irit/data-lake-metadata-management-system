@@ -22,6 +22,7 @@ var cypherHistoryList = [];
 var graphList = [];
 var similarityGraph = []
 var betweennessGraph = []
+var tagsinput =[]
 
 var options = {
   autoResize: true,
@@ -199,7 +200,7 @@ $(function () {
   })
 
   //Variable to stock tags input
-  var tagsinput = $('#tagsinput').tagsinput('items');
+  tagsinput = $('#tagsinput').tagsinput('items');
 
   //Function on itemAdded for each key words input
   $("#tagsinput").on('itemAdded', function (event) {
@@ -2047,6 +2048,8 @@ $(function () {
 
   });
 
+
+
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
     // this will contain a reference to the checkbox
@@ -2139,16 +2142,20 @@ $(function () {
     }
     console.log(exeEnvList);
   });
+
   $('#landmarkerDropdown').on('click', 'input', function () {
+
     $("#analyseNames").empty();
     if (this.checked) {
       landmarkerList.push(this.id)
+      $("#analyseNames").empty()
       showStudies(tagsinput, typeRecherche, landmarkerList);
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
+      $("#analyseNames").empty()
       showStudies(tagsinput, typeRecherche, landmarkerList);
     }
     console.log(landmarkerList);
@@ -2248,11 +2255,25 @@ $(function () {
     var display = $('#landmarkerDropdown')[0].style.display;
     if (display === "none") {
       $('#landmarkerDropdown')[0].style.display = "block";
+      document.getElementById("landmarkerClear").style.display = "block"
     } else {
       $('#landmarkerDropdown')[0].style.display = "none";
+      document.getElementById("landmarkerClear").style.display = "none"
     }
     return display;
   });
+
+  $('#landmarkerClear').on("click", function () {
+    a = div.getElementsByClassName("landmarkerList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    landmarkerList = [];
+    $("#analyseNames").empty()
+    showStudies(tagsinput, typeRecherche, landmarkerList);
+    console.log(landmarkerList)
+  });
+
 
   $('#parameter').on("click", function () {
     var display = $('#parameterDropdown')[0].style.display;
@@ -2308,6 +2329,9 @@ $(function () {
   });
 
   $("#landmarkerInput").keyup(function () {
+    var elt2 = document.getElementById("DropdownMenulandmarker");
+    //elt2.insertAdjacentHTML('beforeend', "<li><a>123</a></li>");
+    elt2.innerText=""
     var input, filter, ul, li, a, i;
     input = document.getElementById("landmarkerInput");
     filter = input.value.toUpperCase();
@@ -2315,13 +2339,23 @@ $(function () {
     a = div.getElementsByClassName("landmarkerList");
     for (i = 0; i < a.length; i++) {
       txtValue = a[i].textContent || a[i].innerText;
+
+      // console.log(txtValue)
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        a[i].style.display = "";
-      } else {
+        // a[i].style.display = "";
+        var idlandmarker= txtValue.substr(1,txtValue.length-1)
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='lqnd_"+idlandmarker+"'>"+ idlandmarker +"</a></li>");
+      } /*else {
         a[i].style.display = "none";
-      }
+      }*/
+    }
+
+    var landmarkerLink = document.getElementsByName("landmarkerLink");
+    for (j = 0; j < landmarkerLink.length; j++) {
+      landmarkerLink[j].addEventListener("click", getLandmarkerClick);
     }
   });
+
 
   $("#evaluationInput").keyup(function () {
     var input, filter, ul, li, a, i;
@@ -2561,12 +2595,47 @@ function landmarkersInit(study = 'default') {
   api.getLandmarkers(study).then(p => {
     $("#landmarkerDropdown div").each(function () { if (optionLandmarkerList.indexOf($(this).text()) === -1) { optionLandmarkerList.push($(this).text()) } });
     var $list = $("#landmarkerDropdown")
+
     for (var i = 0; i < p.length; i++) {
       if (!optionLandmarkerList.includes(" " + p[i].name)) {
-        $list.append("<div class='landmarkerList'> <input type='checkbox' classe='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "' '><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='landmarkerList' style='display: none'> <input type='checkbox' classe='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "'><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
+
+        var elt2 = document.getElementById("DropdownMenulandmarker");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='lqnd_"+p[i].name+"'>"+ p[i].name +"</a></li>");
+
       }
     }
   }, "json");
+  var landmarkerLink = document.getElementsByName("landmarkerLink");
+  for (j = 0; j < landmarkerLink.length; j++) {
+    landmarkerLink[j].addEventListener("click", getLandmarkerClick);
+  }
+}
+
+function getLandmarkerClick() {
+  // console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("landmarkerDropdown");
+  a = div.getElementsByClassName("landmarkerList");
+  // console.log(landmarkerList);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    var idlandmarker= txtValue.substr(1,txtValue.length-1)
+    if (filter===idlandmarker.toUpperCase()) {
+      console.log("diqnshqngle")
+      a[i].style.display = "";
+      var elt = document.getElementById(idlandmarker)
+      elt.checked = true
+      landmarkerList.push(idlandmarker)
+      console.log(landmarkerList);
+
+    }
+  }
+  $("#analyseNames").empty();
+  showStudies(tagsinput, typeRecherche, landmarkerList);
 }
 
 //function to create a list of filter
@@ -2657,6 +2726,7 @@ function showStudies(tags, type = '', landmarker = '', algoNames = '', omNames =
       if (p) {
         //var $list = $(".names").empty();
         var $list = $("#analyseNames")
+        // $list.empty()
         var landList = []
         for (var i = 0; i < p.length; i++) {
 
