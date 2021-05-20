@@ -2114,6 +2114,7 @@ $(function () {
     }
     console.log(typeOpe);
   });
+
   $('#languageDropDown').on('click', 'input', function () {
     $("#processNames").empty();
     if (this.checked) {
@@ -2128,6 +2129,8 @@ $(function () {
     }
     console.log(langList);
   });
+
+
   $('#exeEnvDropdown').on('click', 'input', function () {
     $("#processNames").empty();
     if (this.checked) {
@@ -2144,7 +2147,6 @@ $(function () {
   });
 
   $('#landmarkerDropdown').on('click', 'input', function () {
-
     $("#analyseNames").empty();
     if (this.checked) {
       landmarkerList.push(this.id)
@@ -2243,6 +2245,7 @@ $(function () {
     return display;
   });
 
+  //for clear the chosed used operation
   $('#usedOpeClear').on("click", function () {
     a = div.getElementsByClassName("usedOpeList");
     for (i = 0; i < a.length; i++) {
@@ -2266,6 +2269,7 @@ $(function () {
     return display;
   });
 
+  //for clear the chosed execution Environment
   $('#exeEnvClear').on("click", function () {
     a = div.getElementsByClassName("exeEnvList");
     for (i = 0; i < a.length; i++) {
@@ -2288,7 +2292,7 @@ $(function () {
     }
     return display;
   });
-
+  //for clear the chosed landmarker
   $('#landmarkerClear').on("click", function () {
     a = div.getElementsByClassName("landmarkerList");
     for (i = 0; i < a.length; i++) {
@@ -2299,9 +2303,6 @@ $(function () {
     showStudies(tagsinput, typeRecherche, landmarkerList);
     console.log(landmarkerList)
   });
-
-
-
 
   $('#parameter').on("click", function () {
     var display = $('#parameterDropdown')[0].style.display;
@@ -2356,39 +2357,33 @@ $(function () {
     }
   });
 
+  //Changed: for click in the drop-down
   $("#landmarkerInput").keyup(function () {
     var elt2 = document.getElementById("DropdownMenulandmarker");
-    //elt2.insertAdjacentHTML('beforeend', "<li><a>123</a></li>");
     elt2.innerText=""
-    var input, filter, ul, li, a, i;
+    var input, filter, a, i;
     input = document.getElementById("landmarkerInput");
     filter = input.value.toUpperCase();
     div = document.getElementById("landmarkerDropdown");
     a = div.getElementsByClassName("landmarkerList");
     for (i = 0; i < a.length; i++) {
       txtValue = a[i].textContent || a[i].innerText;
-
-      // console.log(txtValue)
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        // a[i].style.display = "";
         var idlandmarker= txtValue.substr(1,txtValue.length-1)
         elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_"+idlandmarker+"'>"+ idlandmarker +"</a></li>");
-      } /*else {
-        a[i].style.display = "none";
-      }*/
+      }
     }
-
     var landmarkerLink = document.getElementsByName("landmarkerLink");
     for (j = 0; j < landmarkerLink.length; j++) {
       landmarkerLink[j].addEventListener("click", getLandmarkerClick);
     }
   });
 
+  //Add: for click in the drop-down of used operation
   $("#usedOpeInput").keyup(function () {
     var elt2 = document.getElementById("DropdownMenuusedop");
-    //elt2.insertAdjacentHTML('beforeend', "<li><a>123</a></li>");
     elt2.innerText=""
-    var input, filter, ul, li, a, i;
+    var input, filter, a, i;
     input = document.getElementById("usedOpeInput");
     filter = input.value.toUpperCase();
     div = document.getElementById("usedOpeDropdown");
@@ -2396,22 +2391,40 @@ $(function () {
     console.log(filter)
     for (i = 0; i < a.length; i++) {
       txtValue = a[i].textContent || a[i].innerText;
-      console.log("tttttttttttttttttttt")
-      var idisedop= txtValue.substr(1,txtValue.length-1)
-      if (idisedop.toUpperCase().indexOf(filter) > -1) {
-        // a[i].style.display = "";
-
+      var idusedop= txtValue.substr(1,txtValue.length-1)
+      if (idusedop.toUpperCase().indexOf(filter) > -1) {
         var elt2 = document.getElementById("DropdownMenuusedop");
-        elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+idisedop+"'>"+ idisedop +"</a></li>");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+idusedop+"'>"+ idusedop +"</a></li>");
       }
     }
-
     var usedOpLink = document.getElementsByName("usedOpLink");
     for (j = 0; j < usedOpLink.length; j++) {
       usedOpLink[j].addEventListener("click", getusedOperationClick);
     }
   });
 
+  //Add: for click in the drop-down of execution environment
+  $("#exeEnvInput").keyup(function () {
+    var elt2 = document.getElementById("DropdownMenuexeEnv");
+    elt2.innerText=""
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("exeEnvInput");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("exeEnvDropdown");
+    a = div.getElementsByClassName("exeEnvList");
+    for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      var idexeEnv= txtValue.substr(2,txtValue.length-1)
+      if (idexeEnv.toUpperCase().indexOf(filter) > -1) {
+        var elt2 = document.getElementById("DropdownMenuexeEnv");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='exeEnvLink' id='exeEnv_"+idexeEnv+"'>"+ idexeEnv +"</a></li>");
+      }
+    }
+    var exeEnvLink = document.getElementsByName("exeEnvLink");
+    for (j = 0; j < exeEnvLink.length; j++) {
+      exeEnvLink[j].addEventListener("click", getexeEnvClick);
+    }
+  });
 
   $("#evaluationInput").keyup(function () {
     var input, filter, ul, li, a, i;
@@ -2642,12 +2655,11 @@ function usedOpeInit() {
     var $list = $("#usedOpeDropdown")
     for (var i = 0; i < p.length; i++) {
       $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' classe='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
-
+      //Add for drop-down menu
       var elt2 = document.getElementById("DropdownMenuusedop");
       elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+p[i].name+"'>"+ p[i].name +"</a></li>");
-      // console.log("123")
-      // console.log(p[i])
     }
+    //click event for drop-down menu
     var usedOpLink = document.getElementsByName("usedOpLink");
     for (j = 0; j < usedOpLink.length; j++) {
       usedOpLink[j].addEventListener("click", getusedOperationClick);
@@ -2665,70 +2677,17 @@ function landmarkersInit(study = 'default') {
     for (var i = 0; i < p.length; i++) {
       if (!optionLandmarkerList.includes(" " + p[i].name)) {
         $list.append("<div class='landmarkerList' style='display: none'> <input type='checkbox' classe='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "'><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
-
+        //Add for drop-down menu
         var elt2 = document.getElementById("DropdownMenulandmarker");
         elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_"+p[i].name+"'>"+ p[i].name +"</a></li>");
-
       }
     }
   }, "json");
+  //click event for drop-down menu
   var landmarkerLink = document.getElementsByName("landmarkerLink");
   for (j = 0; j < landmarkerLink.length; j++) {
     landmarkerLink[j].addEventListener("click", getLandmarkerClick);
   }
-}
-
-function getusedOperationClick(){
-console.log(this.id)
-  var input, filter, ul, li, a, i;
-  input = document.getElementById(this.id);
-
-  filter = input.innerText.toUpperCase();
-  div = document.getElementById("usedOpeDropdown");
-  a = div.getElementsByClassName("usedOpeList");
-  // console.log(a);
-  for (i = 0; i < a.length; i++) {
-    txtValue = a[i].textContent || a[i].innerText;
-    console.log(txtValue)
-    var idisedop= txtValue.substr(1,txtValue.length-1)
-    if (filter===idisedop.toUpperCase()) {
-      console.log("diqnshqngle")
-      console.log(a[i])
-      a[i].style.display = "";
-      var elt = document.getElementById(idisedop)
-      elt.checked = true
-      typeOpe.push(idisedop)
-      console.log(typeOpe);
-    }
-  }
-  $("#processNames").empty();
-  showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-}
-
-function getLandmarkerClick() {
-  // console.log(this.id)
-  var input, filter, ul, li, a, i;
-  input = document.getElementById(this.id);
-
-  filter = input.innerText.toUpperCase();
-  div = document.getElementById("landmarkerDropdown");
-  a = div.getElementsByClassName("landmarkerList");
-  // console.log(landmarkerList);
-  for (i = 0; i < a.length; i++) {
-    txtValue = a[i].textContent || a[i].innerText;
-    var idlandmarker= txtValue.substr(1,txtValue.length-1)
-    if (filter===idlandmarker.toUpperCase()) {
-      console.log("diqnshqngle")
-      a[i].style.display = "";
-      var elt = document.getElementById(idlandmarker)
-      elt.checked = true
-      landmarkerList.push(idlandmarker)
-      console.log(landmarkerList);
-
-    }
-  }
-  $("#analyseNames").empty();
-  showStudies(tagsinput, typeRecherche, landmarkerList);
 }
 
 //function to create a list of filter
@@ -2780,7 +2739,7 @@ function languageProcessInit(tagsinput, language = "", date = "0001-01-01", type
 function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", type = [], execuEnv = []) {
   api.getProcesses(tagsinput, language, date, type, execuEnv).then(p => {
     if (p) {
-      $("#exeEnvDropdown").empty()
+      // $("#exeEnvDropdown").empty()
       var $list2 = $("#exeEnvDropdown");
       var listexeEnv = [];
       console.log(p)
@@ -2789,22 +2748,18 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
         if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
           console.log("meiyou")
            if(p[i].executionEnvironment) {
-            $list2.append($("<div class='exeEnvList'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" +p[i].executionEnvironment + "</label></div>"));
+            $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" +p[i].executionEnvironment + "</label></div>"));
              listexeEnv.push(p[i].executionEnvironment)
-
+             //Add for drop-down menu
              var elt2 = document.getElementById("DropdownMenuexeEnv");
-             console.log(elt2)
              elt2.insertAdjacentHTML('beforeend', "<li><a name='exeEnvLink' id='exeEnv_"+p[i].executionEnvironment+"'>"+ p[i].executionEnvironment +"</a></li>");
-             // console.log("123")
-             // console.log(p[i])
            }
         }
-
       }
+      //Click event for drop-down menu
       var exeEnvLink = document.getElementsByName("exeEnvLink");
       for (j = 0; j < exeEnvLink.length; j++) {
-        // exeEnvLink[j].addEventListener("click", getusedOperationClick);
-        console.log(j)
+        exeEnvLink[j].addEventListener("click", getexeEnvClick);
       }
     }
   }, "json");
@@ -2865,6 +2820,88 @@ function showDatabases(tags, type = 'defaultValue', date = '0001-01-01', quality
         console.log('nb items liste : ' + p.length)
       }
     }, "json");
+}
+
+//Click event with show of check box for execution environment
+function getexeEnvClick(){
+  console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("exeEnvDropdown");
+  a = div.getElementsByClassName("exeEnvList");
+  console.log(a);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    console.log(txtValue)
+    var idexeEnv= txtValue.substr(2,txtValue.length-1)
+    if (filter===idexeEnv.toUpperCase()) {
+      console.log("diqnshqngle")
+      console.log(a[i])
+      a[i].style.display = "";
+      a[i].firstElementChild.checked = true
+      exeEnvList.push(idexeEnv)
+      console.log(exeEnvList);
+    }
+  }
+  $("#processNames").empty();
+  showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+}
+
+//Click event with show of check box for used operation
+function getusedOperationClick(){
+  console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("usedOpeDropdown");
+  a = div.getElementsByClassName("usedOpeList");
+  // console.log(a);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    console.log(txtValue)
+    var idusedop= txtValue.substr(1,txtValue.length-1)
+    if (filter===idusedop.toUpperCase()) {
+      console.log("diqnshqngle")
+      console.log(a[i])
+      a[i].style.display = "";
+      var elt = document.getElementById(idusedop)
+      elt.checked = true
+      typeOpe.push(idusedop)
+      console.log(typeOpe);
+    }
+  }
+  $("#processNames").empty();
+  showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+}
+
+//Click event with show of check box for landmarker
+function getLandmarkerClick() {
+  // console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("landmarkerDropdown");
+  a = div.getElementsByClassName("landmarkerList");
+  // console.log(landmarkerList);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    var idlandmarker= txtValue.substr(1,txtValue.length-1)
+    if (filter===idlandmarker.toUpperCase()) {
+      console.log("diqnshqngle")
+      a[i].style.display = "";
+      var elt = document.getElementById(idlandmarker)
+      elt.checked = true
+      landmarkerList.push(idlandmarker)
+      console.log(landmarkerList);
+
+    }
+  }
+  $("#analyseNames").empty();
+  showStudies(tagsinput, typeRecherche, landmarkerList);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
