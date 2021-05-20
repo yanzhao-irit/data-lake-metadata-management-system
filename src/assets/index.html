@@ -86,12 +86,24 @@
                                 id='pDate' name="pDate" value="0001-01-01">
 
                             <button class="dropbtn" id="usedOpe">Used Operations</button>
+                            <a id="usedOpeClear" style="display: none">Clear Landmarker</a>
                             <div class="dropdown">
-                                <input type="text" placeholder="Search.." id="usedOpeInput" class="dropdown-contente"
-                                    style="display: none">
                                 <div id="usedOpeDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="usedOpeInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu" id="DropdownMenuusedop" style="height:100px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
+
+
+<!--                            <div class="dropdown">-->
+<!--                                <input type="text" placeholder="Search.." id="usedOpeInput" class="dropdown-contente"-->
+<!--                                    style="display: none">-->
+<!--                                <div id="usedOpeDropdown" class="dropdown-content" style="display: none">-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                             <button class="dropbtn" id="exeEnv">Execution Environment</button>
                             <div class="dropdown">
@@ -119,7 +131,8 @@
                         <br />
                         <div id="moreAFilter" style='display: none'>
                             <button class="dropbtn" id="landmarker">Landmarker</button>
-                            <center><button id="landmarkerClear" style="display: none">Clear Landmarker</button></center>
+                            <a id="landmarkerClear" style="display: none">Clear Landmarker</a>
+
                             <div class="dropdown">
                                 <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
                                     <div class="dropdown">

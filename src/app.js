@@ -2235,8 +2235,10 @@ $(function () {
     var display = $('#usedOpeDropdown')[0].style.display;
     if (display === "none") {
       $('#usedOpeDropdown')[0].style.display = "block";
+      document.getElementById("usedOpeClear").style.display = "block"
     } else {
       $('#usedOpeDropdown')[0].style.display = "none";
+      document.getElementById("usedOpeClear").style.display = "none"
     }
     return display;
   });
@@ -2272,6 +2274,17 @@ $(function () {
     $("#analyseNames").empty()
     showStudies(tagsinput, typeRecherche, landmarkerList);
     console.log(landmarkerList)
+  });
+
+  $('#usedOpeClear').on("click", function () {
+    a = div.getElementsByClassName("usedOpeList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    typeOpe = [];
+    $("#processNames").empty()
+    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+    console.log(typeOpe)
   });
 
 
@@ -2344,7 +2357,7 @@ $(function () {
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
         // a[i].style.display = "";
         var idlandmarker= txtValue.substr(1,txtValue.length-1)
-        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='lqnd_"+idlandmarker+"'>"+ idlandmarker +"</a></li>");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_"+idlandmarker+"'>"+ idlandmarker +"</a></li>");
       } /*else {
         a[i].style.display = "none";
       }*/
@@ -2353,6 +2366,34 @@ $(function () {
     var landmarkerLink = document.getElementsByName("landmarkerLink");
     for (j = 0; j < landmarkerLink.length; j++) {
       landmarkerLink[j].addEventListener("click", getLandmarkerClick);
+    }
+  });
+
+  $("#usedOpeInput").keyup(function () {
+    var elt2 = document.getElementById("DropdownMenuusedop");
+    //elt2.insertAdjacentHTML('beforeend', "<li><a>123</a></li>");
+    elt2.innerText=""
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("usedOpeInput");
+    filter = input.value.toUpperCase();
+    div = document.getElementById("usedOpeDropdown");
+    a = div.getElementsByClassName("usedOpeList");
+    console.log(filter)
+    for (i = 0; i < a.length; i++) {
+      txtValue = a[i].textContent || a[i].innerText;
+      console.log("tttttttttttttttttttt")
+      var idisedop= txtValue.substr(1,txtValue.length-1)
+      if (idisedop.toUpperCase().indexOf(filter) > -1) {
+        // a[i].style.display = "";
+
+        var elt2 = document.getElementById("DropdownMenuusedop");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+idisedop+"'>"+ idisedop +"</a></li>");
+      }
+    }
+
+    var usedOpLink = document.getElementsByName("usedOpLink");
+    for (j = 0; j < usedOpLink.length; j++) {
+      usedOpLink[j].addEventListener("click", getusedOperationClick);
     }
   });
 
@@ -2585,9 +2626,19 @@ function usedOpeInit() {
   api.getOperations().then(p => {
     var $list = $("#usedOpeDropdown")
     for (var i = 0; i < p.length; i++) {
-      $list.append("<div class='usedOpeList'> <input type='checkbox' classe='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "' '><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
+      $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' classe='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
+
+      var elt2 = document.getElementById("DropdownMenuusedop");
+      elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+p[i].name+"'>"+ p[i].name +"</a></li>");
+      console.log("123")
+      console.log(p[i])
+    }
+    var usedOpLink = document.getElementsByName("usedOpLink");
+    for (j = 0; j < usedOpLink.length; j++) {
+      usedOpLink[j].addEventListener("click", getusedOperationClick);
     }
   }, "json");
+
 }
 
 //function to create a list of filter
@@ -2601,7 +2652,7 @@ function landmarkersInit(study = 'default') {
         $list.append("<div class='landmarkerList' style='display: none'> <input type='checkbox' classe='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "'><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
 
         var elt2 = document.getElementById("DropdownMenulandmarker");
-        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='lqnd_"+p[i].name+"'>"+ p[i].name +"</a></li>");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_"+p[i].name+"'>"+ p[i].name +"</a></li>");
 
       }
     }
@@ -2610,6 +2661,33 @@ function landmarkersInit(study = 'default') {
   for (j = 0; j < landmarkerLink.length; j++) {
     landmarkerLink[j].addEventListener("click", getLandmarkerClick);
   }
+}
+
+function getusedOperationClick(){
+console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("usedOpeDropdown");
+  a = div.getElementsByClassName("usedOpeList");
+  // console.log(a);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    console.log(txtValue)
+    var idisedop= txtValue.substr(1,txtValue.length-1)
+    if (filter===idisedop.toUpperCase()) {
+      console.log("diqnshqngle")
+      console.log(a[i])
+      a[i].style.display = "";
+      var elt = document.getElementById(idisedop)
+      elt.checked = true
+      typeOpe.push(idisedop)
+      console.log(typeOpe);
+    }
+  }
+  $("#processNames").empty();
+  showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
 }
 
 function getLandmarkerClick() {
