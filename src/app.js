@@ -2824,25 +2824,24 @@ function showDatabases(tags, type = 'defaultValue', date = '0001-01-01', quality
 
 //Click event with show of check box for execution environment
 function getexeEnvClick(){
-  console.log(this.id)
+  // console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
-
   filter = input.innerText.toUpperCase();
   div = document.getElementById("exeEnvDropdown");
   a = div.getElementsByClassName("exeEnvList");
-  console.log(a);
+  // console.log(a);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
-    console.log(txtValue)
+    // console.log(txtValue)
     var idexeEnv= txtValue.substr(2,txtValue.length-1)
     if (filter===idexeEnv.toUpperCase()) {
-      console.log("diqnshqngle")
-      console.log(a[i])
+      // console.log("diqnshqngle")
+      // console.log(a[i])
       a[i].style.display = "";
       a[i].firstElementChild.checked = true
       exeEnvList.push(idexeEnv)
-      console.log(exeEnvList);
+      // console.log(exeEnvList);
     }
   }
   $("#processNames").empty();
@@ -2861,11 +2860,11 @@ function getusedOperationClick(){
   // console.log(a);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
-    console.log(txtValue)
+    // console.log(txtValue)
     var idusedop= txtValue.substr(1,txtValue.length-1)
     if (filter===idusedop.toUpperCase()) {
-      console.log("diqnshqngle")
-      console.log(a[i])
+      /*console.log("diqnshqngle")
+      console.log(a[i])*/
       a[i].style.display = "";
       var elt = document.getElementById(idusedop)
       elt.checked = true
@@ -2882,7 +2881,6 @@ function getLandmarkerClick() {
   // console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
-
   filter = input.innerText.toUpperCase();
   div = document.getElementById("landmarkerDropdown");
   a = div.getElementsByClassName("landmarkerList");
@@ -2891,13 +2889,12 @@ function getLandmarkerClick() {
     txtValue = a[i].textContent || a[i].innerText;
     var idlandmarker= txtValue.substr(1,txtValue.length-1)
     if (filter===idlandmarker.toUpperCase()) {
-      console.log("diqnshqngle")
+      // console.log("diqnshqngle")
       a[i].style.display = "";
       var elt = document.getElementById(idlandmarker)
       elt.checked = true
       landmarkerList.push(idlandmarker)
       console.log(landmarkerList);
-
     }
   }
   $("#analyseNames").empty();
