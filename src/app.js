@@ -2243,14 +2243,38 @@ $(function () {
     return display;
   });
 
+  $('#usedOpeClear').on("click", function () {
+    a = div.getElementsByClassName("usedOpeList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    typeOpe = [];
+    $("#processNames").empty()
+    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+    console.log(typeOpe)
+  });
+
   $('#exeEnv').on("click", function () {
     var display = $('#exeEnvDropdown')[0].style.display;
     if (display === "none") {
       $('#exeEnvDropdown')[0].style.display = "block";
+      document.getElementById("exeEnvClear").style.display = "block"
     } else {
       $('#exeEnvDropdown')[0].style.display = "none";
+      document.getElementById("exeEnvClear").style.display = "none"
     }
     return display;
+  });
+
+  $('#exeEnvClear').on("click", function () {
+    a = div.getElementsByClassName("exeEnvList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    exeEnvList = [];
+    $("#processNames").empty()
+    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+    console.log(exeEnvList)
   });
 
   $('#landmarker').on("click", function () {
@@ -2276,16 +2300,7 @@ $(function () {
     console.log(landmarkerList)
   });
 
-  $('#usedOpeClear').on("click", function () {
-    a = div.getElementsByClassName("usedOpeList");
-    for (i = 0; i < a.length; i++) {
-      a[i].style.display = "none";
-    }
-    typeOpe = [];
-    $("#processNames").empty()
-    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-    console.log(typeOpe)
-  });
+
 
 
   $('#parameter').on("click", function () {
@@ -2630,8 +2645,8 @@ function usedOpeInit() {
 
       var elt2 = document.getElementById("DropdownMenuusedop");
       elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_"+p[i].name+"'>"+ p[i].name +"</a></li>");
-      console.log("123")
-      console.log(p[i])
+      // console.log("123")
+      // console.log(p[i])
     }
     var usedOpLink = document.getElementsByName("usedOpLink");
     for (j = 0; j < usedOpLink.length; j++) {
@@ -2768,13 +2783,28 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
       $("#exeEnvDropdown").empty()
       var $list2 = $("#exeEnvDropdown");
       var listexeEnv = [];
+      console.log(p)
       for (var i = 0; i < p.length; i++) {
+
         if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
-          if(p[i].programLanguage) {
-            $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].programLanguage + " ' id='" + p[i].programLanguage + "'> <label for='language" + p[i].programLanguage + "'>" + p[i].programLanguage + "</label></div>"));
-            listLanguage.push(p[i].programLanguage)
-          }
+          console.log("meiyou")
+           if(p[i].executionEnvironment) {
+            $list2.append($("<div class='exeEnvList'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" +p[i].executionEnvironment + "</label></div>"));
+             listexeEnv.push(p[i].executionEnvironment)
+
+             var elt2 = document.getElementById("DropdownMenuexeEnv");
+             console.log(elt2)
+             elt2.insertAdjacentHTML('beforeend', "<li><a name='exeEnvLink' id='exeEnv_"+p[i].executionEnvironment+"'>"+ p[i].executionEnvironment +"</a></li>");
+             // console.log("123")
+             // console.log(p[i])
+           }
         }
+
+      }
+      var exeEnvLink = document.getElementsByName("exeEnvLink");
+      for (j = 0; j < exeEnvLink.length; j++) {
+        // exeEnvLink[j].addEventListener("click", getusedOperationClick);
+        console.log(j)
       }
     }
   }, "json");

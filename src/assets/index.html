@@ -86,7 +86,7 @@
                                 id='pDate' name="pDate" value="0001-01-01">
 
                             <button class="dropbtn" id="usedOpe">Used Operations</button>
-                            <a id="usedOpeClear" style="display: none">Clear Landmarker</a>
+                            <a id="usedOpeClear" style="display: none">Clear Used Operations</a>
                             <div class="dropdown">
                                 <div id="usedOpeDropdown" class="dropdown-content" style="display: none">
                                     <div class="dropdown">
@@ -97,21 +97,19 @@
                                 </div>
                             </div>
 
-
-<!--                            <div class="dropdown">-->
-<!--                                <input type="text" placeholder="Search.." id="usedOpeInput" class="dropdown-contente"-->
-<!--                                    style="display: none">-->
-<!--                                <div id="usedOpeDropdown" class="dropdown-content" style="display: none">-->
-<!--                                </div>-->
-<!--                            </div>-->
-
                             <button class="dropbtn" id="exeEnv">Execution Environment</button>
+                            <a id="exeEnvClear" style="display: none">Clear Execution Environment</a>
                             <div class="dropdown">
-                                <input type="text" placeholder="Search.." id="exeEnvInput" class="dropdown-contente"
-                                    style="display: none">
                                 <div id="exeEnvDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="exeEnvInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu" id="DropdownMenuexeEnv" style="height:100px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
+
+
 
                         </div>
                         <a id='moreP'>more</a>
