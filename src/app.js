@@ -1430,6 +1430,8 @@ $(function () {
               $listContent = $('#relationshipAttContent')
               for (var i = 0; i < p.length; i++) {
                 relationlist.push(p[i].name)
+                console.log("ttttttttttttttt")
+                console.log(p[i].name)
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
                 $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
@@ -2571,21 +2573,26 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
         console.log('Promise finit : ' + mapRelationAttDS.size);
         var valueMin = Math.min(...mapRelationAttDS.values())
         var valueMax = Math.max(...mapRelationAttDS.values())
-        for (var [key, value] of mapRelationAttDS) {
-          console.log('HashMap : ' + key + ' = ' + value)
-          $listBody = $('#dataset_' + key.split('&')[2])
-          if (value) {
-            if (value == valueMin) {
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
+
+        var arrayObj=Array.from(mapRelationAttDS);
+        arrayObj.sort(function(a,b){return b[1]-a[1]})
+        for (var i=0; i<arrayObj.length; i++){
+          $listBody = $('#dataset_' + arrayObj[i][0].split('&')[2])
+          console.log(arrayObj[i][0].split('&')[2])
+          if (arrayObj[i][1]) {
+            if (arrayObj[i][1] == valueMin) {
+              $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : red">' + arrayObj[i][1] + '</span></p>')
             } else {
-              if (value == valueMax) {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+              if (arrayObj[i][1] == valueMax) {
+                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : green">' + arrayObj[i][1] + '</span></p>')
               } else {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : ' + arrayObj[i][1] + '</p>')
               }
             }
           }
         }
+
+
       });
     }, 'json')
 }
@@ -2628,19 +2635,21 @@ async function getAnalyseOfRelationship(id, relationlist) {
         console.log('Promise finit : ' + mapRelationAtt.size);
         console.log(mapRelationAtt.values())
         var valueMin = Math.min(...mapRelationAtt.values());
-        var valueMax = Math.max(...mapRelationAtt.values())
+        var valueMax = Math.max(...mapRelationAtt.values());
         console.log(valueMin + ' ||| ' + valueMax)
-        for (var [key, value] of mapRelationAtt) {
-          //console.log('HashMap : ' + key + ' = ' + value)
-          $listBody = $('#attribute_' + key.split('&')[2])
-          if (value) {
-            if (value == valueMin) {
-              $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : red">' + value + '</span></p>')
+        var arrayObj=Array.from(mapRelationAtt);
+        arrayObj.sort(function(a,b){return b[1]-a[1]})
+        for (var i=0; i<arrayObj.length; i++){
+          $listBody = $('#attribute_' + arrayObj[i][0].split('&')[2])
+          console.log(arrayObj[i][0].split('&')[2])
+          if (arrayObj[i][1]) {
+            if (arrayObj[i][1] == valueMin) {
+              $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : red">' + arrayObj[i][1] + '</span></p>')
             } else {
-              if (value == valueMax) {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : <span style="color : green">' + value + '</span></p>')
+              if (arrayObj[i][1] == valueMax) {
+                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : green">' + arrayObj[i][1] + '</span></p>')
               } else {
-                $listBody.append('<p>' + key.split('&')[0] + ' - ' + key.split('&')[1] + ' : ' + value + '</p>')
+                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : ' + arrayObj[i][1] + '</p>')
               }
             }
           }
