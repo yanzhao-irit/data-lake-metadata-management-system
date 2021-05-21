@@ -1126,7 +1126,7 @@ $(function () {
         network.body.emitter.emit('_dataChanged')
         network.fit()
         network.redraw()
-        
+
       })
 
       //Show the table of process
@@ -1410,7 +1410,6 @@ $(function () {
                     <tbody id='dataset_` + p[i].name + `'><tbody>
                     </table>
                 </div>`)
-
               }
               for (var i = 0; i < relationlist.length; i++) {
                 //for each relation get dataset and relation value
@@ -1438,12 +1437,19 @@ $(function () {
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>
+                    <div id='viz5_` + p[i].name + `'>ppp</div>
                 </div>`)
               }
+
               for (var i = 0; i < relationlist.length; i++) {
                 getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlist[i]);
+                console.log("444444")
+                console.log($(this).attr('id').split('$')[2])
+                console.log()
               }
             }, 'json')
+
+
 
           $('#similarityResult').empty()
 
@@ -1735,7 +1741,6 @@ $(function () {
             $('#operationButton')[0].style.display = 'none';
             $('#similarityButton')[0].style.display = 'none';
 
-
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             $('#attributeList').empty()
@@ -1819,6 +1824,7 @@ $(function () {
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>
+                    <div id='viz5_` + p[i].name + `'>ppp</div>
                 </div>`)
                 }
                 for (var i = 0; i < relationlist.length; i++) {
@@ -2481,6 +2487,7 @@ $(function () {
     console.log(omNames.value)
     showStudies(tagsinput, typeRecherche, landmarkerList, algoNames.value, omNames.value)
   });
+
 });
 
 async function showSimilarity() {
@@ -2573,7 +2580,6 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
         console.log('Promise finit : ' + mapRelationAttDS.size);
         var valueMin = Math.min(...mapRelationAttDS.values())
         var valueMax = Math.max(...mapRelationAttDS.values())
-
         var arrayObj=Array.from(mapRelationAttDS);
         arrayObj.sort(function(a,b){return b[1]-a[1]})
         for (var i=0; i<arrayObj.length; i++){
@@ -2581,18 +2587,16 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
           console.log(arrayObj[i][0].split('&')[2])
           if (arrayObj[i][1]) {
             if (arrayObj[i][1] == valueMin) {
-              $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : red">' + arrayObj[i][1] + '</span></p>')
+              $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : red">' + arrayObj[i][1] + '</span></td></tr>')
             } else {
               if (arrayObj[i][1] == valueMax) {
-                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : green">' + arrayObj[i][1] + '</span></p>')
+                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : green">' + arrayObj[i][1] + '</span></td></tr>')
               } else {
-                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : ' + arrayObj[i][1] + '</p>')
+                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td>' + arrayObj[i][1] + '</td></tr>')
               }
             }
           }
         }
-
-
       });
     }, 'json')
 }
@@ -2623,6 +2627,7 @@ async function getAnalyseOfRelationship(id, relationlist) {
     .getRelationshipAttribute(id, '', 'analyse', relationlist)
     .then(p => {
       $listBody = $('#attribute_' + relationlist)
+
       for (var i = 0; i < p.length; i++) {
         for (var j = i; j < p.length; j++) {
           if (p[j].name != p[i].name) {
@@ -2639,22 +2644,25 @@ async function getAnalyseOfRelationship(id, relationlist) {
         console.log(valueMin + ' ||| ' + valueMax)
         var arrayObj=Array.from(mapRelationAtt);
         arrayObj.sort(function(a,b){return b[1]-a[1]})
+        var typeRelation
         for (var i=0; i<arrayObj.length; i++){
           $listBody = $('#attribute_' + arrayObj[i][0].split('&')[2])
-          console.log(arrayObj[i][0].split('&')[2])
+          $vizBody = $('#viz5_' + arrayObj[i][0].split('&')[2])
+          typeRelation = arrayObj[i][0].split('&')[2]
           if (arrayObj[i][1]) {
             if (arrayObj[i][1] == valueMin) {
-              $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : red">' + arrayObj[i][1] + '</span></p>')
+              $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : red">' + arrayObj[i][1] + '</span></td></tr>')
             } else {
               if (arrayObj[i][1] == valueMax) {
-                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : <span style="color : green">' + arrayObj[i][1] + '</span></p>')
+                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : green">' + arrayObj[i][1] + '</span></td></tr>')
               } else {
-                $listBody.append('<p>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : ' + arrayObj[i][1] + '</p>')
+                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td>' + arrayObj[i][1] + '</td></tr>')
               }
             }
           }
         }
       });
+
     }, 'json')
 }
 
@@ -2908,6 +2916,11 @@ function getLandmarkerClick() {
   }
   $("#analyseNames").empty();
   showStudies(tagsinput, typeRecherche, landmarkerList);
+}
+
+
+function test(){
+ console.log("reussièèèèèèèèèèèèèèèèèèèèèèèèèè")
 }
 
 document.addEventListener("DOMContentLoaded", () => {
