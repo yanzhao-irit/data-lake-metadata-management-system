@@ -94,7 +94,7 @@
                                     <div class="dropdown">
                                         <input type="text" placeholder="Search.." id="usedOpeInput"
                                                class="dropdown-contente" data-toggle="dropdown">
-                                        <ul class="dropdown-menu" id="DropdownMenuusedop" style="height:100px;width:270px;overflow:scroll"></ul>
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuusedop" style="height:100px;width:270px;overflow:scroll"></ul>
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
                                     <div class="dropdown">
                                         <input type="text" placeholder="Search.." id="exeEnvInput"
                                                class="dropdown-contente" data-toggle="dropdown">
-                                        <ul class="dropdown-menu" id="DropdownMenuexeEnv" style="height:100px;width:270px;overflow:scroll"></ul>
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuexeEnv" style="height:100px;width:270px;overflow:scroll"></ul>
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                     <div class="dropdown">
                                         <input type="text" placeholder="Search.." id="landmarkerInput"
                                             class="dropdown-contente" data-toggle="dropdown">
-                                        <ul class="dropdown-menu" id="DropdownMenulandmarker" style="height:100px;width:270px;overflow:scroll"></ul>
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenulandmarker" style="height:100px;width:270px;overflow:scroll"></ul>
                                     </div>
                                 </div>
                             </div>
@@ -153,21 +153,47 @@
                             <input type="checkbox" class="algotype" id="algoReinforcement"
                                 name="algoReinforcement"><label for="algoReinforcement">Reinforcement</label>
                             <br />
+
+<!--                            <button class="dropbtn" id="parameter">Parameter</button>-->
+<!--                            <div class="dropdown">-->
+<!--                                <div id="parameterDropdown" class="dropdown-content" style="display: none">-->
+<!--                                    <input type="text" placeholder="Search.." id="parameterInput"-->
+<!--                                        class="dropdown-content">-->
+<!--                                </div>-->
+<!--                            </div>-->
                             <button class="dropbtn" id="parameter">Parameter</button>
+                            <a id="parameterClear" style="display: none">Clear Parameter</a>
+
                             <div class="dropdown">
                                 <div id="parameterDropdown" class="dropdown-content" style="display: none">
-                                    <input type="text" placeholder="Search.." id="parameterInput"
-                                        class="dropdown-content">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="parameterInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuparameter" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
+
                             <!-- <label for='omNames'>Output Model : </label><input type='text' class='omInputNames'
                                 id='omNames' name="omNames">
                             <br /> -->
-                            <button class="dropbtn" id="evaluation">Evaluation</button>
+                            <!--<button class="dropbtn" id="evaluation">Evaluation</button>
                             <div class="dropdown">
                                 <div id="evaluationDropdown" class="dropdown-content" style="display: none">
                                     <input type="text" placeholder="Search.." id="evaluationInput"
                                         class="dropdown-content">
+                                </div>
+                            </div>-->
+                            <button class="dropbtn" id="evaluation">Evaluation</button>
+                            <a id="evaluationClear" style="display: none">Clear Evaluation</a>
+
+                            <div class="dropdown">
+                                <div id="evaluationDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="evaluationInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuevaluation" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -278,24 +304,26 @@
                                 <div id='RelationshipDS'>
                                     <ul class="nav nav-tabs" id='relationshipOnglet'></ul>
                                     <div class="tab-content" id='relationshipContent'></div>
+                                    <div id="viz4" style="display: none"></div>
                                 </div>
-                                <div id="viz4"></div>
+<!--                                <div id="viz4"></div>-->
 
                             </div>
 
                         </div>
                         <div id="viz5_attribute" class="tab-pane fade">
+
                             <div class='col-m-4'>
 
                                 <div id='RelationshipAtt' >
+
                                     <ul class="nav nav-tabs" id='relationshipAttOnglet'></ul>
                                     <div class="tab-content" id='relationshipAttContent'></div>
-
+                                    <div id="viz5" style="display: none"></div>
                                 </div>
-                                <div id="viz7"></div>
-                                <div id="viz5"></div>
 
                             </div>
+
                         </div>
                         <div id="similarity" class="tab-pane fade">
                             <i>* : Similarity use <a

@@ -23,6 +23,8 @@ var graphList = [];
 var similarityGraph = []
 var betweennessGraph = []
 var tagsinput =[]
+var trans="";
+var datasetChosed = []
 
 var options = {
   autoResize: true,
@@ -1403,7 +1405,7 @@ $(function () {
               //Create tabs for each relation
               for (var i = 0; i < p.length; i++) {
                 relationlist.push(p[i].name)
-                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
                 $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
@@ -1415,37 +1417,53 @@ $(function () {
                 //for each relation get dataset and relation value
                 getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
               }
+              for (var j = 0; j < relationlist.length; j++) {
+                /*console.log(j)
+                console.log(relationlistAtt[j])
+                console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                datasetChosed =[$(this).attr('id').split('$')[1],$(this).attr('id').split('$')[2]]
+                /*console.log(datasetChosed[0])
+                console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
+                console.log(datasetChosed[1])*/
+                document.getElementById("a_"+relationlist[j]).addEventListener("click",getGrapheViz4Init)
+              }
             }, 'json')
 
           //same for the attribute
-          var relationlist = []
           $('#relationshipAttOnglet').empty()
           $('#relationshipAttContent').empty()
           api
             .getRelationshipAttribute($(this).attr('id').split('$')[2], '', 'relation')
             .then(p => {
-              console.log(p)
+              var relationlistAtt = []
+              // console.log(p)
               $listTab = $('#relationshipAttOnglet')
               $listContent = $('#relationshipAttContent')
               for (var i = 0; i < p.length; i++) {
-                relationlist.push(p[i].name)
-                console.log("ttttttttttttttt")
+                relationlistAtt.push(p[i].name)
+                // console.log("ttttttttttttttt")
                 console.log(p[i].name)
-                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+                /*console.log("je sais pas")
+                console.log(p[i].name)*/
                 $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
-                    </table>
-                    <div id='viz5_` + p[i].name + `'>ppp</div>
+                    </table>                
                 </div>`)
               }
 
-              for (var i = 0; i < relationlist.length; i++) {
-                getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlist[i]);
-                console.log("444444")
-                console.log($(this).attr('id').split('$')[2])
-                console.log()
+              for (var i = 0; i < relationlistAtt.length; i++) {
+                // console.log(relationlistAtt[i])
+                getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlistAtt[i]);
+              }
+              for (var j = 0; j < relationlistAtt.length; j++) {
+                /*console.log(j)
+                console.log(relationlistAtt[j])
+                console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                trans =$(this).attr('id').split('$')[2]
+                document.getElementById("a_"+relationlistAtt[j]).addEventListener("click",getGrapheViz5Init)
               }
             }, 'json')
 
@@ -1665,18 +1683,20 @@ $(function () {
             network.redraw();
             network.fit();
           })
-          //query4 for dataset relationship
+          /*//query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
           WHERE dl.name CONTAINS '`+ $(this).attr('id').split('$')[1] + `' and dl.uuid = '` + $(this).attr('id').split('$')[2] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
-          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`*/
           //query5 for attribute relationship
-          query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+          /*query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
             WHERE dl.uuid = '` + $(this).attr('id').split('$')[2] + `'
             AND
             (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)
             RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+          console.log("query5")
+          console.log(query5)
           api.getGraph(query5).then(p => {
             // create an array with nodes
             var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -1693,7 +1713,7 @@ $(function () {
             network.body.emitter.emit('_dataChanged')
             network.redraw()
             network.fit()
-          })
+          })*/
           console.log(query2)
           api.getGraph(query2).then(p => {
             // create an array with nodes
@@ -1712,7 +1732,9 @@ $(function () {
             network.redraw()
             network.fit()
           })
-          api.getGraph(query4).then(p => {
+          /*console.log("QQQQQQQQQQQ4")
+          console.log(query4)*/
+          /*api.getGraph(query4).then(p => {
             // create an array with nodes
             var nodes = new vis.DataSet(p[p.length - 1][0]);
             // create an array with edges
@@ -1729,7 +1751,7 @@ $(function () {
             network.body.emitter.emit('_dataChanged')
             network.redraw()
             network.fit()
-          })
+          })*/
 
           setTimeout(() => { $("#dbNames").closest(".collapse").collapse('show') }, 500);
 
@@ -1807,28 +1829,37 @@ $(function () {
 
 
             //Part for the relationship between attribute
-            var relationlist = []
+
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             api
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
+                var relationlistAtt = []
                 console.log(p)
                 $listTab = $('#relationshipAttOnglet')
                 $listContent = $('#relationshipAttContent')
                 for (var i = 0; i < p.length; i++) {
-                  relationlist.push(p[i].name)
-                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '">' + p[i].name + '</a></li>')
+                  relationlistAtt.push(p[i].name)
+                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+
                   $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>
-                    <div id='viz5_` + p[i].name + `'>ppp</div>
                 </div>`)
                 }
-                for (var i = 0; i < relationlist.length; i++) {
-                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlist[i]);
+                for (var i = 0; i < relationlistAtt.length; i++) {
+                  console.log($(this).attr('id').split('$')[1])
+                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
+                }
+                for (var j = 0; j < relationlistAtt.length; j++) {
+                  /*console.log(j)
+                  console.log(relationlistAtt[j])
+                  console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                  trans =$(this).attr('id').split('$')[1]
+                  document.getElementById("a_"+relationlistAtt[j]).addEventListener("click",getGrapheViz5Init)
                 }
               }, 'json')
 
@@ -2008,7 +2039,7 @@ $(function () {
             WITH a,s,em,me,ld,r1,r2,r3,r4
             OPTIONAL MATCH (a)-[r5:hasImplementation]->(i:Implementation)-[r6:usesAlgo]->(al:AlgoSupervised),(i)-[r7:hasParameterSetting]->(ps:ParameterSetting)<-[r8:hasParameterValue]-(p:Parameter)<-[r9:hasParameter]-(i)
             RETURN a,s,me,em,ld,i,al,p,ps,r1,r2,r3,r4,r5,r6,r7,r8,r9`
-            query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+            /*query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
             WHERE dl.uuid = '` + $(this).attr('id').split('$')[1] + `'
             AND
             (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)
@@ -2030,7 +2061,7 @@ $(function () {
               network.body.emitter.emit('_dataChanged')
               network.redraw()
               network.fit()
-            })
+            })*/
             api.getGraph(query2).then(p => {
               // create an array with nodes
               var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -2316,20 +2347,46 @@ $(function () {
     var display = $('#parameterDropdown')[0].style.display;
     if (display === "none") {
       $('#parameterDropdown')[0].style.display = "block";
+      document.getElementById("parameterClear").style.display = "block"
     } else {
       $('#parameterDropdown')[0].style.display = "none";
+      document.getElementById("parameterClear").style.display = "none"
     }
     return display;
+  });
+  //for clear the chosed parameter
+  $('#parameterClear').on("click", function () {
+    a = div.getElementsByClassName("parameterList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    /*parameterList = [];
+    $("#analyseNames").empty()
+    showStudies(tagsinput, typeRecherche, parameterList);
+    console.log(parameterList)*/
   });
 
   $('#evaluation').on("click", function () {
     var display = $('#evaluationDropdown')[0].style.display;
     if (display === "none") {
       $('#evaluationDropdown')[0].style.display = "block";
+      document.getElementById("evaluationClear").style.display = "block"
     } else {
       $('#evaluationDropdown')[0].style.display = "none";
+      document.getElementById("evaluationClear").style.display = "none"
     }
     return display;
+  });
+  //for clear the chosed parameter
+  $('#evaluationClear').on("click", function () {
+    a = div.getElementsByClassName("evaluationList");
+    for (i = 0; i < a.length; i++) {
+      a[i].style.display = "none";
+    }
+    /*evaluationrList = [];
+    $("#analyseNames").empty()
+    showStudies(tagsinput, typeRecherche, evaluationList);
+    console.log(evaluationList)*/
   });
 
   //Event to search a specific filter within a list filter
@@ -2435,7 +2492,9 @@ $(function () {
   });
 
   $("#evaluationInput").keyup(function () {
-    var input, filter, ul, li, a, i;
+    var elt2 = document.getElementById("DropdownMenuevaluation");
+    elt2.innerText=""
+    var input, filter, a, i;
     input = document.getElementById("evaluationInput");
     filter = input.value.toUpperCase();
     div = document.getElementById("evaluationDropdown");
@@ -2443,15 +2502,20 @@ $(function () {
     for (i = 0; i < a.length; i++) {
       txtValue = a[i].textContent || a[i].innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        a[i].style.display = "";
-      } else {
-        a[i].style.display = "none";
+        var idevaluation= txtValue.substr(1,txtValue.length-1)
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='evaluationLink' id='evaluation_"+idevaluation+"'>"+ idevaluation +"</a></li>");
       }
+    }
+    var evaluationLink = document.getElementsByName("evaluationLink");
+    for (j = 0; j < evaluationLink.length; j++) {
+      evaluationLink[j].addEventListener("click", getEvaluationClick);
     }
   });
 
   $("#parameterInput").keyup(function () {
-    var input, filter, ul, li, a, i;
+    var elt2 = document.getElementById("DropdownMenuparameter");
+    elt2.innerText=""
+    var input, filter, a, i;
     input = document.getElementById("parameterInput");
     filter = input.value.toUpperCase();
     div = document.getElementById("parameterDropdown");
@@ -2459,11 +2523,15 @@ $(function () {
     for (i = 0; i < a.length; i++) {
       txtValue = a[i].textContent || a[i].innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        a[i].style.display = "";
-      } else {
-        a[i].style.display = "none";
+        var idparameter= txtValue.substr(1,txtValue.length-1)
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='parameterLink' id='parameter_"+idparameter+"'>"+ idparameter +"</a></li>");
       }
     }
+    var parameterLink = document.getElementsByName("parameterLink");
+    for (j = 0; j < parameterLink.length; j++) {
+      parameterLink[j].addEventListener("click", getParameterClick);
+    }
+
   });
 
   //Event to search within result of dataset or studies a specific entity linked to them
@@ -2582,9 +2650,11 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
         var valueMax = Math.max(...mapRelationAttDS.values())
         var arrayObj=Array.from(mapRelationAttDS);
         arrayObj.sort(function(a,b){return b[1]-a[1]})
+        var typerelationshipDS=""
         for (var i=0; i<arrayObj.length; i++){
           $listBody = $('#dataset_' + arrayObj[i][0].split('&')[2])
           console.log(arrayObj[i][0].split('&')[2])
+          typerelationshipDS = arrayObj[i][0].split('&')[2]
           if (arrayObj[i][1]) {
             if (arrayObj[i][1] == valueMin) {
               $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : red">' + arrayObj[i][1] + '</span></td></tr>')
@@ -2597,8 +2667,42 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
             }
           }
         }
+        $rangeBody = $('#' + typerelationshipDS)
+        $rangeBody.append("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typerelationshipDS +"'></span></p><input type='range' id='r_"+ typerelationshipDS +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
+        document.getElementById('r_'+typerelationshipDS).addEventListener("change",getGrapheViz4Seuil)
       });
     }, 'json')
+}
+
+function getGrapheViz4Seuil() {
+  console.log(this.id.substring(2))
+  var value = this.value ;
+  document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
+
+  query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+          WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
+          AND
+          (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)<=toFloat(`+value +`)
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+  console.log(query4)
+  api.getGraph(query4).then(p => {
+    console.log(p)
+    // create an array with nodes
+    var nodes = new vis.DataSet(p[p.length - 1][0]);
+    // create an array with edges
+    var edges = new vis.DataSet(p[p.length - 1][1]);
+    console.log(edges)
+    // create a network
+    var container = document.getElementById("viz4");
+    var data = {
+      nodes: nodes,
+      edges: edges,
+    };
+    var network = new vis.Network(container, data, options);
+    network.body.emitter.emit('_dataChanged')
+    network.redraw()
+    network.fit()
+  })
 }
 
 //Function to get relationship value between two attribute
@@ -2647,7 +2751,6 @@ async function getAnalyseOfRelationship(id, relationlist) {
         var typeRelation
         for (var i=0; i<arrayObj.length; i++){
           $listBody = $('#attribute_' + arrayObj[i][0].split('&')[2])
-          $vizBody = $('#viz5_' + arrayObj[i][0].split('&')[2])
           typeRelation = arrayObj[i][0].split('&')[2]
           if (arrayObj[i][1]) {
             if (arrayObj[i][1] == valueMin) {
@@ -2661,9 +2764,41 @@ async function getAnalyseOfRelationship(id, relationlist) {
             }
           }
         }
+        $rangeBody = $('#' + typeRelation)
+        $rangeBody.append("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typeRelation +"'></span></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
+        document.getElementById('r_'+typeRelation).addEventListener("change",getGrapheViz5Seuil)
+        // console.log(document.getElementById('range_'+typeRelation))
       });
-
     }, 'json')
+}
+
+function getGrapheViz5Seuil() {
+  console.log(this.id.substring(2))
+  console.log(trans)
+  var value = this.value ;
+  document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
+  query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and toFloat(AA.value)<=toFloat(`+value +`)
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  api.getGraph(query5).then(p => {
+    // create an array with nodes
+    var nodes = new vis.DataSet(p[p.length - 1][0]);
+    // create an array with edges
+    var edges = new vis.DataSet(p[p.length - 1][1]);
+
+    // create a network
+    var container = document.getElementById("viz5");
+    var data = {
+      nodes: nodes,
+      edges: edges,
+    };
+    var network = new vis.Network(container, data, options);
+    network.body.emitter.emit('_dataChanged')
+    network.redraw()
+    network.fit()
+  })
 }
 
 //function to create a list of filter
@@ -2714,10 +2849,19 @@ function parameterInit(study = 'default') {
     var $list = $("#parameterDropdown")
     for (var i = 0; i < p.length; i++) {
       if (!optionParameterList.includes(" " + p[i].name)) {
-        $list.append("<div class='parameterList'> <input type='checkbox' classe='parameter' name='parameter$" + p[i].name + "' id='" + p[i].name + "' '><label for='parameter$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='parameterList' style='display: none'> <input type='checkbox' classe='parameter' name='parameter$" + p[i].name + "' id='" + p[i].name + "' '><label for='parameter$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        //Add for drop-down menu
+        var elt2 = document.getElementById("DropdownMenuparameter");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='parameterLink' id='parameter_"+p[i].name+"'>"+ p[i].name +"</a></li>");
       }
     }
   }, "json");
+  // click event for drop-down menu
+  var parameterLink = document.getElementsByName("parameterLink");
+  for (j = 0; j < parameterLink.length; j++) {
+    console.log(j)
+    parameterLink[j].addEventListener("click", getParameterClick);
+  }
 }
 
 //function to create a list of filter
@@ -2728,9 +2872,18 @@ function evaluationInit(study = 'default') {
     for (var i = 0; i < p.length; i++) {
       if (!optionEvaluationList.includes(" " + p[i].name)) {
         $list.append("<div class='evaluationList'> <input type='checkbox' classe='evaluation' name='evaluation$" + p[i].name + "' id='" + p[i].name + "' '><label for='evaluation$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        //Add for drop-down menu
+        var elt2 = document.getElementById("DropdownMenuevaluation");
+        elt2.insertAdjacentHTML('beforeend', "<li><a name='evaluationLink' id='evaluation_"+p[i].name+"'>"+ p[i].name +"</a></li>");
       }
     }
   }, "json");
+  // click event for drop-down menu
+  var evaluationLink = document.getElementsByName("evaluationLink");
+  for (j = 0; j < evaluationLink.length; j++) {
+    // console.log(j)
+    evaluationLink[j].addEventListener("click", getEvaluationClick);
+  }
 }
 
 //function to create a list of filter
@@ -2763,7 +2916,7 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
       for (var i = 0; i < p.length; i++) {
 
         if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
-          console.log("meiyou")
+          // console.log("meiyou")
            if(p[i].executionEnvironment) {
             $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" +p[i].executionEnvironment + "</label></div>"));
              listexeEnv.push(p[i].executionEnvironment)
@@ -2918,9 +3071,117 @@ function getLandmarkerClick() {
   showStudies(tagsinput, typeRecherche, landmarkerList);
 }
 
+//Click event with show of check box for evaluation
+function getEvaluationClick() {
+  console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("evaluationDropdown");
+  a = div.getElementsByClassName("evaluationList");
+  // console.log(landmarkerList);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    var idevaluation= txtValue.substr(1,txtValue.length-1)
+    console.log("ttttttttttttttttttttttt")
+    console.log(idevaluation)
+    if (filter===idevaluation.toUpperCase()) {
+      // console.log("diqnshqngle")
+      a[i].style.display = "";
+      var elt = document.getElementById(idevaluation)
+      elt.checked = true
+      /*parameterList.push(idevaluation)
+      console.log(evaluationrList);*/
+    }
+  }
+  /*  $("#analyseNames").empty();
+    showStudies(tagsinput, typeRecherche, evaluationList);*/
+}
 
-function test(){
- console.log("reussièèèèèèèèèèèèèèèèèèèèèèèèèè")
+
+//Click event with show of check box for parameter
+function getParameterClick() {
+  console.log(this.id)
+  var input, filter, ul, li, a, i;
+  input = document.getElementById(this.id);
+  filter = input.innerText.toUpperCase();
+  div = document.getElementById("parameterDropdown");
+  a = div.getElementsByClassName("parameterList");
+  // console.log(landmarkerList);
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    var idparameter= txtValue.substr(1,txtValue.length-1)
+    console.log("ttttttttttttttttttttttt")
+    console.log(idparameter)
+    if (filter===idparameter.toUpperCase()) {
+      // console.log("diqnshqngle")
+      a[i].style.display = "";
+      var elt = document.getElementById(idparameter)
+      elt.checked = true
+      /*parameterList.push(idparameter)
+      console.log(parameterList);*/
+    }
+  }
+/*  $("#analyseNames").empty();
+  showStudies(tagsinput, typeRecherche, landmarkerList);*/
+}
+
+function getGrapheViz4Init(){
+  /*console.log(this.id)
+  console.log(trans)*/
+  document.getElementById("viz4").style.display="block"
+  var relationDS = this.id.substring(2)
+  //query4 for dataset relationship
+  query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+          WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
+          AND
+          (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ relationDS + `'
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+  api.getGraph(query4).then(p => {
+    // create an array with nodes
+    var nodes = new vis.DataSet(p[p.length - 1][0]);
+    // create an array with edges
+    var edges = new vis.DataSet(p[p.length - 1][1]);
+
+    // create a network
+    var container = document.getElementById("viz4");
+    var data = {
+      nodes: nodes,
+      edges: edges,
+    };
+    var network = new vis.Network(container, data, options);
+    network.body.emitter.emit('_dataChanged')
+    network.redraw()
+    network.fit()
+  })
+}
+function getGrapheViz5Init(){
+  /*console.log(this.id)
+  console.log(trans)*/
+  document.getElementById("viz5").style.display="block"
+  var relationAtt = this.id.substring(2)
+  query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  api.getGraph(query5).then(p => {
+    // create an array with nodes
+    var nodes = new vis.DataSet(p[p.length - 1][0]);
+    // create an array with edges
+    var edges = new vis.DataSet(p[p.length - 1][1]);
+
+    // create a network
+    var container = document.getElementById("viz5");
+    var data = {
+      nodes: nodes,
+      edges: edges,
+    };
+    var network = new vis.Network(container, data, options);
+    network.body.emitter.emit('_dataChanged')
+    network.redraw()
+    network.fit()
+  })
 }
 
 document.addEventListener("DOMContentLoaded", () => {
