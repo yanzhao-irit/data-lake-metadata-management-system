@@ -2765,7 +2765,7 @@ async function getAnalyseOfRelationship(id, relationlist) {
           }
         }
         $rangeBody = $('#' + typeRelation)
-        $rangeBody.append("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typeRelation +"'></span></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
+        $rangeBody.prepend("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typeRelation +"'></span></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div></br>")
         document.getElementById('r_'+typeRelation).addEventListener("change",getGrapheViz5Seuil)
         // console.log(document.getElementById('range_'+typeRelation))
       });
