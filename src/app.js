@@ -2702,7 +2702,7 @@ function getGrapheViz4Seuil() {
     var nodes = new vis.DataSet(p[p.length - 1][0]);
     // create an array with edges
     var edges = new vis.DataSet(p[p.length - 1][1]);
-    console.log(edges)
+    console.log(p[p.length - 1][1])
     // create a network
     var container = document.getElementById("viz4");
     var data = {
