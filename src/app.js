@@ -2556,6 +2556,7 @@ $(function () {
     showStudies(tagsinput, typeRecherche, landmarkerList, algoNames.value, omNames.value)
   });
 
+
 });
 
 async function showSimilarity() {
@@ -2668,22 +2669,32 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
           }
         }
         $rangeBody = $('#' + typerelationshipDS)
-        $rangeBody.append("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typerelationshipDS +"'></span></p><input type='range' id='r_"+ typerelationshipDS +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typerelationshipDS +"'></span><input type='button' id='b_"+ typerelationshipDS +"' value='blue'/></p><input type='range' id='r_"+ typerelationshipDS +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
         document.getElementById('r_'+typerelationshipDS).addEventListener("change",getGrapheViz4Seuil)
+        document.getElementById('b_'+typerelationshipDS).addEventListener("click",changRange)
+        document.getElementById('b_'+typerelationshipDS).addEventListener("click",getGrapheViz4Seuil)
       });
     }, 'json')
 }
 
 function getGrapheViz4Seuil() {
   console.log(this.id.substring(2))
-  var value = this.value ;
+  var value = document.getElementById('r_'+this.id.substring(2)).value ;
   document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
-
+  console.log(document.getElementById('b_'+this.id.substring(2)).value)
+  if (document.getElementById('b_'+this.id.substring(2)).value=='blue'){
   query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)<=toFloat(`+value +`)
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+  }else{
+    query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+          WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
+          AND
+          (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)>=toFloat(`+value +`)
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+  }
   console.log(query4)
   api.getGraph(query4).then(p => {
     console.log(p)
@@ -2765,23 +2776,41 @@ async function getAnalyseOfRelationship(id, relationlist) {
           }
         }
         $rangeBody = $('#' + typeRelation)
-        $rangeBody.prepend("</br><p><b>Seuil</b>(Graphe displayed in the blue range):<span id='seuil_"+ typeRelation +"'></span></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div></br>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typeRelation +"'></span><input type='button' id='b_"+ typeRelation +"' value='blue'/></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div></br>")
         document.getElementById('r_'+typeRelation).addEventListener("change",getGrapheViz5Seuil)
-        // console.log(document.getElementById('range_'+typeRelation))
+        document.getElementById('b_'+typeRelation).addEventListener("click",changRange)
+        document.getElementById('b_'+typeRelation).addEventListener("click",getGrapheViz5Seuil)
       });
     }, 'json')
 }
 
+function changRange(){
+  if (this.value=='blue'){
+    this.value='gris'
+  }else{
+    this.value='blue'
+  }
+}
+
 function getGrapheViz5Seuil() {
   console.log(this.id.substring(2))
-  console.log(trans)
-  var value = this.value ;
+  // console.log(trans)
+  var value = document.getElementById('r_'+this.id.substring(2)).value ;
   document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
+  console.log(document.getElementById('b_'+this.id.substring(2)).value)
+  if (document.getElementById('b_'+this.id.substring(2)).value=='blue'){
   query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
                   WHERE dl.uuid = '` + trans + `'
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and toFloat(AA.value)<=toFloat(`+value +`)
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  }else{
+    query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and toFloat(AA.value)>=toFloat(`+value +`)
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  }
   api.getGraph(query5).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
