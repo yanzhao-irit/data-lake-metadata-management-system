@@ -1418,13 +1418,11 @@ $(function () {
                 getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
               }
               for (var j = 0; j < relationlist.length; j++) {
-                /*console.log(j)
-                console.log(relationlistAtt[j])
-                console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                /*console.log(relationlistAtt[j])*/
                 datasetChosed =[$(this).attr('id').split('$')[1],$(this).attr('id').split('$')[2]]
                 /*console.log(datasetChosed[0])
-                console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
                 console.log(datasetChosed[1])*/
+                //add Eventlistener for each tab
                 document.getElementById("a_"+relationlist[j]).addEventListener("click",getGrapheViz4Init)
               }
             }, 'json')
@@ -1441,11 +1439,8 @@ $(function () {
               $listContent = $('#relationshipAttContent')
               for (var i = 0; i < p.length; i++) {
                 relationlistAtt.push(p[i].name)
-                // console.log("ttttttttttttttt")
                 console.log(p[i].name)
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
-                /*console.log("je sais pas")
-                console.log(p[i].name)*/
                 $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
@@ -1459,15 +1454,12 @@ $(function () {
                 getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlistAtt[i]);
               }
               for (var j = 0; j < relationlistAtt.length; j++) {
-                /*console.log(j)
-                console.log(relationlistAtt[j])
-                console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
                 trans =$(this).attr('id').split('$')[2]
+                //add eventlistener for each tab of relationshipAttribute
                 document.getElementById("a_"+relationlistAtt[j]).addEventListener("click",getGrapheViz5Init)
               }
             }, 'json')
-
-
 
           $('#similarityResult').empty()
 
@@ -1829,7 +1821,6 @@ $(function () {
 
 
             //Part for the relationship between attribute
-
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             api
@@ -2154,6 +2145,7 @@ $(function () {
     console.log(typeOpe);
   });
 
+  //Event for checkbox in dropdown menu (mainly for filter)
   $('#languageDropDown').on('click', 'input', function () {
     $("#processNames").empty();
     if (this.checked) {
@@ -2169,7 +2161,7 @@ $(function () {
     console.log(langList);
   });
 
-
+//Event for checkbox in dropdown menu (mainly for filter)
   $('#exeEnvDropdown').on('click', 'input', function () {
     $("#processNames").empty();
     if (this.checked) {
@@ -2185,6 +2177,7 @@ $(function () {
     console.log(exeEnvList);
   });
 
+  //Event for checkbox in dropdown menu (mainly for filter)
   $('#landmarkerDropdown').on('click', 'input', function () {
     $("#analyseNames").empty();
     if (this.checked) {
@@ -2331,6 +2324,7 @@ $(function () {
     }
     return display;
   });
+
   //for clear the chosed landmarker
   $('#landmarkerClear').on("click", function () {
     a = div.getElementsByClassName("landmarkerList");
@@ -2677,6 +2671,7 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
     }, 'json')
 }
 
+//Function to draw relationshipDataset
 function getGrapheViz4Seuil() {
   console.log(this.id.substring(2))
   var value = document.getElementById('r_'+this.id.substring(2)).value ;
@@ -2687,14 +2682,16 @@ function getGrapheViz4Seuil() {
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)<=toFloat(`+value +`)
-          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+          RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6`
   }else{
     query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)>=toFloat(`+value +`)
-          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+          RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6`
   }
+  //without relationship name
+  // RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6    -    dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6
   console.log(query4)
   api.getGraph(query4).then(p => {
     console.log(p)
@@ -2784,6 +2781,7 @@ async function getAnalyseOfRelationship(id, relationlist) {
     }, 'json')
 }
 
+//Function to change the range of graph relationship
 function changRange(){
   if (this.value=='blue'){
     this.value='gris'
@@ -2792,6 +2790,7 @@ function changRange(){
   }
 }
 
+//Function to draw relationshipAttribute
 function getGrapheViz5Seuil() {
   console.log(this.id.substring(2))
   // console.log(trans)
@@ -2980,7 +2979,7 @@ function showProcesses(tags, language = "", date = "0001-01-01", type = [], exec
     }, "json");
 }
 
-//fucnction to get studies
+//function to get studies
 function showStudies(tags, type = '', landmarker = '', algoNames = '', omNames = '') {
   api
     .getStudies(tags, type, landmarker, algoNames, omNames = '')
@@ -3155,6 +3154,7 @@ function getParameterClick() {
   showStudies(tagsinput, typeRecherche, landmarkerList);*/
 }
 
+//Function to draw relationDataset without condition
 function getGrapheViz4Init(){
   /*console.log(this.id)
   console.log(trans)*/
@@ -3184,6 +3184,8 @@ function getGrapheViz4Init(){
     network.fit()
   })
 }
+
+//Function to draw relationAttribute without condition
 function getGrapheViz5Init(){
   /*console.log(this.id)
   console.log(trans)*/
