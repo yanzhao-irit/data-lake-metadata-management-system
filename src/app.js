@@ -2253,14 +2253,15 @@ $(function () {
     return display;
   });
 
-  $('#programmationLanguage').on("click", function () {
+  $('#programLanguage').on("click", function () {
     var display = $('#languageDropDown')[0].style.display;
+    console.log(display)
     if (display === "none") {
       $('#languageDropDown')[0].style.display = "block";
-      $('#languageInput')[0].style.display = "block";
+      //$('#languageInput')[0].style.display = "block";
     } else {
       $('#languageDropDown')[0].style.display = "none";
-      $('#languageInput')[0].style.display = "none";
+      //$('#languageInput')[0].style.display = "none";
     }
     return display;
   });
