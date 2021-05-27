@@ -2679,23 +2679,22 @@ function getGrapheViz4Seuil() {
   document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
   console.log(document.getElementById('b_'+this.id.substring(2)).value)
   if (document.getElementById('b_'+this.id.substring(2)).value=='blue'){
-  query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+  query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)<=toFloat(`+value +`)
-          RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6`
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6,r7`
   }else{
-    query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+    query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and toFloat(adrR.value)>=toFloat(`+value +`)
-          RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6`
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6,r7`
   }
-  //without relationship name
-  // RETURN DISTINCT dl,autreDS,adrR,r1,r3,r5,r6    -    dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6
-  console.log(query4)
+  // console.log(query4)
   api.getGraph(query4).then(p => {
-    console.log(p)
+    /*console.log("++++++++++++++++++++")
+    console.log(p)*/
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
     // create an array with edges
@@ -3167,12 +3166,15 @@ function getGrapheViz4Init(){
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ relationDS + `'
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+  // console.log(query4)
   api.getGraph(query4).then(p => {
+    /*console.log("-------------")
+    console.log(p)*/
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
     // create an array with edges
     var edges = new vis.DataSet(p[p.length - 1][1]);
-
+    console.log(p[p.length - 1][1])
     // create a network
     var container = document.getElementById("viz4");
     var data = {
