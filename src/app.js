@@ -1462,12 +1462,15 @@ $(function () {
             }, 'json')
 
           $('#similarityResult').empty()
-
+          $('#similarityResult').append('<table>')
           for (var i = 0; i < similarityGraph.length; i++) {
+
             if (similarityGraph[i][0] == $(this).text()) {
-              $('#similarityResult').append($('<p>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' : <span>' + similarityGraph[i][2] + '</span></p>'))
+              $('#similarityResult').append($('<tr><td>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' </td>: <td><span>' + similarityGraph[i][2] + '</span></td></tr>'))
             }
+
           }
+          $('#similarityResult').append('</table>')
           if ($('#similarityResult span:first-child').first()[0]) {
             $('#similarityResult span:first-child').first()[0].style.color = 'green'
             $('#similarityResult span:first-child').last()[0].style.color = 'red'
@@ -2664,7 +2667,7 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
           }
         }
         $rangeBody = $('#' + typerelationshipDS)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typerelationshipDS +"'></span><input type='button' id='b_"+ typerelationshipDS +"' value='blue'/></p><input type='range' id='r_"+ typerelationshipDS +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typerelationshipDS +"'></span><input type='button' id='b_"+ typerelationshipDS +"' name='blue' value='Show part blue'/></p><input type='range' id='r_"+ typerelationshipDS +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div>")
         document.getElementById('r_'+typerelationshipDS).addEventListener("change",getGrapheViz4Seuil)
         document.getElementById('b_'+typerelationshipDS).addEventListener("click",changRange)
         document.getElementById('b_'+typerelationshipDS).addEventListener("click",getGrapheViz4Seuil)
@@ -2773,7 +2776,7 @@ async function getAnalyseOfRelationship(id, relationlist) {
           }
         }
         $rangeBody = $('#' + typeRelation)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typeRelation +"'></span><input type='button' id='b_"+ typeRelation +"' value='blue'/></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div></br>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_"+ typeRelation +"'></span><input type='button' id='b_"+ typeRelation +"' name='blue' value='Show part blue'/></p><input type='range' id='r_"+ typeRelation +"' value='"+valueMax+"' max='"+valueMax+"' min='"+valueMin+"' step='any'/><div class='row'> <div class='col-md-6'>"+valueMin+"</div><div class='col-md-6' ><div class='text-right'>"+valueMax+"</div></div></div></br>")
         document.getElementById('r_'+typeRelation).addEventListener("change",getGrapheViz5Seuil)
         document.getElementById('b_'+typeRelation).addEventListener("click",changRange)
         document.getElementById('b_'+typeRelation).addEventListener("click",getGrapheViz5Seuil)
@@ -2783,10 +2786,12 @@ async function getAnalyseOfRelationship(id, relationlist) {
 
 //Function to change the range of graph relationship
 function changRange(){
-  if (this.value=='blue'){
-    this.value='gris'
+  if (this.name=='blue'){
+    this.name='grey'
+    this.value='Show part grey'
   }else{
-    this.value='blue'
+    this.name='blue'
+    this.value='Show part blue'
   }
 }
 
@@ -2797,7 +2802,7 @@ function getGrapheViz5Seuil() {
   var value = document.getElementById('r_'+this.id.substring(2)).value ;
   document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
   console.log(document.getElementById('b_'+this.id.substring(2)).value)
-  if (document.getElementById('b_'+this.id.substring(2)).value=='blue'){
+  if (document.getElementById('b_'+this.id.substring(2)).name=='blue'){
   query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
                   WHERE dl.uuid = '` + trans + `'
                   AND
