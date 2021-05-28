@@ -2679,7 +2679,7 @@ function getGrapheViz4Seuil() {
   var value = document.getElementById('r_'+this.id.substring(2)).value ;
   document.getElementById('seuil_'+this.id.substring(2)).innerHTML = value;
   console.log(document.getElementById('b_'+this.id.substring(2)).value)
-  if (document.getElementById('b_'+this.id.substring(2)).value=='blue'){
+  if (document.getElementById('b_'+this.id.substring(2)).name=='blue'){
   query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
