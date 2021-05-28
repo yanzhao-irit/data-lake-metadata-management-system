@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://rawgit.com/neo4j-contrib/neovis.js/master/dist/neovis.js"></script>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet"
         href="https://neo4j-documentation.github.io/developer-resources/language-guides/assets/css/main.css">
-    <script
-            type="text/javascript"
-            src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
-    ></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <title>Data Lake App</title>
 
 </head>
@@ -114,6 +114,11 @@
                     </div>
                     <div class="col-md-4">
                         <h4>Analysis</h4>
+                        <input type="checkbox" class="analysetype" id="machineLearning" name="machineLearning"><label
+                            for="machineLearning">Machine Learning</label>
+                        <input type="checkbox" class="analysetype" id="otherAnalysis" name="otherAnalysis"><label
+                            for="otherAnalysis">Others</label>
+                        </br>
                         <input type="checkbox" class="analysetype" id="supervised" name="supervised"><label
                             for="supervised">Supervised</label>
                         <input type="checkbox" class="analysetype" id="descriptive" name="descriptive"><label
@@ -142,11 +147,11 @@
                             <label for='algoNames'>Algorithm : </label><input type='text' class='algoinputNames'
                                 id='algoNames' name="algoNames">
                             <br />
-                            <input type="checkbox" class="algotype" id="algosupervised" name="algosupervised"><label
+                            <input type="checkbox" class="algotype" id="algosupervised" name="AlgoSupervised"><label
                                 for="algosupervised">Supervised</label>
-                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="algoUnsupervised"><label
+                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="AlgoUnsupervised"><label
                                 for="algoUnsupervised">Unsupervised</label>
-                            <input type="checkbox" class="algotype" id="algoReinforcement"
+                            <input type="checkbox" class="algotype" id="AlgoReinforcement"
                                 name="algoReinforcement"><label for="algoReinforcement">Reinforcement</label>
                             <br />
 
@@ -206,10 +211,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Dataset Results
                         <button type="button" class="btn btn-primary pull-right" id="sortDataset">Importance</button>
-                        <button type="button" class="btn btn-primary pull-right"
-                            data-toggle="modal" data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
+                        <button type="button" class="btn btn-primary pull-right" data-toggle="modal"
+                            data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
                             Entity Class
-                        </button></div>
+                        </button>
+                    </div>
                     <table id="results" class="table table-striped table-hover">
                         <tbody class="names" id="dbNames">
                         </tbody>
