@@ -1464,11 +1464,9 @@ $(function () {
           $('#similarityResult').empty()
           $('#similarityResult').append('<table>')
           for (var i = 0; i < similarityGraph.length; i++) {
-
             if (similarityGraph[i][0] == $(this).text()) {
-              $('#similarityResult').append($('<tr><td>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' </td>: <td><span>' + similarityGraph[i][2] + '</span></td></tr>'))
+              $('#similarityResult').append($('<tr><td>' + similarityGraph[i][0] + ' || ' + similarityGraph[i][1] + ' : </td> <td><span>' + similarityGraph[i][2] + '</span></td></tr>'))
             }
-
           }
           $('#similarityResult').append('</table>')
           if ($('#similarityResult span:first-child').first()[0]) {
