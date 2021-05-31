@@ -100,7 +100,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 }
 
 //Function to search study metadata
-function getStudies(tags, type, landmarker, algoNames, omNames) {
+function getStudies(tags, type, creationdate = '0001-01-01',landmarker, algoNames, omNames) {
   var session = driver.session();
   //Classic cypher query to search for study without filter.
   console.log(type)
@@ -147,7 +147,7 @@ function getStudies(tags, type, landmarker, algoNames, omNames) {
   // if(omNames>0){
   //   query += ' AND (s)-[:hasAnalysis]->(a)-[:hasOutputModel]->(opm:OutputModel) AND opm.name CONTAINS "' + omNames + '"';
   // }
-
+  query = query + ' AND (datetime(s.creationDate) >= datetime("' + creationdate + '"))'
   query = query + " RETURN DISTINCT s"
   console.log(query)
   //We get only study here, which are used later to get analysis

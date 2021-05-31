@@ -119,18 +119,20 @@
                         <input type="checkbox" class="analysetype" id="otherAnalysis" name="otherAnalysis"><label
                             for="otherAnalysis">Others</label>
                         </br>
-                        <input type="checkbox" class="analysetype" id="supervised" name="supervised"><label
-                            for="supervised">Supervised</label>
-                        <input type="checkbox" class="analysetype" id="descriptive" name="descriptive"><label
-                            for="descriptive">Descriptive</label>
-                        <input type="checkbox" class="analysetype" id="diagnostic" name="diagnostic"><label
-                            for="diagnostic">Diagnostic</label>
-                        <input type="checkbox" class="analysetype" id="predictive" name="predictive"><label
-                            for="predictive">Predictive</label>
-                        <input type="checkbox" class="analysetype" id="prescriptive" name="prescriptive"><label
-                            for="prescriptive">Prescriptive</label>
+                        <input type="checkbox" class="analysetype" id="supervised" name="supervised" style="display: none"><label
+                            for="supervised" style="display: none">Supervised</label>
+                        <input type="checkbox" class="analysetype" id="descriptive" name="descriptive" style="display: none"><label
+                            for="descriptive" style="display: none">Descriptive</label>
+                        <input type="checkbox" class="analysetype" id="diagnostic" name="diagnostic" style="display: none"><label
+                            for="diagnostic" style="display: none">Diagnostic</label>
+                        <input type="checkbox" class="analysetype" id="predictive" name="predictive" style="display: none"><label
+                            for="predictive" style="display: none">Predictive</label>
+                        <input type="checkbox" class="analysetype" id="prescriptive" name="prescriptive" style="display: none"><label
+                            for="prescriptive" style="display: none">Prescriptive</label>
                         <br />
                         <div id="moreAFilter" style='display: none'>
+                            <label for='aDate'>Creation Date after : </label><input type='date' class='inputDate'
+                                id='aDate' name="aDate" value="0001-01-01">
                             <button class="dropbtn" id="landmarker">Landmarker</button>
                             <a id="landmarkerClear" style="display: none">Clear Landmarker</a>
 
