@@ -37,7 +37,7 @@ In the application, users can search different elements with tags and filters.
 
 ## Getting started
 
-1. Make sure you have a metadata database (Neo4j) that respects the model proposed by Yan ZHAO. We provide an [example database](https://github.com/yanzhao-irit/data-lake-metadata-management-system/tree/main/example-metadata) that you can download and test the application.
+1. Make sure you have a metadata database (Neo4j) that respects the model proposed by Yan ZHAO. We also provide an [example database](https://github.com/yanzhao-irit/data-lake-metadata-management-system/tree/main/example-metadata) that you can download and test the application.
 
 2. Make sure that you have installed [Neod.js](https://nodejs.org/en/download/) in your computer.
 
