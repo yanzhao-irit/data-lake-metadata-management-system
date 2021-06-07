@@ -2311,14 +2311,14 @@ $(function () {
     if (this.checked) {
       landmarkerList.push(this.id)
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, landmarkerList);
+      showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, landmarkerList);
+      showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
     }
   });
 
@@ -2465,7 +2465,7 @@ $(function () {
     }
     landmarkerList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, landmarkerList);
+    showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
     console.log(landmarkerList)
   });
 
@@ -2999,12 +2999,13 @@ function landmarkersInit(study = 'default') {
         elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_" + p[i].name + "'>" + p[i].name + "</a></li>");
       }
     }
+    //click event for drop-down menu
+    var landmarkerLink = document.getElementsByName("landmarkerLink");
+    for (j = 0; j < landmarkerLink.length; j++) {
+      landmarkerLink[j].addEventListener("click", getLandmarkerClick);
+    }
   }, "json");
-  //click event for drop-down menu
-  var landmarkerLink = document.getElementsByName("landmarkerLink");
-  for (j = 0; j < landmarkerLink.length; j++) {
-    landmarkerLink[j].addEventListener("click", getLandmarkerClick);
-  }
+
 }
 
 //function to create a list of filter
@@ -3020,13 +3021,14 @@ function parameterInit(study = 'default') {
         elt2.insertAdjacentHTML('beforeend', "<li><a name='parameterLink' id='parameter_" + p[i].name + "'>" + p[i].name + "</a></li>");
       }
     }
+    // click event for drop-down menu
+    var parameterLink = document.getElementsByName("parameterLink");
+    for (j = 0; j < parameterLink.length; j++) {
+      console.log(j)
+      parameterLink[j].addEventListener("click", getParameterClick);
+    }
   }, "json");
-  // click event for drop-down menu
-  var parameterLink = document.getElementsByName("parameterLink");
-  for (j = 0; j < parameterLink.length; j++) {
-    console.log(j)
-    parameterLink[j].addEventListener("click", getParameterClick);
-  }
+
 }
 
 //function to create a list of filter
@@ -3036,19 +3038,20 @@ function evaluationInit(study = 'default') {
     var $list = $("#evaluationDropdown")
     for (var i = 0; i < p.length; i++) {
       if (!optionEvaluationList.includes(" " + p[i].name)) {
-        $list.append("<div class='evaluationList'> <input type='checkbox' classe='evaluation' name='evaluation$" + p[i].name + "' id='" + p[i].name + "' '><label for='evaluation$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='evaluationList' style='display: none'> <input type='checkbox' classe='evaluation' name='evaluation$" + p[i].name + "' id='" + p[i].name + "' '><label for='evaluation$" + p[i].name + "'>" + p[i].name + "</label></div>")
         //Add for drop-down menu
         var elt2 = document.getElementById("DropdownMenuevaluation");
         elt2.insertAdjacentHTML('beforeend', "<li><a name='evaluationLink' id='evaluation_" + p[i].name + "'>" + p[i].name + "</a></li>");
       }
     }
+    // click event for drop-down menu
+    var evaluationLink = document.getElementsByName("evaluationLink");
+    for (j = 0; j < evaluationLink.length; j++) {
+      // console.log(j)
+      evaluationLink[j].addEventListener("click", getEvaluationClick);
+    }
   }, "json");
-  // click event for drop-down menu
-  var evaluationLink = document.getElementsByName("evaluationLink");
-  for (j = 0; j < evaluationLink.length; j++) {
-    // console.log(j)
-    evaluationLink[j].addEventListener("click", getEvaluationClick);
-  }
+
 }
 
 //function to create a list of filter
@@ -3233,7 +3236,7 @@ function getLandmarkerClick() {
     }
   }
   $("#analyseNames").empty();
-  showStudies(tagsinput, typeRecherche, landmarkerList);
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList)
 }
 
 //Click event with show of check box for evaluation
