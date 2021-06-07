@@ -133,28 +133,28 @@
                         <div id="moreAFilter" style='display: none'>
                             <label for='aDate'>Creation Date after : </label><input type='date' class='inputDate'
                                 id='aDate' name="aDate" value="0001-01-01">
-                            <button class="dropbtn" id="landmarker">Landmarker</button>
+                            <button class="dropbtn" id="landmarker" style="display: none">Landmarker</button>
                             <a id="landmarkerClear" style="display: none">Clear Landmarker</a>
 
                             <div class="dropdown">
                                 <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
                                     <div class="dropdown">
                                         <input type="text" placeholder="Search.." id="landmarkerInput"
-                                            class="dropdown-contente" data-toggle="dropdown">
+                                            class="dropdown-contente" data-toggle="dropdown" style="display: none">
                                         <ul class="dropdown-menu pull-right" id="DropdownMenulandmarker" style="height:100px;width:270px;overflow:scroll"></ul>
                                     </div>
                                 </div>
                             </div>
 
-                            <label for='algoNames'>Algorithm : </label><input type='text' class='algoinputNames'
-                                id='algoNames' name="algoNames">
+                            <label for='algoNames' style="display: none">Algorithm : </label><input type='text' class='algoinputNames'
+                                id='algoNames' name="algoNames" style="display: none">
                             <br />
-                            <input type="checkbox" class="algotype" id="algosupervised" name="AlgoSupervised"><label
-                                for="algosupervised">Supervised</label>
-                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="AlgoUnsupervised"><label
-                                for="algoUnsupervised">Unsupervised</label>
+                            <input type="checkbox" class="algotype" id="algosupervised" name="AlgoSupervised" style="display: none"><label
+                                for="algosupervised" style="display: none">Supervised</label>
+                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="AlgoUnsupervised" style="display: none"><label
+                                for="algoUnsupervised" style="display: none">Unsupervised</label>
                             <input type="checkbox" class="algotype" id="AlgoReinforcement"
-                                name="algoReinforcement"><label for="algoReinforcement">Reinforcement</label>
+                                name="algoReinforcement" style="display: none"><label for="algoReinforcement" style="display: none">Reinforcement</label>
                             <br />
 
 <!--                            <button class="dropbtn" id="parameter">Parameter</button>-->
@@ -164,7 +164,7 @@
 <!--                                        class="dropdown-content">-->
 <!--                                </div>-->
 <!--                            </div>-->
-                            <button class="dropbtn" id="parameter">Parameter</button>
+                            <button class="dropbtn" id="parameter" style="display: none">Parameter</button>
                             <a id="parameterClear" style="display: none">Clear Parameter</a>
 
                             <div class="dropdown">
@@ -187,7 +187,7 @@
                                         class="dropdown-content">
                                 </div>
                             </div>-->
-                            <button class="dropbtn" id="evaluation">Evaluation</button>
+                            <button class="dropbtn" id="evaluation" style="display: none">Evaluation</button>
                             <a id="evaluationClear" style="display: none">Clear Evaluation</a>
 
                             <div class="dropdown">
@@ -264,9 +264,9 @@
                         <li><a data-toggle="tab" href="#viz2">Hyper-graph</a></li>
                         <li id='operationButton'><a data-toggle="tab" href="#viz3">Operation</a></li>
                         <li id='featureButton'><a data-toggle="tab" href="#features">Features</a></li>
-                        <li id='dsRelationButton'><a data-toggle="tab" href="#viz4_dataset">Relationship Dataset</a>
+                        <li id='dsRelationButton'><a data-toggle="tab" href="#viz4_dataset">Relationship of Dataset</a>
                         </li>
-                        <li id='attRelationButton'><a data-toggle="tab" href="#viz5_attribute">Relationship
+                        <li id='attRelationButton'><a data-toggle="tab" href="#viz5_attribute">Relationship of
                                 Attribute</a></li>
                         <li id='similarityButton'><a data-toggle="tab" href="#similarity">Similarity*</a></li>
                     </ul>

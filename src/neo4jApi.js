@@ -187,7 +187,7 @@ function getAnalyses(study, name, id) {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
-  console.log(query)
+  console.log('heyo' + query)
   return session
     .run(
       query)
