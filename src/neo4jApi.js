@@ -645,10 +645,17 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
   if (relationName != '') {
     query += ' AND RA.name ="' + relationName + '"'
   }
-
   switch (type) {
     case 'relation':
-      query += ` RETURN DISTINCT RA`
+      query += ` RETURN DISTINCT RA union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+      WHERE dl.uuid = '`+ sourceId + `'
+      AND
+      (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)`
+      if (relationName != '') {
+        query += ' AND RA.name ="' + relationName + '"'
+      }
+
+      query+= `RETURN DISTINCT RA`
       return session
         .run(
           query)
@@ -664,6 +671,13 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
           return session.close();
         });
     case 'analyse':
+      query += ` RETURN DISTINCT a union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+      WHERE dl.uuid = '`+ sourceId + `'
+      AND
+      (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)`
+      if (relationName != '') {
+        query += ' AND RA.name ="' + relationName + '"'
+      }
       query += `RETURN DISTINCT a`
       return session
         .run(
@@ -681,6 +695,15 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
         });
     case 'relationValue':
       query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
+      query += ` union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+      WHERE dl.uuid = '`+ sourceId + `'
+      AND
+      (a:NominalAttribute OR a:NumericAttribute OR a:Attribute)`
+      if (relationName != '') {
+        query += ' AND RA.name ="' + relationName + '"'
+      }
+      query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
+      // console.log(query)
       return session
         .run(
           query)

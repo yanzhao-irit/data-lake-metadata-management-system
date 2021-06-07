@@ -1641,7 +1641,7 @@ $(function () {
             network.fit();
           })
           /*//query4 for dataset relationship
-          query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+          query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl)
           WHERE dl.name CONTAINS '`+ $(this).attr('id').split('$')[1] + `' and dl.uuid = '` + $(this).attr('id').split('$')[2] + `'
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
@@ -1782,7 +1782,40 @@ $(function () {
             //Part for the relationship between attribute
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
+            console.log(uuidAnalysis)
             api
+                .getRelationshipAttribute($(this).attr('id').split('$')[1],'', 'relation')
+                .then(p => {
+                  console.log("llllllllllllllllll")
+                  console.log(p.length)
+                  var relationlistAtt = []
+                  // console.log(p)
+                  $listTab = $('#relationshipAttOnglet')
+                  $listContent = $('#relationshipAttContent')
+                  for (var i = 0; i < p.length; i++) {
+                    relationlistAtt.push(p[i].name)
+                    console.log(p[i].name)
+                    $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+                    $listContent.append(`
+                <div id='`+ p[i].name + `' class="tab-pane fade">
+                    <table class='relationshiptable'>
+                        <tbody id='attribute_` + p[i].name + `'><tbody>
+                    </table>                
+                </div>`)
+                  }
+
+                  for (var i = 0; i < relationlistAtt.length; i++) {
+                    // console.log(relationlistAtt[i])
+                    getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
+                  }
+                  for (var j = 0; j < relationlistAtt.length; j++) {
+                    /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                    trans = $(this).attr('id').split('$')[1]
+                    //add eventlistener for each tab of relationshipAttribute
+                    document.getElementById("a_" + relationlistAtt[j]).addEventListener("click", getGrapheViz5Init)
+                  }
+                }, 'json')
+            /*api
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
                 var relationlistAtt = []
@@ -1805,13 +1838,13 @@ $(function () {
                   getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
                 }
                 for (var j = 0; j < relationlistAtt.length; j++) {
-                  /*console.log(j)
+                  /!*console.log(j)
                   console.log(relationlistAtt[j])
-                  console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                  console.log(document.getElementById("a_"+relationlistAtt[j]))*!/
                   trans = $(this).attr('id').split('$')[1]
                   document.getElementById("a_" + relationlistAtt[j]).addEventListener("click", getGrapheViz5Init)
                 }
-              }, 'json')
+              }, 'json')*/
 
 
             //Query part
@@ -2938,9 +2971,17 @@ function getGrapheViz5Seuil() {
                   WHERE dl.uuid = '` + trans + `'
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and round(toFloat(AA.value),5)<=toFloat(` + value + `)
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3 union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and round(toFloat(AA.value),5)<=toFloat(` + value + `)
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
   } else {
     query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and round(toFloat(AA.value),5)>=toFloat(` + value + `)
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3 union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
                   WHERE dl.uuid = '` + trans + `'
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and round(toFloat(AA.value),5)>=toFloat(` + value + `)
@@ -3130,7 +3171,6 @@ function showStudies(tags, type = '', aDate,landmarker = '', algoNames = '', omN
         // $list.empty()
         var landList = []
         for (var i = 0; i < p.length; i++) {
-
           $list.append($("<tr><td class='Study'>" + p[i].name + "</td></tr>"));
           if (!landList.includes(p[i].name)) {
             parameterInit(p[i])
@@ -3338,7 +3378,13 @@ function getGrapheViz5Init() {
                   WHERE dl.uuid = '` + trans + `'
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
+                  RETURN DISTINCT a,r1,AA,r2,RA,a2,r3 union all MATCH (dl)-[]-()-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
+                  WHERE dl.uuid = '` + trans + `'
+                  AND
+                  (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  console.log("query5")
+  console.log(query5)
   api.getGraph(query5).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
