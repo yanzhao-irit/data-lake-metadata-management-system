@@ -12,7 +12,7 @@ var optionParameterList = [];
 var optionEvaluationList = [];
 var optionEntityClass = [];
 var entityClassList = [];
-var dsDate = "0001-01-01";
+var dsDate = "0001-01-01T00:00:00Z";
 var pDate = "0001-01-01";
 var aDate = "0001-01-01";
 var inputECAnames = "";
@@ -165,6 +165,19 @@ var options = {
   },
 };
 
+var date_today =new Date();
+var day=date_today.getDate()
+var month=date_today.getMonth() + 1
+if (day < 10) {
+  day = '0' + day
+}
+if (month < 10) {
+  month = '0' + month
+}
+var year=date_today.getFullYear()
+document.getElementById("dsDate").value = year+"-"+month+"-"+day
+document.getElementById("pDate").value = year+"-"+month+"-"+day
+document.getElementById("aDate").value = year+"-"+month+"-"+day
 
 //Beginning of event listener
 $(function () {
@@ -2357,7 +2370,7 @@ $(function () {
 
   //Event to get the date if changed for date filter
   $('#dsDate').change(function () {
-    dsDate = $(this).val();
+    dsDate = $(this).val()+'T00:00:00Z';
     showDatabases(tagsinput, '', dsDate);
   });
 
@@ -3185,13 +3198,14 @@ function showStudies(tags, type = '', aDate,landmarker = '', algoNames = '', omN
 }
 
 //function to get dataset
-function showDatabases(tags, type = 'defaultValue', date = '0001-01-01', quality = "", sensitivity = "", ECANames = "") {
+function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
       if (p) {
         //var $list = $(".names").empty();
         var $list = $("#dbNames")
+        $list.empty()
         for (var i = 0; i < p.length; i++) {
           $list.append($("<tr><td class='Database' id='" + p[i].type + "$" + p[i].name + "$" + p[i].uuid + "'>" + p[i].name + "</td></tr>"));
         }

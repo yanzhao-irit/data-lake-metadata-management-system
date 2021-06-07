@@ -725,7 +725,7 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
 
 //fonction de recherches des datasets avec les différents paramètres pour chaque filtre.
 //Function to search dataset metadata, with parameters for each filter.
-function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01', quality = [], sensitivity = 0, entityAttributeNames = "") {
+function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00:00:00Z', quality = [], sensitivity = 0, entityAttributeNames = "") {
   var session = driver.session();
   //Cypher query with ifs to have the dataset type filter used.
   var query = "MATCH (ds),(a),(e:EntityClass) WHERE ("; //,(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
