@@ -2404,7 +2404,7 @@ $(function () {
     return display;
   });
 
-  //Event to all the filter on click
+  //Event to clear all the filter on click
   $('#clearAllFilterDS').on("click", function () {
     $('#moreDSFilter')[0].style.display = "none";
     document.getElementById('Structured').checked = false;
@@ -2423,24 +2423,16 @@ $(function () {
     $('#morePFilter')[0].style.display = "none";
     $('#languageDropDown')[0].style.display = "none";
     var elt = document.getElementsByClassName("languageList")
-    for(i=0;i<elt.length;i++){
+    for(var i=0; i < elt.length; i++){
       elt[i].childNodes[1].checked=false;
     }
     document.getElementById('pDate').value = "0001-01-01";
     document.getElementById("usedOpeDropdown").style.display="none"
     document.getElementById("usedOpeClear").style.display = "none"
-    var elt2 = div.getElementsByClassName("usedOpeList");
-    for (j = 0; j < elt2.length; j++) {
-      elt2[j].style.display = "none";
-      elt2[j].childNodes[1].checked=false;
-    }
+    clearList("usedOpeList");
     document.getElementById("exeEnvDropdown").style.display="none"
     document.getElementById("exeEnvClear").style.display = "none"
-    var elt3 = div.getElementsByClassName("exeEnvList");
-    for (x = 0; x < elt3.length; x++) {
-      elt3[x].style.display = "none";
-      elt3[x].childNodes[1].checked=false;
-    }
+    clearList("exeEnvList");
     langList = [];
     pDate = "0001-01-01";
     exeEnvList = [];
@@ -2450,13 +2442,45 @@ $(function () {
   });
 
   $('#clearAllFilterA').on("click", function () {
-    var display = $('#moreAFilter')[0].style.display;
-    if (display === "none") {
-      $('#moreAFilter')[0].style.display = "block";
-    } else {
-      $('#moreAFilter')[0].style.display = "none";
+    //$('#moreAFilter')[0].style.display = "none";
+    var elt = document.getElementsByClassName("analysetype")
+    // console.log(elt[0])
+    for (x = 0; x < elt.length; x++) {
+      elt[x].checked = false;
+      if (x>=2){
+        elt[x].style.display = "none";
+      }
     }
-    return display;
+    $('label[for="supervised"]')[0].style.display = 'none';
+    $('label[for="descriptive"]')[0].style.display = 'none';
+    $('label[for="diagnostic"]')[0].style.display = 'none';
+    $('label[for="predictive"]')[0].style.display = 'none';
+    $('label[for="prescriptive"]')[0].style.display = 'none';
+
+    document.getElementById("aDate").value = "0001-01-01";
+
+    document.getElementById("landmarkerDropdown").style.display="none"
+    document.getElementById("landmarkerClear").style.display = "none"
+    clearList("landmarkerList");
+
+    document.getElementById("parameterDropdown").style.display="none"
+    document.getElementById("parameterClear").style.display = "none"
+    clearList("parameterList");
+
+    document.getElementById("evaluationDropdown").style.display="none"
+    document.getElementById("evaluationClear").style.display = "none"
+    clearList("evaluationList");
+
+    document.getElementById("algoNames").value = ""
+    var elt2 = document.getElementsByClassName("algotype")
+    for (j = 0; j < elt.length; j++) {
+      elt2[j].checked = false;
+    }
+    landmarkerList = [];
+    aDate = "0001-01-01";
+    algoNames = "";
+    $("#analyseNames").empty()
+    showStudies(tagsinput);
   });
 
   //Event to show or hide filters with button
@@ -3176,9 +3200,7 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
       var listexeEnv = [];
       console.log(p)
       for (var i = 0; i < p.length; i++) {
-
         if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
-          // console.log("meiyou")
           if (p[i].executionEnvironment) {
             $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</label></div>"));
             listexeEnv.push(p[i].executionEnvironment)
@@ -3457,6 +3479,16 @@ function getGrapheViz5Init() {
     network.fit()
   })
 }
+
+function clearList(divname){
+  var elt2 = document.getElementsByClassName(divname);
+  for (var j = 0; j < elt2.length; j++) {
+    elt2[j].style.display = "none";
+    elt2[j].childNodes[1].checked=false;
+  }
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('add').addEventListener("click", addTag);
