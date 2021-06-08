@@ -51,9 +51,9 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     query += " AND ("
     for (var i = 0; i < language.length; i++) {
       if (i != language.length - 1) {
-        query += " p.programmationLanguage CONTAINS ('" + language[i] + "') OR "
+        query += " p.programLanguage CONTAINS ('" + language[i] + "') OR "
       } else {
-        query += " p.programmationLanguage CONTAINS ('" + language[i] + "') ) "
+        query += " p.programLanguage CONTAINS ('" + language[i] + "') ) "
       }
     }
   }

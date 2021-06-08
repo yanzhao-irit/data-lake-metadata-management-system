@@ -165,20 +165,6 @@ var options = {
   },
 };
 
-var date_today =new Date();
-var day=date_today.getDate()
-var month=date_today.getMonth() + 1
-if (day < 10) {
-  day = '0' + day
-}
-if (month < 10) {
-  month = '0' + month
-}
-var year=date_today.getFullYear()
-document.getElementById("dsDate").value = year+"-"+month+"-"+day
-document.getElementById("pDate").value = year+"-"+month+"-"+day
-document.getElementById("aDate").value = year+"-"+month+"-"+day
-
 //Beginning of event listener
 $(function () {
   //Initialisation of graphic interface
@@ -2418,6 +2404,60 @@ $(function () {
     return display;
   });
 
+  //Event to all the filter on click
+  $('#clearAllFilterDS').on("click", function () {
+    $('#moreDSFilter')[0].style.display = "none";
+    document.getElementById('Structured').checked = false;
+    document.getElementById('Semi-Structured').checked = false;
+    document.getElementById('Unstructured').checked = false;
+    document.getElementById('dsDate').value = "0001-01-01";
+    document.getElementById('inputECANames').value = "";
+    typeRecherche = [];
+    dsDate="0001-01-01T00:00:00Z";
+    inputECAnames = "";
+    $("#dbNames").empty();
+    showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
+  });
+
+  $('#clearAllFilterP').on("click", function () {
+    $('#morePFilter')[0].style.display = "none";
+    $('#languageDropDown')[0].style.display = "none";
+    var elt = document.getElementsByClassName("languageList")
+    for(i=0;i<elt.length;i++){
+      elt[i].childNodes[1].checked=false;
+    }
+    document.getElementById('pDate').value = "0001-01-01";
+    document.getElementById("usedOpeDropdown").style.display="none"
+    document.getElementById("usedOpeClear").style.display = "none"
+    var elt2 = div.getElementsByClassName("usedOpeList");
+    for (j = 0; j < elt2.length; j++) {
+      elt2[j].style.display = "none";
+      elt2[j].childNodes[1].checked=false;
+    }
+    document.getElementById("exeEnvDropdown").style.display="none"
+    document.getElementById("exeEnvClear").style.display = "none"
+    var elt3 = div.getElementsByClassName("exeEnvList");
+    for (x = 0; x < elt3.length; x++) {
+      elt3[x].style.display = "none";
+      elt3[x].childNodes[1].checked=false;
+    }
+    langList = [];
+    pDate = "0001-01-01";
+    exeEnvList = [];
+    typeOpe = [];
+    $("#processNames").empty()
+    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+  });
+
+  $('#clearAllFilterA').on("click", function () {
+    var display = $('#moreAFilter')[0].style.display;
+    if (display === "none") {
+      $('#moreAFilter')[0].style.display = "block";
+    } else {
+      $('#moreAFilter')[0].style.display = "none";
+    }
+    return display;
+  });
 
   //Event to show or hide filters with button
   $('#qualityLevel').on("click", function () {
@@ -3281,7 +3321,6 @@ function getLandmarkerClick() {
     txtValue = a[i].textContent || a[i].innerText;
     var idlandmarker = txtValue.substr(1, txtValue.length - 1)
     if (filter === idlandmarker.toUpperCase()) {
-      // console.log("diqnshqngle")
       a[i].style.display = "";
       var elt = document.getElementById(idlandmarker)
       elt.checked = true
@@ -3290,6 +3329,7 @@ function getLandmarkerClick() {
     }
   }
   $("#analyseNames").empty();
+  console.log(aDate)
   showStudies(tagsinput, typeRecherche, aDate, landmarkerList)
 }
 

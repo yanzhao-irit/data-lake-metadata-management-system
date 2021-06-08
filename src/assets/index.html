@@ -38,11 +38,11 @@
                 <div class="row">
                     <div class="col-md-4">
                         <h4>Dataset</h4>
-                        <input type="checkbox" class="dstype" id="Structured" name="Structured"><label
+                        <input type="checkbox" class="dstype" id="Structured" name="Structured"/><label
                             for="Structured">Structured</label>
-                        <input type="checkbox" class="dstype" id="Semi-Structured" name="Semi-Structured"><label
+                        <input type="checkbox" class="dstype" id="Semi-Structured" name="Semi-Structured"/><label
                             for="Semi-Structured">Semi-Structured</label>
-                        <input type="checkbox" class="dstype" id="Unstructured" name="Unstructured"><label
+                        <input type="checkbox" class="dstype" id="Unstructured" name="Unstructured"/><label
                             for="Unstructured">Unstructured</label>
                         <br />
                         <div id="moreDSFilter" style='display: none'>
@@ -68,7 +68,8 @@
                                 class='inputECANames' id='inputECANames' name="inputECANames">
                             <!--<select multiple data-role="inputECANames" id="inputECANames"></select><input type='text' class='inputECANames' id='inputECANames' name="inputECANames">-->
                         </div>
-                        <a id='moreDS'>more</a>
+                        <a id='moreDS'>more</a></br>
+                        <a id='clearAllFilterDS'>clear all</a>
                     </div>
                     <div class="col-md-4">
                         <h4>Process</h4>
@@ -84,7 +85,7 @@
                                 id='pDate' name="pDate" value="0001-01-01">
 
                             <button class="dropbtn" id="usedOpe">Used Operations</button>
-                            <a id="usedOpeClear" style="display: none">Clear Used Operations</a>
+                            <a id="usedOpeClear" style="display: none">clear used operations</a>
                             <div class="dropdown">
                                 <div id="usedOpeDropdown" class="dropdown-content" style="display: none">
                                     <div class="dropdown">
@@ -96,7 +97,7 @@
                             </div>
 
                             <button class="dropbtn" id="exeEnv">Execution Environment</button>
-                            <a id="exeEnvClear" style="display: none">Clear Execution Environment</a>
+                            <a id="exeEnvClear" style="display: none">clear execution environment</a>
                             <div class="dropdown">
                                 <div id="exeEnvDropdown" class="dropdown-content" style="display: none">
                                     <div class="dropdown">
@@ -110,7 +111,8 @@
 
 
                         </div>
-                        <a id='moreP'>more</a>
+                        <a id='moreP'>more</a><br/>
+                        <a id='clearAllFilterP'>clear all</a>
                     </div>
                     <div class="col-md-4">
                         <h4>Analysis</h4>
@@ -134,7 +136,7 @@
                             <label for='aDate'>Creation Date after : </label><input type='date' class='inputDate'
                                 id='aDate' name="aDate" value="0001-01-01">
                             <button class="dropbtn" id="landmarker" style="display: none">Landmarker</button>
-                            <a id="landmarkerClear" style="display: none">Clear Landmarker</a>
+                            <a id="landmarkerClear" style="display: none">clear landmarker</a>
 
                             <div class="dropdown">
                                 <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
@@ -165,7 +167,7 @@
 <!--                                </div>-->
 <!--                            </div>-->
                             <button class="dropbtn" id="parameter" style="display: none">Parameter</button>
-                            <a id="parameterClear" style="display: none">Clear Parameter</a>
+                            <a id="parameterClear" style="display: none">clear parameter</a>
 
                             <div class="dropdown">
                                 <div id="parameterDropdown" class="dropdown-content" style="display: none">
@@ -188,7 +190,7 @@
                                 </div>
                             </div>-->
                             <button class="dropbtn" id="evaluation" style="display: none">Evaluation</button>
-                            <a id="evaluationClear" style="display: none">Clear Evaluation</a>
+                            <a id="evaluationClear" style="display: none">clear evaluation</a>
 
                             <div class="dropdown">
                                 <div id="evaluationDropdown" class="dropdown-content" style="display: none">
@@ -201,6 +203,7 @@
                             </div>
                         </div>
                         <a id='moreA'>more</a>
+                        <a id='clearAllFilterA'>clear all</a>
                     </div>
                 </div>
             </div>
