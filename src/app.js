@@ -2427,12 +2427,17 @@ $(function () {
       elt[i].childNodes[1].checked=false;
     }
     document.getElementById('pDate').value = "0001-01-01";
-    document.getElementById("usedOpeDropdown").style.display="none"
-    document.getElementById("usedOpeClear").style.display = "none"
+
+    document.getElementById("usedOpeDropdown").style.display="none";
+    document.getElementById("usedOpeClear").style.display = "none";
+    document.getElementById('usedOpeInput').value = "";
     clearList("usedOpeList");
-    document.getElementById("exeEnvDropdown").style.display="none"
-    document.getElementById("exeEnvClear").style.display = "none"
+
+    document.getElementById("exeEnvDropdown").style.display="none";
+    document.getElementById("exeEnvClear").style.display = "none";
+    document.getElementById('exeEnvInput').value = "";
     clearList("exeEnvList");
+
     langList = [];
     pDate = "0001-01-01";
     exeEnvList = [];
@@ -2461,14 +2466,17 @@ $(function () {
 
     document.getElementById("landmarkerDropdown").style.display="none"
     document.getElementById("landmarkerClear").style.display = "none"
+    document.getElementById('landmarkerInput').value = "";
     clearList("landmarkerList");
 
     document.getElementById("parameterDropdown").style.display="none"
     document.getElementById("parameterClear").style.display = "none"
+    document.getElementById('parameterInput').value = "";
     clearList("parameterList");
 
     document.getElementById("evaluationDropdown").style.display="none"
     document.getElementById("evaluationClear").style.display = "none"
+    document.getElementById('evaluationInput').value = "";
     clearList("evaluationList");
 
     document.getElementById("algoNames").value = ""
@@ -2524,7 +2532,9 @@ $(function () {
     a = div.getElementsByClassName("usedOpeList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
+      a[i].childNodes[1].checked=false;
     }
+    document.getElementById('usedOpeInput').value = "";
     typeOpe = [];
     $("#processNames").empty()
     showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
@@ -2548,7 +2558,9 @@ $(function () {
     a = div.getElementsByClassName("exeEnvList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
+      a[i].childNodes[1].checked=false;
     }
+    document.getElementById('exeEnvInput').value = "";
     exeEnvList = [];
     $("#processNames").empty()
     showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
@@ -2572,7 +2584,9 @@ $(function () {
     a = div.getElementsByClassName("landmarkerList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
+      a[i].childNodes[1].checked=false;
     }
+    document.getElementById('landmarkerInput').value = "";
     landmarkerList = [];
     $("#analyseNames").empty()
     showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
@@ -2595,7 +2609,9 @@ $(function () {
     a = div.getElementsByClassName("parameterList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
+      a[i].childNodes[1].checked=false;
     }
+    document.getElementById('parameterInput').value = "";
     /*parameterList = [];
     $("#analyseNames").empty()
     showStudies(tagsinput, typeRecherche, parameterList);
@@ -2618,7 +2634,9 @@ $(function () {
     a = div.getElementsByClassName("evaluationList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
+      a[i].childNodes[1].checked=false;
     }
+    document.getElementById('evaluationInput').value = "";
     /*evaluationrList = [];
     $("#analyseNames").empty()
     showStudies(tagsinput, typeRecherche, evaluationList);
