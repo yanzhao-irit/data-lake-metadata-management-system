@@ -2473,7 +2473,7 @@ $(function () {
 
     document.getElementById("algoNames").value = ""
     var elt2 = document.getElementsByClassName("algotype")
-    for (j = 0; j < elt.length; j++) {
+    for (j = 0; j < elt2.length; j++) {
       elt2[j].checked = false;
     }
     landmarkerList = [];
