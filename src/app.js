@@ -9,6 +9,7 @@ var exeEnvList = [];
 var landmarkerList = [];
 var optionLandmarkerList = [];
 var optionParameterList = [];
+var parameterList = []
 var optionEvaluationList = [];
 var optionEntityClass = [];
 var entityClassList = [];
@@ -1785,7 +1786,6 @@ $(function () {
             //Part for the relationship between attribute
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
-            console.log(uuidAnalysis)
             api
                 .getRelationshipAttribute($(this).attr('id').split('$')[1],'', 'relation')
                 .then(p => {
@@ -2055,6 +2055,7 @@ $(function () {
               network.redraw()
               network.fit()
             })*/
+            console.log(query2)
             api.getGraph(query2).then(p => {
               // create an array with nodes
               var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -2353,14 +2354,15 @@ $(function () {
     if (this.checked) {
       landmarkerList.push(this.id)
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList)
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
+      
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList);
     }
   });
 
@@ -2378,7 +2380,8 @@ $(function () {
 
   $('#aDate').change(function () {
     aDate = $(this).val();
-    showStudies(tagsinput, '', aDate);
+    
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList);
   });
 
 
@@ -2599,7 +2602,7 @@ $(function () {
     document.getElementById('landmarkerInput').value = "";
     landmarkerList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate,landmarkerList);
+    showStudies(tagsinput, typeRecherche, aDate,landmarkerList, algoNames, parameterList);
     console.log(landmarkerList)
   });
 
@@ -2622,10 +2625,9 @@ $(function () {
       a[i].childNodes[1].checked=false;
     }
     document.getElementById('parameterInput').value = "";
-    /*parameterList = [];
+    parameterList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, parameterList);
-    console.log(parameterList)*/
+    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList);
   });
 
   $('#evaluation').on("click", function () {
@@ -2814,14 +2816,14 @@ $(function () {
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       algoNames = document.getElementById("algoNames");
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value)
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList)
     }, 1000);
   });
 
   $("#omNames").keyup(function () {
     $("#analyseNames").empty();
     omNames = document.getElementById("omNames");
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, omNames.value)
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList,omNames.value)
   });
 
 
@@ -3267,9 +3269,9 @@ function showProcesses(tags, language = "", date = "0001-01-01", type = [], exec
 }
 
 //function to get studies
-function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', omNames = '') {
+function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', parameter = [],omNames = '') {
   api
-    .getStudies(tags, type, aDate, landmarker, algoNames, omNames = '')
+    .getStudies(tags, type, aDate, landmarker, algoNames, parameter, omNames = '')
     .then(p => {
       if (p) {
         //var $list = $(".names").empty();
@@ -3433,12 +3435,12 @@ function getParameterClick() {
       a[i].style.display = "";
       var elt = document.getElementById(idparameter)
       elt.checked = true
-      /*parameterList.push(idparameter)
-      console.log(parameterList);*/
+      parameterList.push(idparameter)
+      console.log(parameterList);
     }
   }
-  /*  $("#analyseNames").empty();
-    showStudies(tagsinput, typeRecherche, landmarkerList);*/
+  $("#analyseNames").empty();
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList)
 }
 
 //Function to draw relationDataset without condition

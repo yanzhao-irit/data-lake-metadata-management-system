@@ -101,7 +101,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 }
 
 //Function to search study metadata
-function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, omNames) {
+function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter, evaluation,omNames) {
   var session = driver.session();
   console.log(typeof type)
   let typeRech = Object.values(type);
@@ -116,7 +116,11 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
   }
   console.log(typeRech)
   //Classic cypher query to search for study without filter.
-  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al) WHERE ("
+  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)" 
+  if(parameter.length > 0){
+    query+= ',(p)'
+  }
+  query += "WHERE ("
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
       query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.description) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') OR "
@@ -146,6 +150,17 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
         query += ' toLower(l.name) CONTAINS toLower("' + landmarker[i] + '") OR toLower(l.description) CONTAINS toLower("' + landmarker[i] + '") OR '
       } else {
         query += ' toLower(l.name) CONTAINS toLower("' + landmarker[i] + '") OR toLower(l.description) CONTAINS toLower("' + landmarker[i] + '") )'
+      }
+    }
+  }
+
+  if(parameter.length > 0){
+    query += ' AND (s)-[:hasAnalysis]->(a)-[:hasImplementation]->()-[:hasParameter]-(p:Parameter) AND ( '
+    for (var i = 0; i < parameter.length; i++) {
+      if (i != parameter.length - 1) {
+        query += ' toLower(p.name) CONTAINS toLower("' + parameter[i] + '") OR '
+      } else {
+        query += ' toLower(p.name) CONTAINS toLower("' + parameter[i] + '") )'
       }
     }
   }
