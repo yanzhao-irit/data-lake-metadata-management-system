@@ -1112,7 +1112,7 @@ $(function () {
         $('#similarityButton')[0].style.display = 'none';
         document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
         api
-          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value)
+          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value,parameterList, evaluationList)
           .then(p => {
             if (p) {
               json = JSON.parse(JSON.stringify(p[0]))
@@ -2366,6 +2366,40 @@ $(function () {
     }
   });
 
+  //Event for checkbox in dropdown menu (mainly for filter)
+  $('#parameterDropdown').on('click', 'input', function () {
+    $("#analyseNames").empty();
+    if (this.checked) {
+      parameterList.push(this.id)
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    } else {
+      const index = parameterList.indexOf(this.id);
+      if (index > -1) {
+        parameterList.splice(index, 1);
+      }
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    }
+  });
+
+  //Event for checkbox in dropdown menu (mainly for filter)
+  $('#evaluationDropdown').on('click', 'input', function () {
+    $("#analyseNames").empty();
+    if (this.checked) {
+      evaluationList.push(this.id)
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    } else {
+      const index = evaluationList.indexOf(this.id);
+      if (index > -1) {
+        evaluationList.splice(index, 1);
+      }
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    }
+  });
+
   //Event to get the date if changed for date filter
   $('#dsDate').change(function () {
     dsDate = $(this).val()+'T00:00:00Z';
@@ -2497,10 +2531,13 @@ $(function () {
       elt2[j].checked = false;
     }
     landmarkerList = [];
+    parameterList = [];
+    evaluationList = [];
+    typeRecherche = [];
     aDate = "0001-01-01";
     algoNames = "";
     $("#analyseNames").empty()
-    showStudies(tagsinput);
+    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
   });
 
   //Event to show or hide filters with button
