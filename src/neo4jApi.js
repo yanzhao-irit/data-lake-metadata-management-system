@@ -103,10 +103,8 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 //Function to search study metadata
 function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter, evaluation,omNames) {
   var session = driver.session();
-  console.log(typeof type)
+  console.log('heho'  + evaluation)
   let typeRech = Object.values(type);
-  console.log(typeof typeRech)
-  console.log(typeRech)
   if (typeRech.indexOf('machineLearning') != -1) {
     console.log(typeRech.indexOf('machineLearning'))
     typeRech.splice(typeRech.indexOf('machineLearning'), 1)
@@ -114,11 +112,13 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
   if (typeRech.indexOf('otherAnalysis') != -1) {
     typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
   }
-  console.log(typeRech)
   //Classic cypher query to search for study without filter.
   var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)" 
   if(parameter.length > 0){
     query+= ',(p)'
+  }
+  if(evaluation.length > 0){
+    query+= ',(e)'
   }
   query += "WHERE ("
   for (var i = 0; i < tags.length; i++) {
@@ -150,6 +150,17 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
         query += ' toLower(l.name) CONTAINS toLower("' + landmarker[i] + '") OR toLower(l.description) CONTAINS toLower("' + landmarker[i] + '") OR '
       } else {
         query += ' toLower(l.name) CONTAINS toLower("' + landmarker[i] + '") OR toLower(l.description) CONTAINS toLower("' + landmarker[i] + '") )'
+      }
+    }
+  }
+
+  if(evaluation.length > 0){
+    query += ' AND (s)-[:hasAnalysis]->(a)-[:evaluateAnalysis]-()-[]-(e:EvaluationMeasure) AND ( '
+    for (var i = 0; i < evaluation.length; i++) {
+      if (i != evaluation.length - 1) {
+        query += ' toLower(e.name) CONTAINS toLower("' + evaluation[i] + '") OR '
+      } else {
+        query += ' toLower(e.name) CONTAINS toLower("' + evaluation[i] + '") )'
       }
     }
   }
