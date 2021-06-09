@@ -1112,7 +1112,7 @@ $(function () {
         $('#similarityButton')[0].style.display = 'none';
         document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
         api
-          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value)
+          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value,parameterList, evaluationList)
           .then(p => {
             if (p) {
               json = JSON.parse(JSON.stringify(p[0]))
