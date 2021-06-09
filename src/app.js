@@ -1110,7 +1110,7 @@ $(function () {
         $('#similarityButton')[0].style.display = 'none';
         document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
         api
-          .getStudies([$(this).text()], typeRecherche, aDate,landmarkerList, algoNames.value)
+          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value)
           .then(p => {
             if (p) {
               json = JSON.parse(JSON.stringify(p[0]))
@@ -1152,7 +1152,7 @@ $(function () {
             },
             layout: {
               hierarchical: {
-                direction: "RL",
+                direction: "LR",
               },
             },
             groups: {
@@ -1290,10 +1290,13 @@ $(function () {
         })
         //Get the analysis of the study clicked to create a list
         var $list = $(this).parent()
+
         api
           .getAnalyses($(this).text(), '')
           .then(p => {
             console.log(p)
+            console.log($(this).siblings('tr'))
+            $(this).siblings('tr').empty()
             p.sort(function (a, b) {
               var nameA = a[0].name.toLowerCase(), nameB = b[0].name.toLowerCase()
               if (nameA < nameB) //sort string ascending
@@ -1304,6 +1307,7 @@ $(function () {
             })
             if (p) {
               $("#EntityClassNames").empty()
+
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
               for (var i = 0; i < p.length; i++) {
                 $list.append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
@@ -1455,11 +1459,11 @@ $(function () {
           WHERE NOT exists((p)<-[:hasSubprocess]-(:Process)-[]-(d)) AND NOT exists((p1)<-[:hasSubprocess]-(:Process)-[]-(d))
           RETURN d,p,p1,r,s`
           query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
-          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path
           UNION ALL
           MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
-          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+          WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path`
           api.getGraph(query).then(result => {
             var nodes = new vis.DataSet(result[0][0])
@@ -1847,10 +1851,17 @@ $(function () {
 
 
             //Query part
-            query = `MATCH path = allshortestpaths ((d)-[*]-(u:Analysis {name:"` + $(this).attr('id').split('$')[0] + `",uuid:"` + $(this).attr('id').split('$')[1] + `"}))
-            WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.name = 'Lung cancer'
+            query = `MATCH path = shortestPath ((d:DatasetSource)-[*]-(u:Analysis {uuid:"` + $(this).attr('id').split('$')[1] + `"}))
+            WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship OR n:Study)
+            RETURN path
+            UNION ALL
+            MATCH path = shortestPath ((d)-[*..1]-(u:Analysis {uuid:"` + $(this).attr('id').split('$')[1] + `"}))
+            WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship OR n:Study)
+            AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:DLUnstructuredDataset)
             RETURN path` //Analyse
+            console.log(query)
             api.getGraph(query).then(result => {
+              console.log(result)
               var nodes = new vis.DataSet(result[0][0])
               var edges = new vis.DataSet(result[0][1])
               var container = document.getElementById('viz')
@@ -1875,7 +1886,7 @@ $(function () {
                 },
                 layout: {
                   hierarchical: {
-                    direction: "RL",
+                    direction: "LR",
                   },
                 },
                 groups: {
@@ -2076,12 +2087,13 @@ $(function () {
     // this will contain a reference to the checkbox
     if (this.checked) {
       typeRecherche.push(this.id);
+      console.log(typeRecherche)
       //Check the type of checkbox
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
         $("#dbNames").empty()
         showDatabases(tagsinput, typeRecherche)
       }
-      if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive")) {
+      if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
         $("#analyseNames").empty()
         showStudies(tagsinput, typeRecherche);
         $('#algoNames')[0].style.display = 'none'
@@ -2109,12 +2121,11 @@ $(function () {
           $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
         }
       }
-      if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-        $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche);
-      }
+      // if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
+      //   $("#analyseNames").empty()
+      //   showStudies(tagsinput, typeRecherche);
+      // }
       if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-        showStudies(tagsinput, typeRecherche);
         $('#supervised')[0].style.display = 'inline-block'
         $('#descriptive')[0].style.display = 'inline-block'
         $('#diagnostic')[0].style.display = 'inline-block'
@@ -2125,20 +2136,19 @@ $(function () {
         $('label[for="diagnostic"]')[0].style.display = 'inline-block'
         $('label[for="predictive"]')[0].style.display = 'inline-block'
         $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-        $('#algoNames')[0].style.display = 'inline-block'
-        $('#algosupervised')[0].style.display = 'inline-block'
-        $('#algoUnsupervised')[0].style.display = 'inline-block'
-        $('#AlgoReinforcement')[0].style.display = 'inline-block'
-        $('#parameter')[0].style.display = 'inline-block'
-        $('#evaluation')[0].style.display = 'inline-block'
-        $('#landmarker')[0].style.display = 'inline-block'
-        $('label[for="algoNames"]')[0].style.display = 'inline-block'
-        $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-        $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
+        // $('#algoNames')[0].style.display = 'inline-block'
+        // $('#algosupervised')[0].style.display = 'inline-block'
+        // $('#algoUnsupervised')[0].style.display = 'inline-block'
+        // $('#AlgoReinforcement')[0].style.display = 'inline-block'
+        // $('#parameter')[0].style.display = 'inline-block'
+        // $('#evaluation')[0].style.display = 'inline-block'
+        // $('#landmarker')[0].style.display = 'inline-block'
+        // $('label[for="algoNames"]')[0].style.display = 'inline-block'
+        // $('label[for="algosupervised"]')[0].style.display = 'inline-block'
+        // $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
+        // $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
       }
       if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-        showStudies(tagsinput, typeRecherche);
         $('#supervised')[0].style.display = 'none'
         $('#descriptive')[0].style.display = 'none'
         $('#diagnostic')[0].style.display = 'none'
@@ -2175,24 +2185,25 @@ $(function () {
         showDatabases(tagsinput)
       }
       else {
+        showProcesses(tagsinput)
+        $('#algoNames')[0].style.display = 'none'
+        $('#algosupervised')[0].style.display = 'none'
+        $('#algoUnsupervised')[0].style.display = 'none'
+        $('#AlgoReinforcement')[0].style.display = 'none'
+        $('#parameter')[0].style.display = 'none'
+        $('#evaluation')[0].style.display = 'none'
+        $('#landmarker')[0].style.display = 'none'
+        $('label[for="algoNames"]')[0].style.display = 'none'
+        $('label[for="algosupervised"]')[0].style.display = 'none'
+        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+        $('label[for="algoReinforcement"]')[0].style.display = 'none'
         if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
           $("#dbNames").empty()
           showDatabases(tagsinput, typeRecherche)
         }
-        if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive")) {
+        if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
           $("#analyseNames").empty()
           showStudies(tagsinput, typeRecherche);
-          $('#algoNames')[0].style.display = 'none'
-          $('#algosupervised')[0].style.display = 'none'
-          $('#algoUnsupervised')[0].style.display = 'none'
-          $('#AlgoReinforcement')[0].style.display = 'none'
-          $('#parameter')[0].style.display = 'none'
-          $('#evaluation')[0].style.display = 'none'
-          $('#landmarker')[0].style.display = 'none'
-          $('label[for="algoNames"]')[0].style.display = 'none'
-          $('label[for="algosupervised"]')[0].style.display = 'none'
-          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-          $('label[for="algoReinforcement"]')[0].style.display = 'none'
           if (typeRecherche.includes("supervised")) {
             $('#algoNames')[0].style.display = 'inline-block'
             $('#algosupervised')[0].style.display = 'inline-block'
@@ -2207,10 +2218,10 @@ $(function () {
             $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
           }
         }
-        if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-          $("#analyseNames").empty()
-          showStudies(tagsinput, typeRecherche);
-        }
+        // if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
+        //   $("#analyseNames").empty()
+        //   showStudies(tagsinput, typeRecherche);
+        // }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
           showProcesses(tagsinput, typeRecherche)
           showStudies(tagsinput, typeRecherche)
@@ -2225,17 +2236,17 @@ $(function () {
           $('label[for="diagnostic"]')[0].style.display = 'inline-block'
           $('label[for="predictive"]')[0].style.display = 'inline-block'
           $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-          $('#algoNames')[0].style.display = 'inline-block'
-          $('#algosupervised')[0].style.display = 'inline-block'
-          $('#algoUnsupervised')[0].style.display = 'inline-block'
-          $('#AlgoReinforcement')[0].style.display = 'inline-block'
-          $('#parameter')[0].style.display = 'inline-block'
-          $('#evaluation')[0].style.display = 'inline-block'
-          $('#landmarker')[0].style.display = 'inline-block'
-          $('label[for="algoNames"]')[0].style.display = 'inline-block'
-          $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
+          // $('#algoNames')[0].style.display = 'inline-block'
+          // $('#algosupervised')[0].style.display = 'inline-block'
+          // $('#algoUnsupervised')[0].style.display = 'inline-block'
+          // $('#AlgoReinforcement')[0].style.display = 'inline-block'
+          // $('#parameter')[0].style.display = 'inline-block'
+          // $('#evaluation')[0].style.display = 'inline-block'
+          // $('#landmarker')[0].style.display = 'inline-block'
+          // $('label[for="algoNames"]')[0].style.display = 'inline-block'
+          // $('label[for="algosupervised"]')[0].style.display = 'inline-block'
+          // $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
+          // $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
           showProcesses(tagsinput, typeRecherche)
@@ -2264,7 +2275,6 @@ $(function () {
           $('label[for="algoReinforcement"]')[0].style.display = 'none'
         }
       }
-      console.log('hello there : ' + typeRecherche.includes("otherAnalysis") + ' and ' + typeRecherche.includes("machineLearning"))
       if (!(typeRecherche.includes("otherAnalysis")) && !(typeRecherche.includes("machineLearning"))) {
         $('#supervised')[0].style.display = 'none'
         $('#descriptive')[0].style.display = 'none'
@@ -2801,8 +2811,11 @@ $(function () {
 
   $("#algoNames").keyup(function () {
     $("#analyseNames").empty();
-    algoNames = document.getElementById("algoNames");
-    showStudies(tagsinput, typeRecherche, aDate,landmarkerList, algoNames.value)
+    clearTimeout(timer);  //clear any running timeout on key up
+    timer = setTimeout(function () {
+      algoNames = document.getElementById("algoNames");
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value)
+    }, 1000);
   });
 
   $("#omNames").keyup(function () {
@@ -2911,10 +2924,10 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
           if (arrayObj[i][1]) {
             var valueNumber = Number(arrayObj[i][1]).toFixed(5)
             if (arrayObj[i][1] == valueMin) {
-              $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : red">' + valueNumber + '</span></td></tr>')
+              $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : green">' + valueNumber + '</span></td></tr>')
             } else {
               if (arrayObj[i][1] == valueMax) {
-                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : green">' + valueNumber + '</span></td></tr>')
+                $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td><span style="color : red">' + valueNumber + '</span></td></tr>')
               } else {
                 $listBody.append('<tr><td>' + arrayObj[i][0].split('&')[0] + ' - ' + arrayObj[i][0].split('&')[1] + ' : </td><td>' + valueNumber + '</td></tr>')
               }
@@ -3254,9 +3267,9 @@ function showProcesses(tags, language = "", date = "0001-01-01", type = [], exec
 }
 
 //function to get studies
-function showStudies(tags, type = '', aDate,landmarker = '', algoNames = '', omNames = '') {
+function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', omNames = '') {
   api
-    .getStudies(tags, type, aDate,landmarker, algoNames, omNames = '')
+    .getStudies(tags, type, aDate, landmarker, algoNames, omNames = '')
     .then(p => {
       if (p) {
         //var $list = $(".names").empty();

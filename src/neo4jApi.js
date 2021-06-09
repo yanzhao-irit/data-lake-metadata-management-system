@@ -82,6 +82,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
     }
   }
   query = query + " RETURN distinct p"
+  console.log('process ' + query)
   // Query return is kept and stocked within a model with the same name to avoid confusion. Note that only one parameter of return can be stocked.
   return session
     .run(
@@ -100,10 +101,21 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 }
 
 //Function to search study metadata
-function getStudies(tags, type, creationdate = '0001-01-01',landmarker, algoNames, omNames) {
+function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, omNames) {
   var session = driver.session();
+  console.log(typeof type)
+  let typeRech = Object.values(type);
+  console.log(typeof typeRech)
+  console.log(typeRech)
+  if (typeRech.indexOf('machineLearning') != -1) {
+    console.log(typeRech.indexOf('machineLearning'))
+    typeRech.splice(typeRech.indexOf('machineLearning'), 1)
+  }
+  if (typeRech.indexOf('otherAnalysis') != -1) {
+    typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
+  }
+  console.log(typeRech)
   //Classic cypher query to search for study without filter.
-  console.log(type)
   var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al) WHERE ("
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
@@ -114,13 +126,15 @@ function getStudies(tags, type, creationdate = '0001-01-01',landmarker, algoName
     }
   }
   //Cypher query for analysis type filter
-  if (type.length > 0) {
-    query += ' AND (s)-[:hasAnalysis]->(a) AND ('
-    for (var i = 0; i < type.length; i++) {
-      if (i != type.length - 1) {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + type[i] + '") OR (al:' + type[i] + ') OR '
+  if (typeRech.length > 0) {
+    query += ' AND ('
+    for (var i = 0; i < typeRech.length; i++) {
+      console.log(typeRech[i])
+      console.log("c'est passé")
+      if (i != typeRech.length - 1) {
+        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR (al:' + typeRech[i] + ') OR '
       } else {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + type[i] + '") OR (al:' + type[i] + ') )'
+        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR (al:' + typeRech[i] + ') )'
       }
     }
   }
@@ -136,20 +150,54 @@ function getStudies(tags, type, creationdate = '0001-01-01',landmarker, algoName
     }
   }
   //Cypher query for algo filter. The database does not have all the algo type implemented so this part of query is commented.
-  if (algoNames.length > 0 || type.includes('AlgoSupervised') || type.includes('AlgoUnsupervised') || type.includes('AlgoReinforcement')) {
+  if (algoNames.length > 0 || type.includes('algosupervised') || type.includes('algoUnsupervised') || type.includes('AlgoReinforcement')) {
     query += ' AND (s)-[:hasAnalysis]->(a)-[:hasImplementation]->()-[:usesAlgo]->(al) '
-
+    if(type.includes('algosupervised') || type.includes('algoUnsupervised') || type.includes('AlgoReinforcement')){
+      query += 'AND ('
+      if (!type.includes("algosupervised") && !type.includes("algoUnsupervised") && !type.includes("AlgoReinforcement")) {
+        query += " al:AlgoSupervised OR al:AlgoUnsupervised OR al:AlgoReinforcement ";
+      } else {
+        if (type.includes("algosupervised") && type.includes("algoUnsupervised") && type.includes("AlgoReinforcement")) {
+          query += " al:AlgoSupervised OR al:AlgoUnsupervised OR al:AlgoReinforcement ";
+        } else {
+          if (type.includes("algosupervised") && type.includes("algoUnsupervised")) {
+            query += " al:AlgoSupervised OR al:AlgoUnsupervised ";
+          } else {
+            if (type.includes("algosupervised") && type.includes("AlgoReinforcement")) {
+              query += " al:AlgoSupervised OR al:AlgoReinforcement ";
+            } else {
+              if (type.includes("algoUnsupervised") && type.includes("AlgoReinforcement")) {
+                query += " al:AlgoUnsupervised OR al:AlgoReinforcement ";
+              } else {
+                if (type.includes("algoUnsupervised")) {
+                  query = query + "al:AlgoUnsupervised";
+                } else {
+                  if (type.includes("AlgoReinforcement")) {
+                    query = query + "al:AlgoReinforcement ";
+                  } else {
+                    if (type.includes("algosupervised")) {
+                      query = query + "al:AlgoSupervised";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      query += ') '
+    }
     //Cypher query to search a particular algo names.
     query += ' AND (toLower(al.name) CONTAINS toLower("' + algoNames + '") OR toLower(al.description) CONTAINS toLower("' + algoNames + '") ) '
   }
 
-  //Cyper query for outpu models filter, they are not implemented in the database.
+  //Cyper query for output models filter, they are not implemented in the database.
   // if(omNames>0){
   //   query += ' AND (s)-[:hasAnalysis]->(a)-[:hasOutputModel]->(opm:OutputModel) AND opm.name CONTAINS "' + omNames + '"';
   // }
   query = query + ' AND (datetime(s.creationDate) >= datetime("' + creationdate + '"))'
   query = query + " RETURN DISTINCT s"
-  console.log(query)
+  console.log('Studies ' + query)
   //We get only study here, which are used later to get analysis
   return session
     .run(
@@ -193,7 +241,7 @@ function getAnalyses(study, name, id) {
       query)
     .then(result => {
       return result.records.map(record => {
-        return [new Analysis(record.get('a')),new Landmarker(record.get('i') || record.get('l'))]
+        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l'))]
       });
     })
     .catch(error => {
@@ -806,6 +854,7 @@ function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00
   }
 
   query = query + ") RETURN distinct ds"
+  console.log('dataset ' + query)
   return session
     .run(
       query)
@@ -938,15 +987,15 @@ function getGraph(query) {
         for (var i = 0; i < data.length; i++) {
           if (record._fields[i] != null) {
             if (record._fields[i].labels) {
-              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label :  record._fields[i].properties.value || record._fields[i].labels[0]+" \n "+ (record._fields[i].properties.name || record._fields[i].properties.operationType || record._fields[i].properties.description || record._fields[i].properties.descriptionAnalysis || record._fields[i].properties.ingestionMode)})              
+              nodes.push({ id: record._fields[i].identity.low, group: record._fields[i].labels[0], properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), label: record._fields[i].properties.value || record._fields[i].labels[0] + " \n " + (record._fields[i].properties.name || record._fields[i].properties.operationType || record._fields[i].properties.description || record._fields[i].properties.descriptionAnalysis || record._fields[i].properties.ingestionMode) })
             }
             if (record._fields[i].type) {
               edges.push({ from: record._fields[i].start.low, to: record._fields[i].end.low, label: record._fields[i].type, properties: record._fields[i].properties, title: JSON.stringify(record._fields[i].properties).replaceAll('","', '",\n"'), id: record._fields[i].identity.low })
             }
             if (record._fields[i].segments) {
               for (var j = 0; j < record._fields[i].segments.length; j++) {
-                nodes.push({ id: record._fields[i].segments[j].end.identity.low, group: record._fields[i].segments[j].end.labels[0], properties: record._fields[i].segments[j].end.properties, title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].end.properties.value || (record._fields[i].segments[j].end.labels[0]+"\n"+record._fields[i].segments[j].end.properties.name || record._fields[i].segments[j].end.properties.description || record._fields[i].segments[j].end.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType || record._fields[i].segments[j].end.properties.operationType)})
-                nodes.push({ id: record._fields[i].segments[j].start.identity.low, group: record._fields[i].segments[j].start.labels[0], properties: record._fields[i].segments[j].start.properties, title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].start.properties.value || (record._fields[i].segments[j].start.labels[0]+"\n"+record._fields[i].segments[j].start.properties.name || record._fields[i].segments[j].start.properties.description || record._fields[i].segments[j].start.properties.descriptionAnalysis || record._fields[i].segments[j].start.properties.operationType || record._fields[i].segments[j].start.properties.ingestionMode)})
+                nodes.push({ id: record._fields[i].segments[j].end.identity.low, group: record._fields[i].segments[j].end.labels[0], properties: record._fields[i].segments[j].end.properties, title: JSON.stringify(record._fields[i].segments[j].end.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].end.properties.value || (record._fields[i].segments[j].end.labels[0] + "\n" + record._fields[i].segments[j].end.properties.name || record._fields[i].segments[j].end.properties.description || record._fields[i].segments[j].end.properties.descriptionAnalysis || record._fields[i].segments[j].end.properties.operationType || record._fields[i].segments[j].end.properties.operationType) })
+                nodes.push({ id: record._fields[i].segments[j].start.identity.low, group: record._fields[i].segments[j].start.labels[0], properties: record._fields[i].segments[j].start.properties, title: JSON.stringify(record._fields[i].segments[j].start.properties).replaceAll('","', '",\n"'), label: record._fields[i].segments[j].start.properties.value || (record._fields[i].segments[j].start.labels[0] + "\n" + record._fields[i].segments[j].start.properties.name || record._fields[i].segments[j].start.properties.description || record._fields[i].segments[j].start.properties.descriptionAnalysis || record._fields[i].segments[j].start.properties.operationType || record._fields[i].segments[j].start.properties.ingestionMode) })
                 edges.push({ from: record._fields[i].segments[j].relationship.start, to: record._fields[i].segments[j].relationship.end, label: record._fields[i].segments[j].relationship.type, id: record._fields[i].segments[j].relationship.identity.low, properties: record._fields[i].segments[j].relationship.properties, title: JSON.stringify(record._fields[i].segments[j].relationship.properties).replaceAll('","', '"\n"') })
               }
             }
@@ -958,7 +1007,7 @@ function getGraph(query) {
           .map(id => {
             return nodes.find(a => a.id === id)
           })
-          var uniqueEdges = Array.from(new Set(edges.map(a => a.id)))
+        var uniqueEdges = Array.from(new Set(edges.map(a => a.id)))
           .map(id => {
             return edges.find(a => a.id === id)
           })
