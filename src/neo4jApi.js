@@ -119,10 +119,10 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
   var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al) WHERE ("
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
-      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') OR "
+      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.description) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') OR "
     }
     else {
-      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.descriptionAnalysis) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') )"
+      query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.description) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') )"
     }
   }
   //Cypher query for analysis type filter
@@ -132,9 +132,9 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
       console.log(typeRech[i])
       console.log("c'est passé")
       if (i != typeRech.length - 1) {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR (al:' + typeRech[i] + ') OR '
+        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
       } else {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR (al:' + typeRech[i] + ') )'
+        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '")  )'
       }
     }
   }
@@ -152,7 +152,7 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
   //Cypher query for algo filter. The database does not have all the algo type implemented so this part of query is commented.
   if (algoNames.length > 0 || type.includes('algosupervised') || type.includes('algoUnsupervised') || type.includes('AlgoReinforcement')) {
     query += ' AND (s)-[:hasAnalysis]->(a)-[:hasImplementation]->()-[:usesAlgo]->(al) '
-    if(type.includes('algosupervised') || type.includes('algoUnsupervised') || type.includes('AlgoReinforcement')){
+    if (type.includes('algosupervised') || type.includes('algoUnsupervised') || type.includes('AlgoReinforcement')) {
       query += 'AND ('
       if (!type.includes("algosupervised") && !type.includes("algoUnsupervised") && !type.includes("AlgoReinforcement")) {
         query += " al:AlgoSupervised OR al:AlgoUnsupervised OR al:AlgoReinforcement ";
@@ -188,7 +188,9 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
       query += ') '
     }
     //Cypher query to search a particular algo names.
-    query += ' AND (toLower(al.name) CONTAINS toLower("' + algoNames + '") OR toLower(al.description) CONTAINS toLower("' + algoNames + '") ) '
+    if (algoNames.length > 0) {
+      query += ' AND (toLower(al.name) CONTAINS toLower("' + algoNames + '") OR toLower(al.description) CONTAINS toLower("' + algoNames + '") ) '
+    }
   }
 
   //Cyper query for output models filter, they are not implemented in the database.
@@ -703,7 +705,7 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
         query += ' AND RA.name ="' + relationName + '"'
       }
 
-      query+= `RETURN DISTINCT RA`
+      query += `RETURN DISTINCT RA`
       return session
         .run(
           query)

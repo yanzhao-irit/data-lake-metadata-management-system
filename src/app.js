@@ -3274,7 +3274,7 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', om
       if (p) {
         //var $list = $(".names").empty();
         var $list = $("#analyseNames")
-        // $list.empty()
+        $list.empty()
         var landList = []
         for (var i = 0; i < p.length; i++) {
           $list.append($("<tr><td class='Study'>" + p[i].name + "</td></tr>"));
