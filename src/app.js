@@ -2457,7 +2457,7 @@ $(function () {
   });
 
   $('#clearAllFilterA').on("click", function () {
-    //$('#moreAFilter')[0].style.display = "none";
+    $('#moreAFilter')[0].style.display = "none";
     var elt = document.getElementsByClassName("analysetype")
     // console.log(elt[0])
     for (x = 0; x < elt.length; x++) {
