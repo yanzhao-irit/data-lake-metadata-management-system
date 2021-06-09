@@ -740,7 +740,7 @@ $(function () {
             json = JSON.parse(JSON.stringify(p[0]))
             var $p = $("#properties")
             for (propriete in p[0]) {
-              if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+              if (propriete == "executionDate" || propriete == 'id') {
                 $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
                 $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
@@ -1118,7 +1118,7 @@ $(function () {
               json = JSON.parse(JSON.stringify(p[0]))
               var $p = $("#properties")
               for (propriete in p[0]) {
-                if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+                if (propriete == "executionDate" || propriete == 'id') {
                   $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
                 } else {
                   $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
