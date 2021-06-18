@@ -1,0 +1,62 @@
+.row {
+    text-align: center;
+}
+
+#moreDSFilter {
+    display: none;
+}
+
+.node {
+    stroke: #222;
+    stroke-width: 1.5px;
+}
+
+.node.actor {
+    fill: #888;
+}
+
+.node.movie {
+    fill: #BBB;
+}
+
+.link {
+    stroke: #999;
+    stroke-opacity: .6;
+    stroke-width: 1px;
+}
+
+#filter {
+    text-align: center;
+}
+
+#specificSearch {
+    text-align: center;
+}
+
+#similarity i {
+    font-size: 75%;
+}
+
+#viz,
+#viz2,
+#viz3,
+#viz4 {
+    height: 700px;
+    border: 1px solid lightgray;
+    font: 22pt arial;
+    margin: 10px;
+}
+
+#viz5 {
+    height: 500px;
+    border: 1px solid lightgray;
+    font: 22pt arial;
+    margin: 10px;
+}
+
+#viz6 {
+    height: 700px;
+    border: 1px solid lightgray;
+    font: 22pt arial;
+    margin: 10px;
+}

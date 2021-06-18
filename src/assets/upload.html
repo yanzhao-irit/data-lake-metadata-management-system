@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test upload Interface</title>
+  
+  <script src="./renderer.js"></script>
+  <script>let $ = require('jquery');</script>
+  <style type="text/css">
+  .boite {
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      display: none;
+      width: 198px;
+      border-width: 1px;
+      border-style: solid;
+      margin-top: 1px;
+      padding: 2px;
+      overflow: auto;
+  }
+  </style>
+</head>
+<body>
+<div>
+  <a href="index.html">Back To application</a>
+</div>
+
+<h1>Dataset : </h1>
+<p>Owner of this dataset : <input type="text" id="owner"></p>
+</br>
+<input type="file" id="fileInput">
+
+<h1>Ingest : </h1>
+<p>Ingest Mode :
+  <select id="ingestMode">
+    <option value="real-time">real-time</option>
+    <option value="batch">batch</option>
+
+  </select></p>
+<div id="ingestionTime" display="none">
+
+  <p>Start Time : <input id="ingestionStartTime" type="datetime-local"
+                         name="meeting-time" ></p>
+  <p>End Time : <input id="ingestionEndTime" type="datetime-local"
+                       name="meeting-time" ></p>
+</div>
+
+<h1>Tags : </h1>
+
+<div id="Tags">
+  <div><input id="add" type="button" value="+"></div>
+  <div><span>Tag : </span><div><input type="text" name="tags" id="zone0" /><div id="zoneaff0"  class="boite"></div></div></div>
+</div>
+
+<h1>Datalake Dataset : </h1>
+<p>Connection URL : <input type="text" id="url"></p>
+<p>Administrator : <input type="text" id="admin"></p>
+<p>Description : <input type="text" id="description"></p>
+
+
+<input type="submit" value="send">
+
+</body>
+
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="neo4j-web.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css"
+      crossorigin="anonymous">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"
+        crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+<script src="app.js"></script>
+
+
+</html>
