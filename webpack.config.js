@@ -30,7 +30,7 @@ module.exports = {
 	new HtmlWebpackPlugin({filename:'upload.html',template: 'src/assets/upload.html', chunks: ['upload']}),
   new HtmlWebpackPlugin({filename:'index.html',template: 'src/assets/index.html', chunks: ['app']})
   ],
-
+  target: 'electron',
   resolve: {
     extensions: ['.webpack.js', '.web.js', '.js', '.jsx']
   },

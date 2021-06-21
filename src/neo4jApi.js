@@ -3,31 +3,31 @@
 let neo4j = require('neo4j-driver');
 
 //Call of models file to stock responses from database.
-// var Processes = require('./models/Processes');
-// var Analysis = require('./models/Analysis')
-// var DLStructuredDataset = require('./models/DLStructuredDataset')
-// var Operation = require('./models/Operation')
-// var Quality = require('./models/Quality')
-// var QualityValue = require('./models/QualityValue')
-// var Study = require('./models/Study')
-// var Landmarker = require('./models/Landmarker')
-// var Parameter = require('./models/Parameter')
-// var ParameterSettings = require('./models/ParameterSettings')
-// var Evaluation = require('./models/Evaluation')
-// var NominalFeature = require('./models/NominalFeature')
-// var NumericFeature = require('./models/NumericFeature')
-// var NominalAttribute = require('./models/NominalAttribute')
-// var NumericAttribute = require('./models/NumericAttribute')
-// var EntityClass = require('./models/EntityClass')
-// var RelationshipDS = require('./models/RelationshipDS')
-// var AnalysisDSRelationship = require('./models/AnalysisDSRelationship')
-// var RelationshipAtt = require('./models/RelationshipAtt')
-// var Attribute = require('./models/Attribute')
-// var AnalysisAttribute = require('./models/AnalysisAttribute')
-// var AlgoResult = require('./models/AlgoResult')
-// var Nodes = require('./models/Nodes')
-// var Relationship = require('./models/Relationship')
-// var Tag = require('./models/Tag')
+var Processes = require('./models/Processes');
+var Analysis = require('./models/Analysis')
+var DLStructuredDataset = require('./models/DLStructuredDataset')
+var Operation = require('./models/Operation')
+var Quality = require('./models/Quality')
+var QualityValue = require('./models/QualityValue')
+var Study = require('./models/Study')
+var Landmarker = require('./models/Landmarker')
+var Parameter = require('./models/Parameter')
+var ParameterSettings = require('./models/ParameterSettings')
+var Evaluation = require('./models/Evaluation')
+var NominalFeature = require('./models/NominalFeature')
+var NumericFeature = require('./models/NumericFeature')
+var NominalAttribute = require('./models/NominalAttribute')
+var NumericAttribute = require('./models/NumericAttribute')
+var EntityClass = require('./models/EntityClass')
+var RelationshipDS = require('./models/RelationshipDS')
+var AnalysisDSRelationship = require('./models/AnalysisDSRelationship')
+var RelationshipAtt = require('./models/RelationshipAtt')
+var Attribute = require('./models/Attribute')
+var AnalysisAttribute = require('./models/AnalysisAttribute')
+var AlgoResult = require('./models/AlgoResult')
+var Nodes = require('./models/Nodes')
+var Relationship = require('./models/Relationship')
+var Tag = require('./models/Tag')
 
 //Drivers and parameters to acces database 
 var _ = require('lodash');
@@ -35,12 +35,12 @@ var _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 
-let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../store-password.json')));
+let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../store-password.json')));
 console.log(pwd)
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
 //Function to search processus metadata with parameters to apply filter. 
 //Attributed values are default value if no parameter is given.
-function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) {
+module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) => {
   var session = driver.session();
   //Classic query without filter, search with name, description and tag name.
   var query = "MATCH (p:Process) OPTIONAL MATCH (p)-[r:hasTag]->(t :Tag) OPTIONAL MATCH (o:Operation)-[:isUsedBy]->(:OperationOfProcess)<-[:containsOp]-(p) WITH p,t,o WHERE ("
@@ -107,7 +107,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 }
 
 //Function to search study metadata
-function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter = [], evaluation = [],omNames) {
+module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter = [], evaluation = [],omNames) => {
   var session = driver.session();
   console.log('heho'  + evaluation)
   let typeRech = Object.values(type);
@@ -250,7 +250,7 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
 }
 
 //Function to search for analysis metadata by study id or analysis
-function getAnalyses(study, name, id) {
+module.exports.getAnalyses = (study, name, id) => {
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis 
@@ -287,7 +287,7 @@ function getAnalyses(study, name, id) {
 }
 
 //Function to get nominal features by analysis
-function getNominalFeaturesbyAnalysis(analyseId) {
+module.exports.getNominalFeaturesbyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf) RETURN nf'
   return session
@@ -307,7 +307,7 @@ function getNominalFeaturesbyAnalysis(analyseId) {
 }
 
 //Function to get numeric features by analysis
-function getNumericFeaturesbyAnalysis(analyseId) {
+module.exports.getNumericFeaturesbyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf) RETURN nf'
   return session
@@ -327,7 +327,7 @@ function getNumericFeaturesbyAnalysis(analyseId) {
 }
 
 //Function to get numeric attributes by analysis
-function getNumericAttributebyAnalysis(analyseId) {
+module.exports.getNumericAttributebyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -347,7 +347,7 @@ function getNumericAttributebyAnalysis(analyseId) {
 }
 
 //Function to get nominal attributes by analysis
-function getNominalAttributebyAnalysis(analyseId) {
+module.exports.getNominalAttributebyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -367,7 +367,7 @@ function getNominalAttributebyAnalysis(analyseId) {
 }
 
 //Function to get a specific nominal attribute by analysis
-function getNominalAttribute(name, analyseId) {
+module.exports.getNominalAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND na.name= "' + name + '" AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -387,7 +387,7 @@ function getNominalAttribute(name, analyseId) {
 }
 
 //Function to get a specific numeric attribute by analysis
-function getNumericAttribute(name, analyseId) {
+module.exports.getNumericAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '" AND na.name= "' + name + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -407,7 +407,7 @@ function getNumericAttribute(name, analyseId) {
 }
 
 //Function to get numeric attributes by dataset
-function getNumericAttributebyDataset(datasetId) {
+module.exports.getNumericAttributebyDataset = (datasetId) => {
   var session = driver.session();
   query = 'MATCH (dl)-[]-(e:EntityClass)-[]-(a:NumericAttribute) WHERE dl.uuid = "' + datasetId + '" AND (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset) RETURN DISTINCT a'
   return session
@@ -427,7 +427,7 @@ function getNumericAttributebyDataset(datasetId) {
 }
 
 //Function to get nominal attributes by dataset
-function getNominalAttributebyDataset(datasetId) {
+module.exports.getNominalAttributebyDataset = (datasetId) => {
   var session = driver.session();
   query = 'MATCH (dl)-[]-(e:EntityClass)-[]-(a:NominalAttribute) WHERE dl.uuid = "' + datasetId + '" AND (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset) RETURN DISTINCT a'
   return session
@@ -447,7 +447,7 @@ function getNominalAttributebyDataset(datasetId) {
 }
 
 //Function to get quality informations by dataset to create filter (there are no quality in databse for now)
-function getQuality(dataSet) {
+module.exports.getQuality = (dataSet) => {
   var session = driver.session();
   var query = "MATCH (q:quality),(n) WHERE (q)<-[:hasQuality]-(n) AND n.name CONTAINS (" + dataSet.name + ") RETURN DISTINCT q";
   return session
@@ -468,7 +468,7 @@ function getQuality(dataSet) {
 
 
 //Function to get quaity value with dataset Id and quality name
-function getQualityValue(quality, dataSet) {
+module.exports.getQualityValue = (quality, dataSet) => {
   var session = driver.session();
   query = "MATCH (q:Quality)<-[r:hasQuality]-(n) WHERE q.name CONTAINS (" + quality.name + ") AND n.name CONTAINS (" + dataSet.name + ") RETURN DISTINCT r";
   return session
@@ -488,7 +488,7 @@ function getQualityValue(quality, dataSet) {
 }
 
 //Function to get all the operation to create filter
-function getOperations() {
+module.exports.getOperations = () => {
   var session = driver.session();
   query = "MATCH (o:Operation) RETURN DISTINCT o";
   return session
@@ -508,7 +508,7 @@ function getOperations() {
 }
 
 //Function to get landmarkes by study to create a filter
-function getLandmarkers(study) {
+module.exports.getLandmarkers = (study) => {
   var session = driver.session();
   query = "MATCH (l:Landmarker),(s:Study) WHERE (l)<-[:hasImplementation]-()<-[:hasAnalysis]-(s) AND (toLower(s.name) CONTAINS toLower('" + study.name + "')) RETURN DISTINCT l";
   return session
@@ -528,7 +528,7 @@ function getLandmarkers(study) {
 }
 
 //Function to get parameter by study to create a filter
-function getParameter(study) {
+module.exports.getParameter = (study) => {
   var session = driver.session();
   query = 'MATCH (s:Study)-[:hasAnalysis]->()-[:hasImplementation]->()-[:hasParameter]->(p:Parameter) WHERE toLower(s.name) CONTAINS toLower("' + study.name + '") RETURN DISTINCT p'
   return session
@@ -548,7 +548,7 @@ function getParameter(study) {
 }
 
 //Function to get parameter settings
-function getParameterSettings() {
+module.exports.getParameterSettings = () => {
   var session = driver.session();
   query += 'MATCH (p:ParameterSettings) RETURN DISTINCT p'
   return session
@@ -568,7 +568,7 @@ function getParameterSettings() {
 }
 
 //Function to get evaluation by study to create a filter
-function getEvaluation(study) {
+module.exports.getEvaluation = (study) => {
   var session = driver.session();
   query = 'MATCH (s:Study)-[:hasAnalysis]->()<-[:evaluateAnalysis]-()-[:useEvaluationMeasure]-(e:EvaluationMeasure) WHERE (toLower(s.name) CONTAINS toLower("' + study.name + '")) RETURN DISTINCT e'
   return session
@@ -588,7 +588,7 @@ function getEvaluation(study) {
 }
 
 //Function to get entity class by analysis
-function getEntityClassByAnalyse(analyseName, analyseId) {
+module.exports.getEntityClassByAnalyse = (analyseName, analyseId) => {
   var session = driver.session();
   query = 'MATCH (e:EntityClass)-[]-(n)<-[:analyze]-(a:Analysis) WHERE a.name = "' + analyseName + '" AND a.uuid = "' + analyseId + '" AND (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset) RETURN DISTINCT e';
   console.log(query)
@@ -609,8 +609,8 @@ function getEntityClassByAnalyse(analyseName, analyseId) {
 }
 
 
-//function to get entity class by dataset
-function getEntityClassByDataset(datasetName, datasetId, typeDS) {
+//module.exports.to get entity class by dataset
+module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
   var session = driver.session();
   query = 'MATCH (e:EntityClass)<-[:hasEntityClass]-(a) WHERE '
   if (typeDS.includes("Semi-Structured")) {
@@ -641,8 +641,8 @@ function getEntityClassByDataset(datasetName, datasetId, typeDS) {
     });
 }
 
-//function to search for dataset relationship with other datasets 
-function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
+//module.exports.to search for dataset relationship with other datasets 
+module.exports.getRelationshipDSbyDataset = (dsName, dsId, type, relationName = '') => {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
   query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
@@ -694,7 +694,7 @@ function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
 }
 
 //Function to get relationship value between two datasets
-function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
+module.exports.getRelationshipDSAnalysisbyDataset = (dataset1, dataset2, Relationship) => {
   var session = driver.session();
   query = `MATCH (ds1)-[]-(adsr:AnalysisDSRelationship)-[]-(ds2), (adsr)-[]-(rds:RelationshipDS) 
               WHERE rds.name = "` + Relationship + `" AND ds1.uuid = "` + dataset1 + `" AND ds2.uuid = "` + dataset2 + `" 
@@ -718,7 +718,7 @@ function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
 }
 
 //Function to search for relationships between attribute by datasets or analysis. allow to get relationship name,value and others attributes linked to the target.
-function getRelationshipAttribute(sourceId, name = '', type, relationName = '', name2 = '') {
+module.exports.getRelationshipAttribute = (sourceId, name = '', type, relationName = '', name2 = '') => {
   var session = driver.session();
   query = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
   WHERE dl.uuid = '`+ sourceId + `'
@@ -807,7 +807,7 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
 
 //fonction de recherches des datasets avec les différents paramètres pour chaque filtre.
 //Function to search dataset metadata, with parameters for each filter.
-function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00:00:00Z', quality = [], sensitivity = 0, entityAttributeNames = "") {
+module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001-01-01T00:00:00Z', quality = [], sensitivity = 0, entityAttributeNames = "") => {
   var session = driver.session();
   //Cypher query with ifs to have the dataset type filter used.
   var query = "MATCH (ds),(a),(e:EntityClass) WHERE ("; //,(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
@@ -905,7 +905,7 @@ function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00
     });
 }
 
-function graphList() {
+module.exports.graphList = () => {
   var session = driver.session();
   query = 'CALL gds.graph.list() YIELD graphName'
   return session
@@ -924,7 +924,7 @@ function graphList() {
     });
 }
 
-function createGraph() {
+module.exports.createGraph = () => {
   var session = driver.session();
   query = `CALL gds.graph.create.cypher(
     'graph-DDDT',
@@ -943,7 +943,7 @@ function createGraph() {
     });
 }
 
-function createGraphAll() {
+module.exports.createGraphAll = () => {
   var session = driver.session();
   query = `CALL gds.graph.create.cypher(
     'graph-All',
@@ -962,7 +962,7 @@ function createGraphAll() {
     });
 }
 
-function algoSimilairty() {
+module.exports.algoSimilairty = () => {
   var session = driver.session();
   query = `CALL gds.nodeSimilarity.stream('graph-DDDT')
   YIELD node1, node2, similarity
@@ -984,7 +984,7 @@ function algoSimilairty() {
     });
 }
 
-function algoBetweennessCentrality() {
+module.exports.algoBetweennessCentrality = () => {
   var session = driver.session();
   query = `CALL gds.betweenness.stream('graph-All')
   YIELD nodeId, score
@@ -1007,7 +1007,7 @@ function algoBetweennessCentrality() {
     });
 }
 
-function getGraph(query) {
+module.exports.getGraph = (query) => {
   var session = driver.session();
   var nodes = []
   var edges = []
@@ -1060,7 +1060,7 @@ function getGraph(query) {
 
 //-------------------------------------ADD start----------------------------
 //Function to search for analysis metadata by study id or analysis
-function getTags(tag) {
+module.exports.getTags = (tag) => {
   //console.log(tag);
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
@@ -1087,34 +1087,34 @@ function getTags(tag) {
 
 
 // //Exports of used functions
-module.exports.getTags = getTags;
-module.exports.getProcesses = getProcesses;
-module.exports.getStudies = getStudies;
-module.exports.getAnalyses = getAnalyses;
-module.exports.getDatabases = getDatabases;
-module.exports.getQuality = getQuality;
-module.exports.getQualityValue = getQualityValue;
-module.exports.getOperations = getOperations;
-module.exports.getLandmarkers = getLandmarkers;
-module.exports.getParameter = getParameter;
-module.exports.getParameterSettings = getParameterSettings;
-module.exports.getEvaluation = getEvaluation;
-module.exports.getNominalFeaturesbyAnalysis = getNominalFeaturesbyAnalysis;
-module.exports.getNumericFeaturesbyAnalysis = getNumericFeaturesbyAnalysis;
-module.exports.getNumericAttributebyAnalysis = getNumericAttributebyAnalysis;
-module.exports.getNominalAttributebyAnalysis = getNominalAttributebyAnalysis;
-module.exports.getNominalAttribute = getNominalAttribute;
-module.exports.getNumericAttribute = getNumericAttribute;
-module.exports.getEntityClassByAnalyse = getEntityClassByAnalyse;
-module.exports.getEntityClassByDataset = getEntityClassByDataset;
-module.exports.getRelationshipDSbyDataset = getRelationshipDSbyDataset;
-module.exports.getRelationshipDSAnalysisbyDataset = getRelationshipDSAnalysisbyDataset;
-module.exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
-module.exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
-module.exports.getRelationshipAttribute = getRelationshipAttribute;
-module.exports.createGraph = createGraph;
-module.exports.createGraphAll = createGraphAll;
-module.exports.algoSimilairty = algoSimilairty;
-module.exports.graphList = graphList;
-module.exports.algoBetweennessCentrality = algoBetweennessCentrality;
-module.exports.getGraph = getGraph;
+// module.exports.getTags = getTags;
+// module.exports.getProcesses = getProcesses;
+// module.exports.getStudies = getStudies;
+// module.exports.getAnalyses = getAnalyses;
+// module.exports.getDatabases = getDatabases;
+// module.exports.getQuality = getQuality;
+// module.exports.getQualityValue = getQualityValue;
+// module.exports.getOperations = getOperations;
+// module.exports.getLandmarkers = getLandmarkers;
+// module.exports.getParameter = getParameter;
+// module.exports.getParameterSettings = getParameterSettings;
+// module.exports.getEvaluation = getEvaluation;
+// module.exports.getNominalFeaturesbyAnalysis = getNominalFeaturesbyAnalysis;
+// module.exports.getNumericFeaturesbyAnalysis = getNumericFeaturesbyAnalysis;
+// module.exports.getNumericAttributebyAnalysis = getNumericAttributebyAnalysis;
+// module.exports.getNominalAttributebyAnalysis = getNominalAttributebyAnalysis;
+// module.exports.getNominalAttribute = getNominalAttribute;
+// module.exports.getNumericAttribute = getNumericAttribute;
+// module.exports.getEntityClassByAnalyse = getEntityClassByAnalyse;
+// module.exports.getEntityClassByDataset = getEntityClassByDataset;
+// module.exports.getRelationshipDSbyDataset = getRelationshipDSbyDataset;
+// module.exports.getRelationshipDSAnalysisbyDataset = getRelationshipDSAnalysisbyDataset;
+// module.exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
+// module.exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
+// module.exports.getRelationshipAttribute = getRelationshipAttribute;
+// module.exports.createGraph = createGraph;
+// module.exports.createGraphAll = createGraphAll;
+// module.exports.algoSimilairty = algoSimilairty;
+// module.exports.graphList = graphList;
+// module.exports.algoBetweennessCentrality = algoBetweennessCentrality;
+// module.exports.getGraph = getGraph;

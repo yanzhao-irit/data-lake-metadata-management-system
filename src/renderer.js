@@ -1,12 +1,14 @@
+const api = require("../neo4jApi");
+const _ = require('lodash')
+
+
 $( "#dialog" ).dialog();
 // const api = require('./neo4jApi.js');
 // const orcl = require('./oracleAPI');
 // const toJsonSchema = require('to-json-schema');
+// const path = require("path");
+// const { api } = require(path.resolve('./contents/neo4jJs/neo4jApi'));
 
-const fs = require('fs');
-const path = require('path');
-
-let api = require('./neo4jApi')
 
 var typeRecherche = [];
 var typeOpe = [];
@@ -177,6 +179,7 @@ var options = {
 //Beginning of event listener
 $(function () {
   //Initialisation of graphic interface
+  console.log('hello 1')
   usedOpeInit()
   var promisegraph = new Promise((resolve, reject) => {
     api.graphList().then(p => {
@@ -642,7 +645,7 @@ $(function () {
     $('#relationshipOnglet').empty()
     $('#relationshipContent').empty()
     //Check if the target is a attribute or an entity class
-    if ($(this).context.className == "Attribute") {
+    if ($(this)[0].className == "Attribute") {
       //Clean the properties windows if a precedent items has been clicked.
       $('#attrProperties').empty()
       //Check if the attributes is numeric or nominal
@@ -671,7 +674,7 @@ $(function () {
     }
 
     //if the target is an entity class
-    if ($(this).context.className == 'EntityClass') {
+    if ($(this)[0].className == 'EntityClass') {
       $('#EntityClassProperties').empty()
       //Call of a database fucntion to get entity class by analysis
       api.getEntityClassByAnalyse($(this).attr('id').split('$')[2], $(this).attr('id').split('$')[1]).then(ec => {
@@ -732,7 +735,8 @@ $(function () {
     $("#properties").empty()
 
     //check which element is clicked
-    if ($(this).context.className == "Process") {
+    console.log($(this)[0].className)
+    if ($(this)[0].className == "Process") {
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
       $('#dsRelationButton')[0].style.display = 'none';
@@ -916,11 +920,6 @@ $(function () {
             Study: {
               color: { background: "#7EC0EE", border: "black" },
               // shape: "diamond",
-            },
-          },
-          physics: {
-            hierarchicalRepulsion: {
-              avoidOverlap: 1,
             },
           }
         };
@@ -1112,7 +1111,7 @@ $(function () {
       setTimeout(() => { $("#processNames").closest(".collapse").collapse('show') }, 500);
 
     } else { //Event part for the study
-      if ($(this).context.className == "Study") {
+      if ($(this)[0].className == "Study") {
         $('#featureButton')[0].style.display = 'block';
         $('#dsRelationButton')[0].style.display = 'none';
         $('#attRelationButton')[0].style.display = 'block';
@@ -1286,12 +1285,7 @@ $(function () {
                 color: { background: "#7EC0EE", border: "black" },
                 // shape: "diamond",
               },
-            },
-            physics: {
-              hierarchicalRepulsion: {
-                avoidOverlap: 1,
-              },
-            },
+            }
           };
           var network = new vis.Network(container, data, options);
           network.body.emitter.emit('_dataChanged')
@@ -1331,7 +1325,7 @@ $(function () {
         setTimeout(() => { $("#analyseNames").closest(".collapse").collapse('show') }, 500);
 
       } else { //Event part for the Dataset
-        if ($(this).context.className == "Database") {
+        if ($(this)[0].className == "Database") {
           $('#featureButton')[0].style.display = 'none';
           $('#dsRelationButton')[0].style.display = 'block';
           $('#attRelationButton')[0].style.display = 'block';
@@ -1346,10 +1340,10 @@ $(function () {
           $('#attributeList').empty()
 
           //Check the type of dataset
-          if ((($(this).context.id).toLowerCase()).includes("semi")) {
+          if ((($(this)[0].id).toLowerCase()).includes("semi")) {
             var typeDS = 'Semi-Structured';
           } else {
-            if ((($(this).context.id).toLowerCase()).includes("un")) {
+            if ((($(this)[0].id).toLowerCase()).includes("un")) {
               var typeDS = 'Unstructured';
             } else {
               var typeDS = 'Structured';
@@ -1626,12 +1620,7 @@ $(function () {
                   color: { background: "#7EC0EE", border: "black" },
                   // shape: "diamond",
                 },
-              },
-              physics: {
-                hierarchicalRepulsion: {
-                  avoidOverlap: 1,
-                },
-              },
+              }
             };
             var promisegraph = new Promise((resolve, reject) => {
               var network = new vis.Network(container, data, options);
@@ -1726,7 +1715,7 @@ $(function () {
           setTimeout(() => { $("#dbNames").closest(".collapse").collapse('show') }, 500);
 
         } else { //Event part for the analyse
-          if ($(this).context.className == "analyse") {
+          if ($(this)[0].className == "analyse") {
             $('#featureButton')[0].style.display = 'block';
             $('#dsRelationButton')[0].style.display = 'none';
             $('#attRelationButton')[0].style.display = 'block';
@@ -2019,12 +2008,7 @@ $(function () {
                     color: { background: "#7EC0EE", border: "black" },
                     // shape: "diamond",
                   },
-                },
-                physics: {
-                  hierarchicalRepulsion: {
-                    avoidOverlap: 1,
-                  },
-                },
+                }
               };
               var network = new vis.Network(container, data, options);
               network.body.emitter.emit('_dataChanged')
@@ -3127,7 +3111,9 @@ function getGrapheViz5Seuil() {
 
 //function to create a list of filter
 function usedOpeInit() {
+  console.log('hello 2')
   api.getOperations().then(p => {
+    console.log('hello 3')
     var $list = $("#usedOpeDropdown")
     for (var i = 0; i < p.length; i++) {
       $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' classe='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
