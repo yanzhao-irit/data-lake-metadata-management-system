@@ -1,4 +1,4 @@
-.row {
+.nav {
     text-align: center;
 }
 
@@ -59,4 +59,9 @@
     border: 1px solid lightgray;
     font: 22pt arial;
     margin: 10px;
+}
+
+td {
+    word-wrap:break-word;
+    word-break:break-all;
 }
