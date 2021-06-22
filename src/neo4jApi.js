@@ -1056,7 +1056,6 @@ module.exports.getGraph = (query) => {
     });
 }
 
-//------------------------------------------ADD-----------------------------
 
 //-------------------------------------ADD start----------------------------
 //Function to search for analysis metadata by study id or analysis
@@ -1083,38 +1082,3 @@ module.exports.getTags = (tag) => {
     });
 }
 
-
-
-
-// //Exports of used functions
-// module.exports.getTags = getTags;
-// module.exports.getProcesses = getProcesses;
-// module.exports.getStudies = getStudies;
-// module.exports.getAnalyses = getAnalyses;
-// module.exports.getDatabases = getDatabases;
-// module.exports.getQuality = getQuality;
-// module.exports.getQualityValue = getQualityValue;
-// module.exports.getOperations = getOperations;
-// module.exports.getLandmarkers = getLandmarkers;
-// module.exports.getParameter = getParameter;
-// module.exports.getParameterSettings = getParameterSettings;
-// module.exports.getEvaluation = getEvaluation;
-// module.exports.getNominalFeaturesbyAnalysis = getNominalFeaturesbyAnalysis;
-// module.exports.getNumericFeaturesbyAnalysis = getNumericFeaturesbyAnalysis;
-// module.exports.getNumericAttributebyAnalysis = getNumericAttributebyAnalysis;
-// module.exports.getNominalAttributebyAnalysis = getNominalAttributebyAnalysis;
-// module.exports.getNominalAttribute = getNominalAttribute;
-// module.exports.getNumericAttribute = getNumericAttribute;
-// module.exports.getEntityClassByAnalyse = getEntityClassByAnalyse;
-// module.exports.getEntityClassByDataset = getEntityClassByDataset;
-// module.exports.getRelationshipDSbyDataset = getRelationshipDSbyDataset;
-// module.exports.getRelationshipDSAnalysisbyDataset = getRelationshipDSAnalysisbyDataset;
-// module.exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
-// module.exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
-// module.exports.getRelationshipAttribute = getRelationshipAttribute;
-// module.exports.createGraph = createGraph;
-// module.exports.createGraphAll = createGraphAll;
-// module.exports.algoSimilairty = algoSimilairty;
-// module.exports.graphList = graphList;
-// module.exports.algoBetweennessCentrality = algoBetweennessCentrality;
-// module.exports.getGraph = getGraph;

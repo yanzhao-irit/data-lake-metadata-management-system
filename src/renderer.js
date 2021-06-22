@@ -327,6 +327,9 @@ $(function () {
           },
           arrows: 'to'
         },
+        interaction: {
+          hover: true
+        },
         groups: {
           Process: {
             color: { background: "#00F5FF", border: "black" },
