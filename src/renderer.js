@@ -3227,6 +3227,8 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
     if (p) {
       // $("#exeEnvDropdown").empty()
       var $list2 = $("#exeEnvDropdown");
+      var elt2 = document.getElementById("DropdownMenuexeEnv");
+      elt2.innerText = ""
       var listexeEnv = [];
       console.log(p)
       for (var i = 0; i < p.length; i++) {
