@@ -12,7 +12,7 @@ module.exports = {
     app: './src/renderer.js'
   },
   output: {
-    filename: 'app.js',
+    filename: './src/renderer.js',
     path: buildDirectory,
   },
   devtool: false,
