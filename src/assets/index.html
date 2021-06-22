@@ -94,7 +94,7 @@
                                     <div class="dropdown">
                                         <input type="text" placeholder="Search.." id="usedOpeInput"
                                             class="dropdown-contente" data-toggle="dropdown">
-                                        <ul class="dropdown-menu" id="DropdownMenuusedop"
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuusedop"
                                             style="height:100px;width:270px;overflow:scroll"></ul>
                                     </div>
                                 </div>
@@ -226,12 +226,14 @@
         <div class="collapse in">
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Dataset Results
-                        <button type="button" class="btn btn-primary pull-right" id="sortDataset">Importance</button>
-                        <button type="button" class="btn btn-primary pull-right" data-toggle="modal"
-                            data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
-                            Entity Class
-                        </button>
+                    <div class="panel-heading" style="position:relative">Dataset Results
+                        <div style="position: absolute;top:8%;right:2%">
+                            <button type="button" class="btn btn-primary pull-right" id="sortDataset">Importance</button>
+                            <button type="button" class="btn btn-primary pull-right" data-toggle="modal"
+                                    data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
+                                Entity Class
+                            </button>
+                        </div>
                     </div>
                     <table id="results" class="table table-striped table-hover">
                         <tbody class="names" id="dbNames">
@@ -254,11 +256,14 @@
         <div class="collapse in">
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Analysis Results <button type="button" class="btn btn-primary pull-right"
-                            data-toggle="modal" data-target="#EntityClassModal" id="EntityClassButtonAnalyse"
-                            style="display: none">
-                            Entity Class
-                        </button>
+                    <div class="panel-heading" style="position: relative">Analysis Results
+                        <div style="position: absolute;top:8%;right:2%">
+                            <button type="button" class="btn btn-primary pull-right"
+                                data-toggle="modal" data-target="#EntityClassModal" id="EntityClassButtonAnalyse"
+                                style="display: none">
+                                Entity Class
+                            </button>
+                        </div>
                     </div>
                     <table id="results" class="table table-striped table-hover">
                         <tbody class="names" id="analyseNames">
@@ -292,7 +297,7 @@
                         <div id="viz2" class="tab-pane fade"></div>
                         <div id="viz3" class="tab-pane fade"></div>
                         <div id="features" class="tab-pane fade">
-                            <div class='row'>
+                            <div class='row' style="margin-left: auto">
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#AttributeModal">
                                     Attribute

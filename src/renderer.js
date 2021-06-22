@@ -659,9 +659,20 @@ $(function () {
           json = JSON.parse(JSON.stringify(a[0]))
           //Get the properties windows emplacement
           $list = $('#attrProperties')
+
+          let arr = [];
           for (propriete in a[0]) {
-            $list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+            arr.push(propriete);
           }
+          arr.sort();
+          for (var i in arr) {
+            if (arr[i] === "name") {
+              $list.prepend("<p style='word-wrap:break-word'>" + arr[i] + ":" + a[0][arr[i]] + "</p>");
+            } else {
+              $list.append("<p style='word-wrap:break-word'>" + arr[i] + ":" + a[0][arr[i]] + "</p>");
+            }
+          }
+
         })
       }
       //If numeric attribute
@@ -669,9 +680,20 @@ $(function () {
         api.getNumericAttribute($(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1]).then(a => {
           json = JSON.parse(JSON.stringify(a[0]))
           $list = $('#attrProperties')
+
+          let arr = [];
           for (propriete in a[0]) {
-            $list.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+            arr.push(propriete);
           }
+          arr.sort();
+          for (var i in arr) {
+            if (arr[i] === "name") {
+              $list.prepend("<p style='word-wrap:break-word'>" + arr[i] + ":" + a[0][arr[i]] + "</p>");
+            } else {
+              $list.append("<p style='word-wrap:break-word'>" + arr[i] + ":" + a[0][arr[i]] + "</p>");
+            }
+          }
+
         })
       }
     }
@@ -691,9 +713,9 @@ $(function () {
         arr.sort();
         for (var i in arr) {
           if (arr[i] === "name") {
-            $list.prepend("<p>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
+            $list.prepend("<p style='word-wrap:break-word'>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
           } else {
-            $list.append("<p>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
+            $list.append("<p style='word-wrap:break-word'>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
           }
         }
       })
@@ -711,9 +733,9 @@ $(function () {
         let str = '';
         for (var i in arr) {
           if (arr[i] === "name") {
-            $list.prepend("<p>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
+            $list.prepend("<p style='word-wrap:break-word'>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
           } else {
-            $list.append("<p>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
+            $list.append("<p style='word-wrap:break-word'>" + arr[i] + ":" + ec[0][arr[i]] + "</p>");
           }
 
         }
@@ -755,7 +777,7 @@ $(function () {
             json = JSON.parse(JSON.stringify(p[0]))
             var $p = $("#properties")
             for (propriete in p[0]) {
-              if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+              if (propriete == "executionDate" || propriete == 'id') {
                 $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
                 $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
@@ -1128,7 +1150,7 @@ $(function () {
               json = JSON.parse(JSON.stringify(p[0]))
               var $p = $("#properties")
               for (propriete in p[0]) {
-                if (propriete == 'creationDate' || propriete == "executionDate" || propriete == 'id') {
+                if (propriete == "executionDate" || propriete == 'id') {
                   $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
                 } else {
                   $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
