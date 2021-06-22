@@ -1082,3 +1082,233 @@ module.exports.getTags = (tag) => {
     });
 }
 
+//-----------------------------UPLOAD-----------------------------------------
+//Function to create datasource in BD
+module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_CSV,entityClass_CSV) =>{
+  var session = driver.session();
+  //cypher for insert un noeud datasetsource
+  var query = "Profile CREATE(a:DatasetSource {name:'"+DatasetSource_CSV["name"]
+      + "',type:'"+DatasetSource_CSV["type"]
+      + "',location:'"+DatasetSource_CSV["location"]
+      + "',owner:'"+DatasetSource_CSV["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_CSV["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_CSV["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_CSV["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
+      + "',administrator:'"+DSDatalake_CSV["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
+      + "')),size:'"+DSDatalake_CSV["size"]
+      + "',name:'"+DSDatalake_CSV["name"]
+      + "',type:'"+DSDatalake_CSV["type"]
+      + "',location:'"+DSDatalake_CSV["location"]
+      + "'})-[:hasEntityClass]->(d:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "});"
+  // console.log(query)
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
+  console.log("createNumericAttributs")
+  var session = driver.session();
+
+  var $propertiestAttrNu = (attributesNumeric_CSV)
+
+  //"CALL apoc.create.nodes(['tags'], "+$propertiestTags+");" +
+  var query = "CALL apoc.create.nodes(['NumericAttribute'], "+$propertiestAttrNu+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createNominalAttributs = (attributesNominal_CSV) =>{
+  console.log("createNominalAttributs")
+  var session = driver.session();
+
+  var $propertiestAttrNo = (attributesNominal_CSV)
+
+  var query = "CALL apoc.create.nodes(['NominalAttribute'], "+$propertiestAttrNo+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createTags = (tags_CSV) => {
+  console.log("createTags")
+  var session = driver.session();
+  var $propertiestTags = (tags_CSV)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row "+
+      "MERGE (n:Tag {name:row.name});"
+
+  console.log("queryTTTTTTTTTTTTTTTTT")
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
+  console.log("createHasTag")
+  var session = driver.session();
+  var $propertiestTags = (tags_CSV)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
+      + "',administrator:'"+DSDatalake_CSV["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
+      + "')),size:'"+DSDatalake_CSV["size"]
+      + "',name:'"+DSDatalake_CSV["name"]
+      + "',type:'"+DSDatalake_CSV["type"]
+      + "',location:'"+DSDatalake_CSV["location"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN count(*)"
+
+  console.log("query")
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasAttributeNumeric = (entityClass_CSV,attributesNumeric_CSV) => {
+  console.log("createHasAttributeNumeric")
+  var session = driver.session();
+  var $propertiestAttr = (attributesNumeric_CSV)
+
+  var query = "UNWIND ("+ $propertiestAttr +") as row\n" +
+      "MATCH (e:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "})\n" +
+      "MATCH (a:NumericAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount,min:row.min,max:row.max})\n" +
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN count(*)"
+
+  console.log("queryAttribute")
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CSV) => {
+  console.log("createHasAttributeNominal")
+  var session = driver.session();
+  var $propertiestAttr = (attributesNominal_CSV)
+
+  var query = "UNWIND ("+ $propertiestAttr +") as row\n" +
+      "MATCH (e:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "})\n" +
+      "MATCH (a:NominalAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount})\n" +
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN count(*)"
+
+
+  console.log("queryAttributeno")
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        var end = new Date();
+        console.log("end")
+        console.log(end)
+        return end;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+
+//Exports of insert functions in BD
+/*exports.createDSIngestDSDLEC = createDSIngestDSDLEC;
+exports.createNumericAttributs = createNumericAttributs;
+exports.createNominalAttributs = createNominalAttributs;
+exports.createTags = createTags;
+exports.createHasTag = createHasTag;
+exports.createHasAttributeNumeric = createHasAttributeNumeric;
+exports.createHasAttributeNominal = createHasAttributeNominal;*/
