@@ -9,7 +9,7 @@ $( "#dialog" ).dialog();
 // const path = require("path");
 // const { api } = require(path.resolve('./contents/neo4jJs/neo4jApi'));
 
-
+var listExeEnv =[];
 var typeRecherche = [];
 var typeOpe = [];
 var langList = [];
@@ -3227,15 +3227,15 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
     if (p) {
       // $("#exeEnvDropdown").empty()
       var $list2 = $("#exeEnvDropdown");
-      var elt2 = document.getElementById("DropdownMenuexeEnv");
-      elt2.innerText = ""
-      var listexeEnv = [];
+      /*var elt2 = document.getElementById("DropdownMenuexeEnv");
+      elt2.innerText = ""*/
+      exeEnvList = []
       console.log(p)
       for (var i = 0; i < p.length; i++) {
-        if (listexeEnv.indexOf(p[i].executionEnvironment) === -1) {
+        if (listExeEnv.indexOf(p[i].executionEnvironment) === -1) {
           if (p[i].executionEnvironment) {
             $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</label></div>"));
-            listexeEnv.push(p[i].executionEnvironment)
+            listExeEnv.push(p[i].executionEnvironment)
             //Add for drop-down menu
             var elt2 = document.getElementById("DropdownMenuexeEnv");
             elt2.insertAdjacentHTML('beforeend', "<li><a name='exeEnvLink' id='exeEnv_" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</a></li>");
