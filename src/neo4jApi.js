@@ -1082,12 +1082,13 @@ module.exports.getTags = (tag) => {
     });
 }
 
-//-----------------------------UPLOAD-----------------------------------------
+//-----------------------------UPLOADCSV-----------------------------------------
 //Function to create datasource in BD
 module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_CSV,entityClass_CSV) =>{
+  console.log("createDSIngestDSDLEC")
   var session = driver.session();
   //cypher for insert un noeud datasetsource
-  var query = "Profile CREATE(a:DatasetSource {name:'"+DatasetSource_CSV["name"]
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_CSV["name"]
       + "',type:'"+DatasetSource_CSV["type"]
       + "',location:'"+DatasetSource_CSV["location"]
       + "',owner:'"+DatasetSource_CSV["owner"]
@@ -1112,11 +1113,10 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
       + "});"
-  // console.log(query)
+  console.log(query)
   return session
       .run(query)
       .then(result => {
-        console.log(result)
         return result;
       })
       .catch(error => {
@@ -1128,7 +1128,8 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
 }
 
 module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
-  console.log("createNumericAttributs")
+  console.log("createNumericAttributs");
+
   var session = driver.session();
 
   var $propertiestAttrNu = (attributesNumeric_CSV)
@@ -1152,7 +1153,7 @@ module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
 }
 
 module.exports.createNominalAttributs = (attributesNominal_CSV) =>{
-  console.log("createNominalAttributs")
+  console.log("createNominalAttributs");
   var session = driver.session();
 
   var $propertiestAttrNo = (attributesNominal_CSV)
@@ -1175,14 +1176,13 @@ module.exports.createNominalAttributs = (attributesNominal_CSV) =>{
 }
 
 module.exports.createTags = (tags_CSV) => {
-  console.log("createTags")
+  console.log("createTags");
   var session = driver.session();
   var $propertiestTags = (tags_CSV)
 
   var query = "UNWIND ("+ $propertiestTags +") as row "+
       "MERGE (n:Tag {name:row.name});"
 
-  console.log("queryTTTTTTTTTTTTTTTTT")
   console.log(query)
 
   return session
@@ -1199,7 +1199,7 @@ module.exports.createTags = (tags_CSV) => {
 }
 
 module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
-  console.log("createHasTag")
+  console.log("createHasTag");
   var session = driver.session();
   var $propertiestTags = (tags_CSV)
 
@@ -1215,9 +1215,8 @@ module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
       + "',location:'"+DSDatalake_CSV["location"]
       + "'})\n" +
       "MATCH (t:Tag {name:row.name})\n" +
-      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN count(*)"
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
 
-  console.log("query")
   console.log(query)
 
   return session
@@ -1234,7 +1233,7 @@ module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
 }
 
 module.exports.createHasAttributeNumeric = (entityClass_CSV,attributesNumeric_CSV) => {
-  console.log("createHasAttributeNumeric")
+  console.log("createHasAttributeNumeric");
   var session = driver.session();
   var $propertiestAttr = (attributesNumeric_CSV)
 
@@ -1248,9 +1247,8 @@ module.exports.createHasAttributeNumeric = (entityClass_CSV,attributesNumeric_CS
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
       + "})\n" +
       "MATCH (a:NumericAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount,min:row.min,max:row.max})\n" +
-      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN count(*)"
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN rel"
 
-  console.log("queryAttribute")
   console.log(query)
 
   return session
@@ -1267,7 +1265,7 @@ module.exports.createHasAttributeNumeric = (entityClass_CSV,attributesNumeric_CS
 }
 
 module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CSV) => {
-  console.log("createHasAttributeNominal")
+  console.log("createHasAttributeNominal");
   var session = driver.session();
   var $propertiestAttr = (attributesNominal_CSV)
 
@@ -1281,10 +1279,86 @@ module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CS
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
       + "})\n" +
       "MATCH (a:NominalAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount})\n" +
-      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN count(*)"
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        var end = new Date();
+        return end;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
 
 
-  console.log("queryAttributeno")
+//-----------------------------UPLOADCSV-----------------------------------------
+module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,Ingest_UnStructured,DSDatalake_UnStructured) =>{
+  console.log("createDSIngestDSDLEC_UnStructured")
+  var session = driver.session();
+  //cypher for insert un noeud datasetsource
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_UnStructured["name"]
+      + "',type:'"+DatasetSource_UnStructured["type"]
+      + "',location:'"+DatasetSource_UnStructured["location"]
+      + "',owner:'"+DatasetSource_UnStructured["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_UnStructured["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_UnStructured["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_UnStructured["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
+      + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
+      + "')),size:'"+DSDatalake_UnStructured["size"]
+      + "',name:'"+DSDatalake_UnStructured["name"]
+      + "',type:'"+DSDatalake_UnStructured["type"]
+      + "',location:'"+DSDatalake_UnStructured["location"]
+      + "',format:'"+DSDatalake_UnStructured["format"]
+      + "'});"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTagUnStructured = (DSDatalake_UnStructured,tags_UnStructured) => {
+  console.log("createHasTag");
+  var session = driver.session();
+  var $propertiestTags = (tags_UnStructured)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
+      + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
+      + "')),size:'"+DSDatalake_UnStructured["size"]
+      + "',name:'"+DSDatalake_UnStructured["name"]
+      + "',type:'"+DSDatalake_UnStructured["type"]
+      + "',location:'"+DSDatalake_UnStructured["location"]
+      + "',format:'"+DSDatalake_UnStructured["format"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
   console.log(query)
 
   return session
@@ -1303,12 +1377,3 @@ module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CS
       });
 }
 
-
-//Exports of insert functions in BD
-/*exports.createDSIngestDSDLEC = createDSIngestDSDLEC;
-exports.createNumericAttributs = createNumericAttributs;
-exports.createNominalAttributs = createNominalAttributs;
-exports.createTags = createTags;
-exports.createHasTag = createHasTag;
-exports.createHasAttributeNumeric = createHasAttributeNumeric;
-exports.createHasAttributeNominal = createHasAttributeNominal;*/
