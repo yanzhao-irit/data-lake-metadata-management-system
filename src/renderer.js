@@ -2,14 +2,14 @@ const api = require("../neo4jApi");
 const _ = require('lodash')
 
 
-$( "#dialog" ).dialog();
+$("#dialog").dialog();
 // const api = require('./neo4jApi.js');
 // const orcl = require('./oracleAPI');
 // const toJsonSchema = require('to-json-schema');
 // const path = require("path");
 // const { api } = require(path.resolve('./contents/neo4jJs/neo4jApi'));
 
-var listExeEnv =[];
+var listExeEnv = [];
 var typeRecherche = [];
 var typeOpe = [];
 var langList = [];
@@ -179,7 +179,6 @@ var options = {
 //Beginning of event listener
 $(function () {
   //Initialisation of graphic interface
-  console.log('hello 1')
   usedOpeInit()
   var promisegraph = new Promise((resolve, reject) => {
     api.graphList().then(p => {
@@ -228,9 +227,9 @@ $(function () {
     $(".names").empty()
     //refresh graphic interface
     //Call for search functions with inputs
-    showProcesses(tagsinput)
-    showStudies(tagsinput)
-    showDatabases(tagsinput)
+    showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     //Init filters that need database request
     languageProcessInit(tagsinput)
     excutionEnvironmentInit(tagsinput)
@@ -251,9 +250,9 @@ $(function () {
     $('#graphco').collapse('hide');
     if (!tagsinput.length == 0) {
       $(".names").empty()
-      showProcesses(tagsinput)
-      showStudies(tagsinput)
-      showDatabases(tagsinput)
+      showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       languageProcessInit(tagsinput, langList, pDate, typeOpe)
       excutionEnvironmentInit(tagsinput)
       $(".analyse").empty();
@@ -1810,37 +1809,37 @@ $(function () {
             $('#relationshipAttOnglet').empty()
             $('#relationshipAttContent').empty()
             api
-                .getRelationshipAttribute($(this).attr('id').split('$')[1],'', 'relation')
-                .then(p => {
-                  console.log("llllllllllllllllll")
-                  console.log(p.length)
-                  var relationlistAtt = []
-                  // console.log(p)
-                  $listTab = $('#relationshipAttOnglet')
-                  $listContent = $('#relationshipAttContent')
-                  for (var i = 0; i < p.length; i++) {
-                    relationlistAtt.push(p[i].name)
-                    console.log(p[i].name)
-                    $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
-                    $listContent.append(`
+              .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
+              .then(p => {
+                console.log("llllllllllllllllll")
+                console.log(p.length)
+                var relationlistAtt = []
+                // console.log(p)
+                $listTab = $('#relationshipAttOnglet')
+                $listContent = $('#relationshipAttContent')
+                for (var i = 0; i < p.length; i++) {
+                  relationlistAtt.push(p[i].name)
+                  console.log(p[i].name)
+                  $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+                  $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>                
                 </div>`)
-                  }
+                }
 
-                  for (var i = 0; i < relationlistAtt.length; i++) {
-                    // console.log(relationlistAtt[i])
-                    getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
-                  }
-                  for (var j = 0; j < relationlistAtt.length; j++) {
-                    /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
-                    trans = $(this).attr('id').split('$')[1]
-                    //add eventlistener for each tab of relationshipAttribute
-                    document.getElementById("a_" + relationlistAtt[j]).addEventListener("click", getGrapheViz5Init)
-                  }
-                }, 'json')
+                for (var i = 0; i < relationlistAtt.length; i++) {
+                  // console.log(relationlistAtt[i])
+                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
+                }
+                for (var j = 0; j < relationlistAtt.length; j++) {
+                  /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
+                  trans = $(this).attr('id').split('$')[1]
+                  //add eventlistener for each tab of relationshipAttribute
+                  document.getElementById("a_" + relationlistAtt[j]).addEventListener("click", getGrapheViz5Init)
+                }
+              }, 'json')
             /*api
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
@@ -2099,8 +2098,6 @@ $(function () {
 
   });
 
-
-
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
     // this will contain a reference to the checkbox
@@ -2110,11 +2107,11 @@ $(function () {
       //Check the type of checkbox
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
         $("#dbNames").empty()
-        showDatabases(tagsinput, typeRecherche)
+        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
         $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche);
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
         $('#algoNames')[0].style.display = 'none'
         $('#algosupervised')[0].style.display = 'none'
         $('#algoUnsupervised')[0].style.display = 'none'
@@ -2140,10 +2137,6 @@ $(function () {
           $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
         }
       }
-      // if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-      //   $("#analyseNames").empty()
-      //   showStudies(tagsinput, typeRecherche);
-      // }
       if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
         $('#supervised')[0].style.display = 'inline-block'
         $('#descriptive')[0].style.display = 'inline-block'
@@ -2155,17 +2148,6 @@ $(function () {
         $('label[for="diagnostic"]')[0].style.display = 'inline-block'
         $('label[for="predictive"]')[0].style.display = 'inline-block'
         $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-        // $('#algoNames')[0].style.display = 'inline-block'
-        // $('#algosupervised')[0].style.display = 'inline-block'
-        // $('#algoUnsupervised')[0].style.display = 'inline-block'
-        // $('#AlgoReinforcement')[0].style.display = 'inline-block'
-        // $('#parameter')[0].style.display = 'inline-block'
-        // $('#evaluation')[0].style.display = 'inline-block'
-        // $('#landmarker')[0].style.display = 'inline-block'
-        // $('label[for="algoNames"]')[0].style.display = 'inline-block'
-        // $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-        // $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-        // $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
       }
       if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
         $('#supervised')[0].style.display = 'none'
@@ -2199,12 +2181,12 @@ $(function () {
       // the checkbox is now no longer checked
       $(".names").empty()
       if (typeRecherche.length == 0) {
-        showProcesses(tagsinput)
-        showStudies(tagsinput)
-        showDatabases(tagsinput)
+        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       else {
-        showProcesses(tagsinput)
+        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
         $('#algoNames')[0].style.display = 'none'
         $('#algosupervised')[0].style.display = 'none'
         $('#algoUnsupervised')[0].style.display = 'none'
@@ -2218,11 +2200,11 @@ $(function () {
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
         if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
           $("#dbNames").empty()
-          showDatabases(tagsinput, typeRecherche)
+          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
         }
         if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
           $("#analyseNames").empty()
-          showStudies(tagsinput, typeRecherche);
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
           if (typeRecherche.includes("supervised")) {
             $('#algoNames')[0].style.display = 'inline-block'
             $('#algosupervised')[0].style.display = 'inline-block'
@@ -2237,14 +2219,10 @@ $(function () {
             $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
           }
         }
-        // if (typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-        //   $("#analyseNames").empty()
-        //   showStudies(tagsinput, typeRecherche);
-        // }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-          showProcesses(tagsinput, typeRecherche)
-          showStudies(tagsinput, typeRecherche)
-          showDatabases(tagsinput, typeRecherche)
+          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'inline-block'
           $('#descriptive')[0].style.display = 'inline-block'
           $('#diagnostic')[0].style.display = 'inline-block'
@@ -2255,22 +2233,11 @@ $(function () {
           $('label[for="diagnostic"]')[0].style.display = 'inline-block'
           $('label[for="predictive"]')[0].style.display = 'inline-block'
           $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-          // $('#algoNames')[0].style.display = 'inline-block'
-          // $('#algosupervised')[0].style.display = 'inline-block'
-          // $('#algoUnsupervised')[0].style.display = 'inline-block'
-          // $('#AlgoReinforcement')[0].style.display = 'inline-block'
-          // $('#parameter')[0].style.display = 'inline-block'
-          // $('#evaluation')[0].style.display = 'inline-block'
-          // $('#landmarker')[0].style.display = 'inline-block'
-          // $('label[for="algoNames"]')[0].style.display = 'inline-block'
-          // $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-          // $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-          // $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-          showProcesses(tagsinput, typeRecherche)
-          showStudies(tagsinput, typeRecherche)
-          showDatabases(tagsinput, typeRecherche)
+          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'none'
           $('#descriptive')[0].style.display = 'none'
           $('#diagnostic')[0].style.display = 'none'
@@ -2372,14 +2339,14 @@ $(function () {
     if (this.checked) {
       landmarkerList.push(this.id)
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
     }
   });
 
@@ -2419,19 +2386,29 @@ $(function () {
 
   //Event to get the date if changed for date filter
   $('#dsDate').change(function () {
-    dsDate = $(this).val()+'T00:00:00Z';
-    showDatabases(tagsinput, '', dsDate);
+    console.log($(this).val())
+    clearTimeout(timer);  //clear any running timeout on key up
+    timer = setTimeout(function () {
+      dsDate = document.getElementById('dsDate').value;
+      showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
+    }, 750);
   });
 
   $('#pDate').change(function () {
     $("#processNames").empty();
-    pDate = $(this).val();
-    showProcesses(tagsinput, langList, pDate);
+    clearTimeout(timer);  //clear any running timeout on key up
+    timer = setTimeout(function () {
+      pDate = document.getElementById('pDate').value;
+      showProcesses(tagsinput, langList, pDate);
+    }, 750);
   });
 
   $('#aDate').change(function () {
-    aDate = $(this).val();
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    clearTimeout(timer);  //clear any running timeout on key up
+    timer = setTimeout(function () {
+      aDate = document.getElementById('aDate').value;
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    }, 750);
   });
 
 
@@ -2476,7 +2453,7 @@ $(function () {
     document.getElementById('dsDate').value = "0001-01-01";
     document.getElementById('inputECANames').value = "";
     typeRecherche = [];
-    dsDate="0001-01-01T00:00:00Z";
+    dsDate = "0001-01-01T00:00:00Z";
     inputECAnames = "";
     $("#dbNames").empty();
     showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
@@ -2486,17 +2463,17 @@ $(function () {
     $('#morePFilter')[0].style.display = "none";
     $('#languageDropDown')[0].style.display = "none";
     var elt = document.getElementsByClassName("languageList")
-    for(var i=0; i < elt.length; i++){
-      elt[i].childNodes[1].checked=false;
+    for (var i = 0; i < elt.length; i++) {
+      elt[i].childNodes[1].checked = false;
     }
     document.getElementById('pDate').value = "0001-01-01";
 
-    document.getElementById("usedOpeDropdown").style.display="none";
+    document.getElementById("usedOpeDropdown").style.display = "none";
     document.getElementById("usedOpeClear").style.display = "none";
     document.getElementById('usedOpeInput').value = "";
     clearList("usedOpeList");
 
-    document.getElementById("exeEnvDropdown").style.display="none";
+    document.getElementById("exeEnvDropdown").style.display = "none";
     document.getElementById("exeEnvClear").style.display = "none";
     document.getElementById('exeEnvInput').value = "";
     clearList("exeEnvList");
@@ -2515,7 +2492,7 @@ $(function () {
     // console.log(elt[0])
     for (x = 0; x < elt.length; x++) {
       elt[x].checked = false;
-      if (x>=2){
+      if (x >= 2) {
         elt[x].style.display = "none";
       }
     }
@@ -2527,17 +2504,17 @@ $(function () {
 
     document.getElementById("aDate").value = "0001-01-01";
 
-    document.getElementById("landmarkerDropdown").style.display="none"
+    document.getElementById("landmarkerDropdown").style.display = "none"
     document.getElementById("landmarkerClear").style.display = "none"
     document.getElementById('landmarkerInput').value = "";
     clearList("landmarkerList");
 
-    document.getElementById("parameterDropdown").style.display="none"
+    document.getElementById("parameterDropdown").style.display = "none"
     document.getElementById("parameterClear").style.display = "none"
     document.getElementById('parameterInput').value = "";
     clearList("parameterList");
 
-    document.getElementById("evaluationDropdown").style.display="none"
+    document.getElementById("evaluationDropdown").style.display = "none"
     document.getElementById("evaluationClear").style.display = "none"
     document.getElementById('evaluationInput').value = "";
     clearList("evaluationList");
@@ -2595,7 +2572,7 @@ $(function () {
     a = div.getElementsByClassName("usedOpeList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
-      a[i].childNodes[1].checked=false;
+      a[i].childNodes[1].checked = false;
     }
     document.getElementById('usedOpeInput').value = "";
     typeOpe = [];
@@ -2621,7 +2598,7 @@ $(function () {
     a = div.getElementsByClassName("exeEnvList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
-      a[i].childNodes[1].checked=false;
+      a[i].childNodes[1].checked = false;
     }
     document.getElementById('exeEnvInput').value = "";
     exeEnvList = [];
@@ -2647,12 +2624,12 @@ $(function () {
     a = div.getElementsByClassName("landmarkerList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
-      a[i].childNodes[1].checked=false;
+      a[i].childNodes[1].checked = false;
     }
     document.getElementById('landmarkerInput').value = "";
     landmarkerList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
     console.log(landmarkerList)
   });
 
@@ -2672,12 +2649,12 @@ $(function () {
     a = div.getElementsByClassName("parameterList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
-      a[i].childNodes[1].checked=false;
+      a[i].childNodes[1].checked = false;
     }
     document.getElementById('parameterInput').value = "";
     parameterList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
   });
 
   $('#evaluation').on("click", function () {
@@ -2696,12 +2673,12 @@ $(function () {
     a = div.getElementsByClassName("evaluationList");
     for (i = 0; i < a.length; i++) {
       a[i].style.display = "none";
-      a[i].childNodes[1].checked=false;
+      a[i].childNodes[1].checked = false;
     }
     document.getElementById('evaluationInput').value = "";
     evaluationList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
     console.log(evaluationList)
   });
 
@@ -2857,24 +2834,26 @@ $(function () {
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       inputECAnames = document.getElementById("inputECANames");
-      showDatabases(tagsinput, "", dsDate, "", "", inputECAnames.value);
+      showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     }, 1000);
   });
 
   $("#algoNames").keyup(function () {
+    console.log(algoNames.value)
     $("#analyseNames").empty();
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       algoNames = document.getElementById("algoNames");
-      
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+      console.log('hello')
+
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
     }, 1000);
   });
 
   $("#omNames").keyup(function () {
     $("#analyseNames").empty();
     omNames = document.getElementById("omNames");
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList,evaluationList,omNames.value)
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList, omNames.value)
   });
 
 
@@ -3000,10 +2979,8 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
 
 //Function to draw relationshipDataset
 function getGrapheViz4Seuil() {
-  console.log(this.id.substring(2))
   var value = document.getElementById('r_' + this.id.substring(2)).value;
   document.getElementById('seuil_' + this.id.substring(2)).innerHTML = value;
-  console.log(document.getElementById('b_' + this.id.substring(2)).value)
   if (document.getElementById('b_' + this.id.substring(2)).name == 'blue') {
     query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
@@ -3017,10 +2994,7 @@ function getGrapheViz4Seuil() {
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and round(toFloat(adrR.value),5)>=toFloat(` + value + `)
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6,r7`
   }
-  // console.log(query4)
   api.getGraph(query4).then(p => {
-    /*console.log("++++++++++++++++++++")
-    console.log(p)*/
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
     // create an array with edges
@@ -3121,12 +3095,9 @@ function changRange() {
 
 //Function to draw relationshipAttribute
 function getGrapheViz5Seuil() {
-  console.log(this.id.substring(2))
   // console.log(trans)
   var value = document.getElementById('r_' + this.id.substring(2)).value;
-  console.log(document.getElementById('r_' + this.id.substring(2)).value);
   document.getElementById('seuil_' + this.id.substring(2)).innerHTML = value;
-  console.log(document.getElementById('b_' + this.id.substring(2)).value)
   if (document.getElementById('b_' + this.id.substring(2)).name == 'blue') {
     query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
                   WHERE dl.uuid = '` + trans + `'
@@ -3148,7 +3119,6 @@ function getGrapheViz5Seuil() {
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + this.id.substring(2) + `' and round(toFloat(AA.value),5)>=toFloat(` + value + `)
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
   }
-  console.log(query5)
   api.getGraph(query5).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -3170,9 +3140,7 @@ function getGrapheViz5Seuil() {
 
 //function to create a list of filter
 function usedOpeInit() {
-  console.log('hello 2')
   api.getOperations().then(p => {
-    console.log('hello 3')
     var $list = $("#usedOpeDropdown")
     for (var i = 0; i < p.length; i++) {
       $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' class='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
@@ -3227,7 +3195,6 @@ function parameterInit(study = 'default') {
     // click event for drop-down menu
     var parameterLink = document.getElementsByName("parameterLink");
     for (j = 0; j < parameterLink.length; j++) {
-      console.log(j)
       parameterLink[j].addEventListener("click", getParameterClick);
     }
   }, "json");
@@ -3250,7 +3217,6 @@ function evaluationInit(study = 'default') {
     // click event for drop-down menu
     var evaluationLink = document.getElementsByName("evaluationLink");
     for (j = 0; j < evaluationLink.length; j++) {
-      // console.log(j)
       evaluationLink[j].addEventListener("click", getEvaluationClick);
     }
   }, "json");
@@ -3267,7 +3233,7 @@ function languageProcessInit(tagsinput, language = "", date = "0001-01-01", type
       for (var i = 0; i < p.length; i++) {
         if (listLanguage.indexOf(p[i].programLanguage) === -1) {
           if (p[i].programLanguage) {
-            $list2.append($("<div class='languageList'> <input type='checkbox' classe='language' name='language" + p[i].programLanguage + " ' id='" + p[i].programLanguage + "'> <label for='language" + p[i].programLanguage + "'>" + p[i].programLanguage + "</label></div>"));
+            $list2.append($("<div class='languageList'> <input type='checkbox' class='language' name='language" + p[i].programLanguage + " ' id='" + p[i].programLanguage + "'> <label for='language" + p[i].programLanguage + "'>" + p[i].programLanguage + "</label></div>"));
             listLanguage.push(p[i].programLanguage)
           }
         }
@@ -3282,14 +3248,12 @@ function excutionEnvironmentInit(tagsinput, language = "", date = "0001-01-01", 
     if (p) {
       // $("#exeEnvDropdown").empty()
       var $list2 = $("#exeEnvDropdown");
-      /*var elt2 = document.getElementById("DropdownMenuexeEnv");
-      elt2.innerText = ""*/
       exeEnvList = []
       console.log(p)
       for (var i = 0; i < p.length; i++) {
         if (listExeEnv.indexOf(p[i].executionEnvironment) === -1) {
           if (p[i].executionEnvironment) {
-            $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' classe='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</label></div>"));
+            $list2.append($("<div class='exeEnvList' style='display: none'> <input type='checkbox' class='exeEnv' name='exeEnv" + p[i].executionEnvironment + " ' id='" + p[i].executionEnvironment + "'> <label for='exeEnv" + p[i].executionEnvironment + "'>" + p[i].executionEnvironment + "</label></div>"));
             listExeEnv.push(p[i].executionEnvironment)
             //Add for drop-down menu
             var elt2 = document.getElementById("DropdownMenuexeEnv");
@@ -3323,10 +3287,10 @@ function showProcesses(tags, language = "", date = "0001-01-01", type = [], exec
 }
 
 //function to get studies
-function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', parameter = [], evaluation= [],omNames = '') {
+function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', parameter = [], evaluation = [], omNames = '') {
   console.log('parametre : ' + parameter + " || evaluation : " + evaluation)
   api
-    .getStudies(tags, type, aDate, landmarker, algoNames, parameter, evaluation,omNames = '')
+    .getStudies(tags, type, aDate, landmarker, algoNames, parameter, evaluation, omNames = '')
     .then(p => {
       if (p) {
         //var $list = $(".names").empty();
@@ -3366,24 +3330,18 @@ function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z
 
 //Click event with show of check box for execution environment
 function getexeEnvClick() {
-  // console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
   filter = input.innerText.toUpperCase();
   div = document.getElementById("exeEnvDropdown");
   a = div.getElementsByClassName("exeEnvList");
-  // console.log(a);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
-    // console.log(txtValue)
     var idexeEnv = txtValue.substr(2, txtValue.length - 1)
     if (filter === idexeEnv.toUpperCase()) {
-      // console.log("diqnshqngle")
-      // console.log(a[i])
       a[i].style.display = "";
       a[i].firstElementChild.checked = true
       exeEnvList.push(idexeEnv)
-      // console.log(exeEnvList);
     }
   }
   $("#processNames").empty();
@@ -3399,19 +3357,14 @@ function getusedOperationClick() {
   filter = input.innerText.toUpperCase();
   div = document.getElementById("usedOpeDropdown");
   a = div.getElementsByClassName("usedOpeList");
-  // console.log(a);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
-    // console.log(txtValue)
     var idusedop = txtValue.substr(1, txtValue.length - 1)
     if (filter === idusedop.toUpperCase()) {
-      /*console.log("diqnshqngle")
-      console.log(a[i])*/
       a[i].style.display = "";
       var elt = document.getElementById(idusedop)
       elt.checked = true
       typeOpe.push(idusedop)
-      console.log(typeOpe);
     }
   }
   $("#processNames").empty();
@@ -3420,13 +3373,11 @@ function getusedOperationClick() {
 
 //Click event with show of check box for landmarker
 function getLandmarkerClick() {
-  // console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
   filter = input.innerText.toUpperCase();
   div = document.getElementById("landmarkerDropdown");
   a = div.getElementsByClassName("landmarkerList");
-  // console.log(landmarkerList);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
     var idlandmarker = txtValue.substr(1, txtValue.length - 1)
@@ -3435,63 +3386,50 @@ function getLandmarkerClick() {
       var elt = document.getElementById(idlandmarker)
       elt.checked = true
       landmarkerList.push(idlandmarker)
-      console.log(landmarkerList);
     }
   }
   $("#analyseNames").empty();
-  console.log(aDate)
-  showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
 }
 
 //Click event with show of check box for evaluation
 function getEvaluationClick() {
-  console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
   filter = input.innerText.toUpperCase();
   div = document.getElementById("evaluationDropdown");
   a = div.getElementsByClassName("evaluationList");
-  // console.log(landmarkerList);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
     var idevaluation = txtValue.substr(1, txtValue.length - 1)
-    console.log("ttttttttttttttttttttttt")
-    console.log(idevaluation)
     if (filter === idevaluation.toUpperCase()) {
-      // console.log("diqnshqngle")
       a[i].style.display = "";
       var elt = document.getElementById(idevaluation)
       elt.checked = true
       evaluationList.push(idevaluation)
-      console.log(evaluationList);
+      //manque du code dans le cas où c'est uncheck
     }
   }
-    $("#analyseNames").empty();
-    showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+  $("#analyseNames").empty();
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
 }
 
 
 //Click event with show of check box for parameter
 function getParameterClick() {
-  console.log(this.id)
   var input, filter, ul, li, a, i;
   input = document.getElementById(this.id);
   filter = input.innerText.toUpperCase();
   div = document.getElementById("parameterDropdown");
   a = div.getElementsByClassName("parameterList");
-  // console.log(landmarkerList);
   for (i = 0; i < a.length; i++) {
     txtValue = a[i].textContent || a[i].innerText;
     var idparameter = txtValue.substr(1, txtValue.length - 1)
-    console.log("ttttttttttttttttttttttt")
-    console.log(idparameter)
     if (filter === idparameter.toUpperCase()) {
-      // console.log("diqnshqngle")
       a[i].style.display = "";
       var elt = document.getElementById(idparameter)
       elt.checked = true
       parameterList.push(idparameter)
-      console.log(parameterList);
     }
   }
   $("#analyseNames").empty();
@@ -3500,8 +3438,6 @@ function getParameterClick() {
 
 //Function to draw relationDataset without condition
 function getGrapheViz4Init() {
-  /*console.log(this.id)
-  console.log(trans)*/
   document.getElementById("viz4").style.display = "block"
   var relationDS = this.id.substring(2)
   //query4 for dataset relationship
@@ -3510,10 +3446,7 @@ function getGrapheViz4Init() {
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ relationDS + `'
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
-  // console.log(query4)
   api.getGraph(query4).then(p => {
-    /*console.log("-------------")
-    console.log(p)*/
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
     // create an array with edges
@@ -3534,8 +3467,6 @@ function getGrapheViz4Init() {
 
 //Function to draw relationAttribute without condition
 function getGrapheViz5Init() {
-  /*console.log(this.id)
-  console.log(trans)*/
   document.getElementById("viz5").style.display = "block"
   var relationAtt = this.id.substring(2)
   query5 = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
@@ -3547,8 +3478,6 @@ function getGrapheViz5Init() {
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
-  console.log("query5")
-  console.log(query5)
   api.getGraph(query5).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -3568,14 +3497,10 @@ function getGrapheViz5Init() {
   })
 }
 
-function clearList(divname){
+function clearList(divname) {
   var elt2 = document.getElementsByClassName(divname);
   for (var j = 0; j < elt2.length; j++) {
     elt2[j].style.display = "none";
-    elt2[j].childNodes[1].checked=false;
+    elt2[j].childNodes[1].checked = false;
   }
 }
-
-
-
-

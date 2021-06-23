@@ -36,7 +36,6 @@ const fs = require('fs');
 const path = require('path');
 
 let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../store-password.json')));
-console.log(pwd)
 var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
 //Function to search processus metadata with parameters to apply filter. 
 //Attributed values are default value if no parameter is given.
@@ -109,10 +108,9 @@ module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe
 //Function to search study metadata
 module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter = [], evaluation = [],omNames) => {
   var session = driver.session();
-  console.log('heho'  + evaluation)
   let typeRech = Object.values(type);
+  console.log('Algorithm names : ' + algoNames)
   if (typeRech.indexOf('machineLearning') != -1) {
-    console.log(typeRech.indexOf('machineLearning'))
     typeRech.splice(typeRech.indexOf('machineLearning'), 1)
   }
   if (typeRech.indexOf('otherAnalysis') != -1) {
@@ -139,8 +137,6 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
   if (typeRech.length > 0) {
     query += ' AND ('
     for (var i = 0; i < typeRech.length; i++) {
-      console.log(typeRech[i])
-      console.log("c'est passé")
       if (i != typeRech.length - 1) {
         query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
       } else {
@@ -269,7 +265,6 @@ module.exports.getAnalyses = (study, name, id) => {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
-  console.log('heyo' + query)
   return session
     .run(
       query)
@@ -591,7 +586,6 @@ module.exports.getEvaluation = (study) => {
 module.exports.getEntityClassByAnalyse = (analyseName, analyseId) => {
   var session = driver.session();
   query = 'MATCH (e:EntityClass)-[]-(n)<-[:analyze]-(a:Analysis) WHERE a.name = "' + analyseName + '" AND a.uuid = "' + analyseId + '" AND (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset) RETURN DISTINCT e';
-  console.log(query)
   return session
     .run(
       query)
@@ -785,7 +779,6 @@ module.exports.getRelationshipAttribute = (sourceId, name = '', type, relationNa
         query += ' AND RA.name ="' + relationName + '"'
       }
       query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
-      // console.log(query)
       return session
         .run(
           query)
@@ -1060,7 +1053,6 @@ module.exports.getGraph = (query) => {
 //-------------------------------------ADD start----------------------------
 //Function to search for analysis metadata by study id or analysis
 module.exports.getTags = (tag) => {
-  //console.log(tag);
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis
