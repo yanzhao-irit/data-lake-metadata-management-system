@@ -5,12 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://rawgit.com/neo4j-contrib/neovis.js/master/dist/neovis.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet"
         href="https://neo4j-documentation.github.io/developer-resources/language-guides/assets/css/main.css">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <title>Data Lake App</title>
+
 </head>
 
 <body>
+    <div>
+        <a href="upload.html">Test Upload Interface</a>
+    </div>
     <div role="navigation" class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="row" style="text-align: center;">
@@ -28,16 +37,16 @@
                 <br />
                 <div class="row">
                     <div class="col-md-4">
-                        <h4>Datasets</h4>
-                        <input type="checkbox" class="dstype" id="Structured" name="Structured"><label
+                        <h4>Dataset</h4>
+                        <input type="checkbox" class="dstype" id="Structured" name="Structured"/><label
                             for="Structured">Structured</label>
-                        <input type="checkbox" class="dstype" id="Semi-Structured" name="Semi-Structured"><label
+                        <input type="checkbox" class="dstype" id="Semi-Structured" name="Semi-Structured"/><label
                             for="Semi-Structured">Semi-Structured</label>
-                        <input type="checkbox" class="dstype" id="Unstructured" name="Unstructured"><label
+                        <input type="checkbox" class="dstype" id="Unstructured" name="Unstructured"/><label
                             for="Unstructured">Unstructured</label>
                         <br />
                         <div id="moreDSFilter" style='display: none'>
-                            <label for='dsDate'>Creation Date atfer : </label><input type='date' class='inputDate'
+                            <label for='dsDate'>Creation Date after : </label><input type='date' class='inputDate'
                                 id='dsDate' name="dsDate" value="0001-01-01">
                             <button class="dropbtn" id="qualityLevel">Quality Level</button>
                             <div class="dropdown">
@@ -59,11 +68,12 @@
                                 class='inputECANames' id='inputECANames' name="inputECANames">
                             <!--<select multiple data-role="inputECANames" id="inputECANames"></select><input type='text' class='inputECANames' id='inputECANames' name="inputECANames">-->
                         </div>
-                        <a id='moreDS'>more</a>
+                        <a id='moreDS'>more</a></br>
+                        <a id='clearAllFilterDS'>clear all</a>
                     </div>
                     <div class="col-md-4">
-                        <h4>Processes</h4>
-                        <button class="dropbtn" id="programmationLanguage">Programmation Language</button>
+                        <h4>Process</h4>
+                        <button class="dropbtn" id="programLanguage">Program Language</button>
                         <div class="dropdown">
                             <!-- <input type="text" placeholder="Search.." id="languageInput" class="dropdown-contente"
                                 style="display: none"> -->
@@ -71,79 +81,131 @@
                             </div>
                         </div>
                         <div id="morePFilter" style='display: none'>
-                            <label for='pDate'>Creation Date atfer : </label><input type='date' class='inputDateProcess'
+                            <label for='pDate'>Creation Date after : </label><input type='date' class='inputDateProcess'
                                 id='pDate' name="pDate" value="0001-01-01">
 
                             <button class="dropbtn" id="usedOpe">Used Operations</button>
+                            <a id="usedOpeClear" style="display: none">clear used operations</a>
                             <div class="dropdown">
-                                <input type="text" placeholder="Search.." id="usedOpeInput" class="dropdown-contente"
-                                    style="display: none">
                                 <div id="usedOpeDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="usedOpeInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuusedop" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
 
                             <button class="dropbtn" id="exeEnv">Execution Environment</button>
+                            <a id="exeEnvClear" style="display: none">clear execution environment</a>
                             <div class="dropdown">
-                                <input type="text" placeholder="Search.." id="exeEnvInput" class="dropdown-contente"
-                                    style="display: none">
                                 <div id="exeEnvDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="exeEnvInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuexeEnv" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
 
+
+
                         </div>
-                        <a id='moreP'>more</a>
+                        <a id='moreP'>more</a><br/>
+                        <a id='clearAllFilterP'>clear all</a>
                     </div>
                     <div class="col-md-4">
                         <h4>Analysis</h4>
-                        <input type="checkbox" class="analysetype" id="supervised" name="supervised"><label
-                            for="supervised">Supervised</label>
-                        <input type="checkbox" class="analysetype" id="descriptive" name="descriptive"><label
-                            for="descriptive">Descriptive</label>
-                        <input type="checkbox" class="analysetype" id="diagnostic" name="diagnostic"><label
-                            for="diagnostic">Diagnostic</label>
-                        <input type="checkbox" class="analysetype" id="predictive" name="predictive"><label
-                            for="predictive">Predictive</label>
-                        <input type="checkbox" class="analysetype" id="prescriptive" name="prescriptive"><label
-                            for="prescriptive">Prescriptive</label>
-                        <br />
+                        <input type="checkbox" class="analysetype" id="machineLearning" name="machineLearning"><label
+                            for="machineLearning">Machine Learning</label>
+                        <input type="checkbox" class="analysetype" id="otherAnalysis" name="otherAnalysis"><label
+                            for="otherAnalysis">Others</label>
+                        <br/>
+
+                        <input type="checkbox" class="analysetype" id="supervised" name="supervised" style="display: none"><label
+                            for="supervised" style="display: none">Supervised</label>
+                        <input type="checkbox" class="analysetype" id="descriptive" name="descriptive" style="display: none"><label
+                            for="descriptive" style="display: none">Descriptive</label>
+                        <input type="checkbox" class="analysetype" id="diagnostic" name="diagnostic" style="display: none"><label
+                            for="diagnostic" style="display: none">Diagnostic</label>
+                        <input type="checkbox" class="analysetype" id="predictive" name="predictive" style="display: none"><label
+                            for="predictive" style="display: none">Predictive</label>
+                        <input type="checkbox" class="analysetype" id="prescriptive" name="prescriptive" style="display: none"><label
+                            for="prescriptive" style="display: none">Prescriptive</label>
+
+                        <br/>
                         <div id="moreAFilter" style='display: none'>
-                            <button class="dropbtn" id="landmarker">Landmarker</button>
+                            <label for='aDate'>Creation Date after : </label><input type='date' class='inputDate'
+                                id='aDate' name="aDate" value="0001-01-01">
+                            <button class="dropbtn" id="landmarker" style="display: none">Landmarker</button>
+                            <a id="landmarkerClear" style="display: none">clear landmarker</a>
+
                             <div class="dropdown">
                                 <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
-                                    <input type="text" placeholder="Search.." id="landmarkerInput"
-                                        class="dropdown-contente">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="landmarkerInput"
+                                            class="dropdown-contente" data-toggle="dropdown"/>
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenulandmarker" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
 
-                            <label for='algoNames'>Algorithme : </label><input type='text' class='algoinputNames'
-                                id='algoNames' name="algoNames">
+                            <label for='algoNames' style="display: none">Algorithm : </label><input type='text' class='algoinputNames'
+                                id='algoNames' name="algoNames" style="display: none">
                             <br />
-                            <input type="checkbox" class="algotype" id="algosupervised" name="algosupervised"><label
-                                for="algosupervised">Supervised</label>
-                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="algoUnsupervised"><label
-                                for="algoUnsupervised">Unsupervised</label>
-                            <input type="checkbox" class="algotype" id="algoReinforcement"
-                                name="algoReinforcement"><label for="algoReinforcement">Reinforcement</label>
+                            <input type="checkbox" class="algotype" id="algosupervised" name="AlgoSupervised" style="display: none"><label
+                                for="algosupervised" style="display: none">Supervised</label>
+                            <input type="checkbox" class="algotype" id="algoUnsupervised" name="AlgoUnsupervised" style="display: none"><label
+                                for="algoUnsupervised" style="display: none">Unsupervised</label>
+                            <input type="checkbox" class="algotype" id="AlgoReinforcement"
+                                name="algoReinforcement" style="display: none"><label for="algoReinforcement" style="display: none">Reinforcement</label>
                             <br />
-                            <button class="dropbtn" id="parameter">Parameter</button>
+
+<!--                            <button class="dropbtn" id="parameter">Parameter</button>-->
+<!--                            <div class="dropdown">-->
+<!--                                <div id="parameterDropdown" class="dropdown-content" style="display: none">-->
+<!--                                    <input type="text" placeholder="Search.." id="parameterInput"-->
+<!--                                        class="dropdown-content">-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <button class="dropbtn" id="parameter" style="display: none">Parameter</button>
+                            <a id="parameterClear" style="display: none">clear parameter</a>
+
                             <div class="dropdown">
                                 <div id="parameterDropdown" class="dropdown-content" style="display: none">
-                                    <input type="text" placeholder="Search.." id="parameterInput"
-                                        class="dropdown-content">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="parameterInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuparameter" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
                                 </div>
                             </div>
+
                             <!-- <label for='omNames'>Output Model : </label><input type='text' class='omInputNames'
                                 id='omNames' name="omNames">
                             <br /> -->
-                            <button class="dropbtn" id="evaluation">Evaluation</button>
+                            <!--<button class="dropbtn" id="evaluation">Evaluation</button>
                             <div class="dropdown">
                                 <div id="evaluationDropdown" class="dropdown-content" style="display: none">
                                     <input type="text" placeholder="Search.." id="evaluationInput"
                                         class="dropdown-content">
                                 </div>
+                            </div>-->
+                            <button class="dropbtn" id="evaluation" style="display: none">Evaluation</button>
+                            <a id="evaluationClear" style="display: none">clear evaluation</a>
+
+                            <div class="dropdown">
+                                <div id="evaluationDropdown" class="dropdown-content" style="display: none">
+                                    <div class="dropdown">
+                                        <input type="text" placeholder="Search.." id="evaluationInput"
+                                               class="dropdown-contente" data-toggle="dropdown">
+                                        <ul class="dropdown-menu pull-right" id="DropdownMenuevaluation" style="height:100px;width:270px;overflow:scroll"></ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <a id='moreA'>more</a>
+                        <a id='moreA'>more</a></br>
+                        <a id='clearAllFilterA'>clear all</a>
                     </div>
                 </div>
             </div>
@@ -154,10 +216,13 @@
         <div class="collapse in">
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Database Results<button type="button" class="btn btn-primary pull-right"
-                            data-toggle="modal" data-target="#EntityClassModal">
+                    <div class="panel-heading">Dataset Results
+                        <button type="button" class="btn btn-primary pull-right" id="sortDataset">Importance</button>
+                        <button type="button" class="btn btn-primary pull-right" data-toggle="modal"
+                            data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
                             Entity Class
-                        </button></div>
+                        </button>
+                    </div>
                     <table id="results" class="table table-striped table-hover">
                         <tbody class="names" id="dbNames">
                         </tbody>
@@ -179,8 +244,8 @@
         <div class="collapse in">
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Analyse Results <button type="button" class="btn btn-primary pull-right"
-                            data-toggle="modal" data-target="#EntityClassModal">
+                    <div class="panel-heading">Analysis Results <button type="button" class="btn btn-primary pull-right"
+                            data-toggle="modal" data-target="#EntityClassModal" id="EntityClassButtonAnalyse" style="display: none">
                             Entity Class
                         </button>
                     </div>
@@ -204,11 +269,11 @@
                         <li><a data-toggle="tab" href="#viz2">Hyper-graph</a></li>
                         <li id='operationButton'><a data-toggle="tab" href="#viz3">Operation</a></li>
                         <li id='featureButton'><a data-toggle="tab" href="#features">Features</a></li>
-                        <li id='dsRelationButton'><a data-toggle="tab" href="#viz4_dataset">Relationship Dataset</a>
+                        <li id='dsRelationButton'><a data-toggle="tab" href="#viz4_dataset">Relationship of Dataset</a>
                         </li>
-                        <li id='attRelationButton'><a data-toggle="tab" href="#viz5_attribute">Relationship
+                        <li id='attRelationButton'><a data-toggle="tab" href="#viz5_attribute">Relationship of
                                 Attribute</a></li>
-                        <li><a data-toggle="tab" href="#similarity">Similarity</a></li>
+                        <li id='similarityButton'><a data-toggle="tab" href="#similarity">Similarity*</a></li>
                     </ul>
                     <div class="tab-content">
                         <div id="properties" class="tab-pane fade  in active"></div>
@@ -245,40 +310,38 @@
                         </div>
                         <div id='viz4_dataset' class='tab-pane fade'>
                             <div class='col-m-4'>
-                                <ul class='nav nav-tabs'>
-                                    <li id='dsRelationButton2'><a data-toggle="tab" href="#viz4">Relationship Dataset
-                                            graph</a></li>
-                                    <li id='dsRelationButton'><a data-toggle="tab" href="#RelationshipDS">Dataset
-                                            Relationship table</a></li>
-                                </ul>
-                                <div class='tab-content'>
-                                    <div id="viz4" class="tab-pane fade"></div>
-                                    <div id='RelationshipDS' class="tab-pane fade">
-                                        <ul class="nav nav-tabs" id='relationshipOnglet'></ul>
-                                        <div class="tab-content" id='relationshipContent'></div>
-                                    </div>
+                                <div id='RelationshipDS'>
+                                    <ul class="nav nav-tabs" id='relationshipOnglet'></ul>
+                                    <div class="tab-content" id='relationshipContent'></div>
+                                    <div id="viz4" style="display: none"></div>
                                 </div>
+<!--                                <div id="viz4"></div>-->
+
                             </div>
 
                         </div>
                         <div id="viz5_attribute" class="tab-pane fade">
-                            <div class='col-m-4'>
-                                <ul class="nav nav-tabs">
-                                    <li><a data-toggle="tab" href="#viz5">Relationship Attribute graph</a></li>
-                                    <li><a data-toggle="tab" href="#RelationshipAtt">Relationship Attribute
-                                            table</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div id="viz5" class="tab-pane fade"></div>
-                                    <div id='RelationshipAtt' class="tab-pane fade">
-                                        <ul class="nav nav-tabs" id='relationshipAttOnglet'></ul>
-                                        <div class="tab-content" id='relationshipAttContent'></div>
 
-                                    </div>
+                            <div class='col-m-4'>
+
+                                <div id='RelationshipAtt' >
+
+                                    <ul class="nav nav-tabs" id='relationshipAttOnglet'></ul>
+                                    <div class="tab-content" id='relationshipAttContent'></div>
+                                    <div id="viz5" style="display: none"></div>
                                 </div>
+
                             </div>
+
                         </div>
-                        <div id="similarity" class="tab-pane fade"></div>
+                        <div id="similarity" class="tab-pane fade">
+                            <i>* : Similarity use <a
+                                    href='https://neo4j.com/docs/graph-data-science/current/algorithms/node-similarity/'
+                                    data-toggle="tooltip" data-placement="top" id='tooltipsPreview' title="">Node
+                                    Similarity</a>
+                                algorithm from Neo4j Graph Data Science (gds)</i>
+                            <div id='similarityResult'></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -292,7 +355,7 @@
         <br />
         <textarea name="ameliorer" id="cypherrequest" style='width: 50%;'></textarea>
         <br />
-    </br>
+        </br>
         <div class='row'>
             <div class='col-md-4'>
                 <div class="panel panel-default">
@@ -379,36 +442,7 @@
             </div>
         </div>
     </div>
-    <!-- <div class="modal fade" id="cypherModal" tabindex="-1" role="dialog" aria-labelledby="cypherModal"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Cypher Request</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <label for="ameliorer">
-                        Specific cypher Request :
-                    </label>
-                    <button id='submitCypherRequest' style="width: 100%;">Submit</button>
-                    <br />
-                    <textarea name="ameliorer" id="cypherrequest" style='width : 100%;'></textarea>
-                    <br />
-                    <div class="container-fluid">
-                        <div class='row'>
-                            <div id="viz6" class="tab-pane fade"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
+
     <style type="text/css">
         .node {
             stroke: #222;
@@ -435,6 +469,10 @@
 
         #specificSearch {
             text-align: center;
+        }
+
+        #similarity i {
+            font-size: 75%;
         }
 
         #viz,
@@ -476,6 +514,20 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        .boite {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            display: none;
+            width: 198px;
+            border-width: 1px;
+            border-style: solid;
+            margin-top: 1px;
+            padding: 2px;
+            overflow: auto;
+        }
+    </style>
 </body>
 
 <script type="text/javascript">
