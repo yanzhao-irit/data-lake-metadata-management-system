@@ -2384,14 +2384,13 @@ $(function () {
   });
 
   //Event for checkbox in dropdown menu (mainly for filter)
-  $('#parameterDropdown').on('click', function () {
+  $('#parameterDropdown').on('click','input', function () {
     $("#analyseNames").empty();
     if (this.checked) {
       parameterList.push(this.id)
       $("#analyseNames").empty()
       showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
     } else {
-      console.log("ssssssssssssss")
       const index = parameterList.indexOf(this.id);
       if (index > -1) {
         parameterList.splice(index, 1);
@@ -2400,23 +2399,23 @@ $(function () {
       showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
     }
   });
-/*
+
   //Event for checkbox in dropdown menu (mainly for filter)
-  $('#landmarkerDropdown').on('click', 'input', function () {
+  $('#evaluationDropdown').on('click', 'input', function () {
     $("#analyseNames").empty();
     if (this.checked) {
-      landmarkerList.push(this.id)
+      evaluationList.push(this.id)
       $("#analyseNames").empty()
       showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
     } else {
-      const index = landmarkerList.indexOf(this.id);
+      const index = evaluationList.indexOf(this.id);
       if (index > -1) {
-        landmarkerList.splice(index, 1);
+        evaluationList.splice(index, 1);
       }
       $("#analyseNames").empty()
       showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
     }
-  });*/
+  });
 
   //Event to get the date if changed for date filter
   $('#dsDate').change(function () {
@@ -3176,7 +3175,7 @@ function usedOpeInit() {
     console.log('hello 3')
     var $list = $("#usedOpeDropdown")
     for (var i = 0; i < p.length; i++) {
-      $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' classe='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
+      $list.append("<div class='usedOpeList' style='display: none'> <input type='checkbox' class='usedOperation' name='usedOpe" + p[i].name + "' id='" + p[i].name + "'><label for='usedOpe" + p[i].name + "'>" + p[i].name + "</label></div>")
       //Add for drop-down menu
       var elt2 = document.getElementById("DropdownMenuusedop");
       elt2.insertAdjacentHTML('beforeend', "<li><a name='usedOpLink' id='usedOperation_" + p[i].name + "'>" + p[i].name + "</a></li>");
@@ -3195,10 +3194,9 @@ function landmarkersInit(study = 'default') {
   api.getLandmarkers(study).then(p => {
     $("#landmarkerDropdown div").each(function () { if (optionLandmarkerList.indexOf($(this).text()) === -1) { optionLandmarkerList.push($(this).text()) } });
     var $list = $("#landmarkerDropdown")
-
     for (var i = 0; i < p.length; i++) {
       if (!optionLandmarkerList.includes(" " + p[i].name)) {
-        $list.append("<div class='landmarkerList' style='display: none'> <input type='checkbox' classe='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "'><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='landmarkerList' style='display: none'> <input type='checkbox' class='landmarkers' name='landmarker$" + p[i].name + "' id='" + p[i].name + "'><label for='landmarker$" + p[i].name + "'>" + p[i].name + "</label></div>")
         //Add for drop-down menu
         var elt2 = document.getElementById("DropdownMenulandmarker");
         elt2.insertAdjacentHTML('beforeend', "<li><a name='landmarkerLink' id='landmarker_" + p[i].name + "'>" + p[i].name + "</a></li>");
@@ -3220,7 +3218,7 @@ function parameterInit(study = 'default') {
     var $list = $("#parameterDropdown")
     for (var i = 0; i < p.length; i++) {
       if (!optionParameterList.includes(" " + p[i].name)) {
-        $list.append("<div class='parameterList' style='display: none'> <input type='checkbox' classe='parameter' name='parameter$" + p[i].name + "' id='" + p[i].name + "' '><label for='parameter$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='parameterList' style='display: none'> <input type='checkbox' class='parameter' name='parameter$" + p[i].name + "' id='" + p[i].name + "' '><label for='parameter$" + p[i].name + "'>" + p[i].name + "</label></div>")
         //Add for drop-down menu
         var elt2 = document.getElementById("DropdownMenuparameter");
         elt2.insertAdjacentHTML('beforeend', "<li><a name='parameterLink' id='parameter_" + p[i].name + "'>" + p[i].name + "</a></li>");
@@ -3243,7 +3241,7 @@ function evaluationInit(study = 'default') {
     var $list = $("#evaluationDropdown")
     for (var i = 0; i < p.length; i++) {
       if (!optionEvaluationList.includes(" " + p[i].name)) {
-        $list.append("<div class='evaluationList' style='display: none'> <input type='checkbox' classe='evaluation' name='evaluation$" + p[i].name + "' id='" + p[i].name + "' '><label for='evaluation$" + p[i].name + "'>" + p[i].name + "</label></div>")
+        $list.append("<div class='evaluationList' style='display: none'> <input type='checkbox' class='evaluation' name='evaluation$" + p[i].name + "' id='" + p[i].name + "' '><label for='evaluation$" + p[i].name + "'>" + p[i].name + "</label></div>")
         //Add for drop-down menu
         var elt2 = document.getElementById("DropdownMenuevaluation");
         elt2.insertAdjacentHTML('beforeend', "<li><a name='evaluationLink' id='evaluation_" + p[i].name + "'>" + p[i].name + "</a></li>");
