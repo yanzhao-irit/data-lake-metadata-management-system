@@ -2383,6 +2383,41 @@ $(function () {
     }
   });
 
+  //Event for checkbox in dropdown menu (mainly for filter)
+  $('#parameterDropdown').on('click', function () {
+    $("#analyseNames").empty();
+    if (this.checked) {
+      parameterList.push(this.id)
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    } else {
+      console.log("ssssssssssssss")
+      const index = parameterList.indexOf(this.id);
+      if (index > -1) {
+        parameterList.splice(index, 1);
+      }
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    }
+  });
+/*
+  //Event for checkbox in dropdown menu (mainly for filter)
+  $('#landmarkerDropdown').on('click', 'input', function () {
+    $("#analyseNames").empty();
+    if (this.checked) {
+      landmarkerList.push(this.id)
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    } else {
+      const index = landmarkerList.indexOf(this.id);
+      if (index > -1) {
+        landmarkerList.splice(index, 1);
+      }
+      $("#analyseNames").empty()
+      showStudies(tagsinput, typeRecherche,aDate,landmarkerList,algoNames, parameterList, evaluationList);
+    }
+  });*/
+
   //Event to get the date if changed for date filter
   $('#dsDate').change(function () {
     dsDate = $(this).val()+'T00:00:00Z';
