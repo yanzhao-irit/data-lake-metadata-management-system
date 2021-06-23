@@ -1,7 +1,9 @@
-require('file-loader?name=[name].[ext]!../node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
+//require('file-loader?name=[name].[ext]!../../node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
+//require('../../node_modules/neo4j-driver/lib/browser/neo4j-web.min.js')
+let neo4j = require('neo4j-driver');
 
 //Call of models file to stock responses from database.
-var Process = require('./models/Process');
+var Processes = require('./models/Processes');
 var Analysis = require('./models/Analysis')
 var DLStructuredDataset = require('./models/DLStructuredDataset')
 var Operation = require('./models/Operation')
@@ -25,16 +27,19 @@ var AnalysisAttribute = require('./models/AnalysisAttribute')
 var AlgoResult = require('./models/AlgoResult')
 var Nodes = require('./models/Nodes')
 var Relationship = require('./models/Relationship')
+var Tag = require('./models/Tag')
 
 //Drivers and parameters to acces database 
 var _ = require('lodash');
-var neo4j = window.neo4j.v1;
-var pwd = require("../store-password.json")
-var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
+//var neo4j = global.neo4j.v1;
+const fs = require('fs');
+const path = require('path');
 
+let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../store-password.json')));
+var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
 //Function to search processus metadata with parameters to apply filter. 
 //Attributed values are default value if no parameter is given.
-function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) {
+module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) => {
   var session = driver.session();
   //Classic query without filter, search with name, description and tag name.
   var query = "MATCH (p:Process) OPTIONAL MATCH (p)-[r:hasTag]->(t :Tag) OPTIONAL MATCH (o:Operation)-[:isUsedBy]->(:OperationOfProcess)<-[:containsOp]-(p) WITH p,t,o WHERE ("
@@ -89,7 +94,7 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
       query)
     .then(result => {
       return result.records.map(record => {
-        return new Process(record.get('p'));
+        return new Processes(record.get('p'));
       });
     })
     .catch(error => {
@@ -101,12 +106,11 @@ function getProcesses(tags, language = "", date = "0001-01-01", typeOpe = [], ex
 }
 
 //Function to search study metadata
-function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter, evaluation,omNames) {
+module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker, algoNames, parameter = [], evaluation = [],omNames) => {
   var session = driver.session();
-  console.log('heho'  + evaluation)
   let typeRech = Object.values(type);
+  console.log('Algorithm names : ' + algoNames)
   if (typeRech.indexOf('machineLearning') != -1) {
-    console.log(typeRech.indexOf('machineLearning'))
     typeRech.splice(typeRech.indexOf('machineLearning'), 1)
   }
   if (typeRech.indexOf('otherAnalysis') != -1) {
@@ -133,8 +137,6 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
   if (typeRech.length > 0) {
     query += ' AND ('
     for (var i = 0; i < typeRech.length; i++) {
-      console.log(typeRech[i])
-      console.log("c'est passé")
       if (i != typeRech.length - 1) {
         query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
       } else {
@@ -244,7 +246,7 @@ function getStudies(tags, type, creationdate = '0001-01-01', landmarker, algoNam
 }
 
 //Function to search for analysis metadata by study id or analysis
-function getAnalyses(study, name, id) {
+module.exports.getAnalyses = (study, name, id) => {
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis 
@@ -263,7 +265,6 @@ function getAnalyses(study, name, id) {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
-  console.log('heyo' + query)
   return session
     .run(
       query)
@@ -281,7 +282,7 @@ function getAnalyses(study, name, id) {
 }
 
 //Function to get nominal features by analysis
-function getNominalFeaturesbyAnalysis(analyseId) {
+module.exports.getNominalFeaturesbyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf) RETURN nf'
   return session
@@ -301,7 +302,7 @@ function getNominalFeaturesbyAnalysis(analyseId) {
 }
 
 //Function to get numeric features by analysis
-function getNumericFeaturesbyAnalysis(analyseId) {
+module.exports.getNumericFeaturesbyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf) RETURN nf'
   return session
@@ -321,7 +322,7 @@ function getNumericFeaturesbyAnalysis(analyseId) {
 }
 
 //Function to get numeric attributes by analysis
-function getNumericAttributebyAnalysis(analyseId) {
+module.exports.getNumericAttributebyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -341,7 +342,7 @@ function getNumericAttributebyAnalysis(analyseId) {
 }
 
 //Function to get nominal attributes by analysis
-function getNominalAttributebyAnalysis(analyseId) {
+module.exports.getNominalAttributebyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -361,7 +362,7 @@ function getNominalAttributebyAnalysis(analyseId) {
 }
 
 //Function to get a specific nominal attribute by analysis
-function getNominalAttribute(name, analyseId) {
+module.exports.getNominalAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND na.name= "' + name + '" AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -381,7 +382,7 @@ function getNominalAttribute(name, analyseId) {
 }
 
 //Function to get a specific numeric attribute by analysis
-function getNumericAttribute(name, analyseId) {
+module.exports.getNumericAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '" AND na.name= "' + name + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
   return session
@@ -401,7 +402,7 @@ function getNumericAttribute(name, analyseId) {
 }
 
 //Function to get numeric attributes by dataset
-function getNumericAttributebyDataset(datasetId) {
+module.exports.getNumericAttributebyDataset = (datasetId) => {
   var session = driver.session();
   query = 'MATCH (dl)-[]-(e:EntityClass)-[]-(a:NumericAttribute) WHERE dl.uuid = "' + datasetId + '" AND (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset) RETURN DISTINCT a'
   return session
@@ -421,7 +422,7 @@ function getNumericAttributebyDataset(datasetId) {
 }
 
 //Function to get nominal attributes by dataset
-function getNominalAttributebyDataset(datasetId) {
+module.exports.getNominalAttributebyDataset = (datasetId) => {
   var session = driver.session();
   query = 'MATCH (dl)-[]-(e:EntityClass)-[]-(a:NominalAttribute) WHERE dl.uuid = "' + datasetId + '" AND (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset) RETURN DISTINCT a'
   return session
@@ -441,7 +442,7 @@ function getNominalAttributebyDataset(datasetId) {
 }
 
 //Function to get quality informations by dataset to create filter (there are no quality in databse for now)
-function getQuality(dataSet) {
+module.exports.getQuality = (dataSet) => {
   var session = driver.session();
   var query = "MATCH (q:quality),(n) WHERE (q)<-[:hasQuality]-(n) AND n.name CONTAINS (" + dataSet.name + ") RETURN DISTINCT q";
   return session
@@ -462,7 +463,7 @@ function getQuality(dataSet) {
 
 
 //Function to get quaity value with dataset Id and quality name
-function getQualityValue(quality, dataSet) {
+module.exports.getQualityValue = (quality, dataSet) => {
   var session = driver.session();
   query = "MATCH (q:Quality)<-[r:hasQuality]-(n) WHERE q.name CONTAINS (" + quality.name + ") AND n.name CONTAINS (" + dataSet.name + ") RETURN DISTINCT r";
   return session
@@ -482,7 +483,7 @@ function getQualityValue(quality, dataSet) {
 }
 
 //Function to get all the operation to create filter
-function getOperations() {
+module.exports.getOperations = () => {
   var session = driver.session();
   query = "MATCH (o:Operation) RETURN DISTINCT o";
   return session
@@ -502,7 +503,7 @@ function getOperations() {
 }
 
 //Function to get landmarkes by study to create a filter
-function getLandmarkers(study) {
+module.exports.getLandmarkers = (study) => {
   var session = driver.session();
   query = "MATCH (l:Landmarker),(s:Study) WHERE (l)<-[:hasImplementation]-()<-[:hasAnalysis]-(s) AND (toLower(s.name) CONTAINS toLower('" + study.name + "')) RETURN DISTINCT l";
   return session
@@ -522,7 +523,7 @@ function getLandmarkers(study) {
 }
 
 //Function to get parameter by study to create a filter
-function getParameter(study) {
+module.exports.getParameter = (study) => {
   var session = driver.session();
   query = 'MATCH (s:Study)-[:hasAnalysis]->()-[:hasImplementation]->()-[:hasParameter]->(p:Parameter) WHERE toLower(s.name) CONTAINS toLower("' + study.name + '") RETURN DISTINCT p'
   return session
@@ -542,7 +543,7 @@ function getParameter(study) {
 }
 
 //Function to get parameter settings
-function getParameterSettings() {
+module.exports.getParameterSettings = () => {
   var session = driver.session();
   query += 'MATCH (p:ParameterSettings) RETURN DISTINCT p'
   return session
@@ -562,7 +563,7 @@ function getParameterSettings() {
 }
 
 //Function to get evaluation by study to create a filter
-function getEvaluation(study) {
+module.exports.getEvaluation = (study) => {
   var session = driver.session();
   query = 'MATCH (s:Study)-[:hasAnalysis]->()<-[:evaluateAnalysis]-()-[:useEvaluationMeasure]-(e:EvaluationMeasure) WHERE (toLower(s.name) CONTAINS toLower("' + study.name + '")) RETURN DISTINCT e'
   return session
@@ -582,10 +583,9 @@ function getEvaluation(study) {
 }
 
 //Function to get entity class by analysis
-function getEntityClassByAnalyse(analyseName, analyseId) {
+module.exports.getEntityClassByAnalyse = (analyseName, analyseId) => {
   var session = driver.session();
   query = 'MATCH (e:EntityClass)-[]-(n)<-[:analyze]-(a:Analysis) WHERE a.name = "' + analyseName + '" AND a.uuid = "' + analyseId + '" AND (n:DLStructuredDataset OR n:DLSemistructuredDataset OR n:DLUnstructuredDataset) RETURN DISTINCT e';
-  console.log(query)
   return session
     .run(
       query)
@@ -603,8 +603,8 @@ function getEntityClassByAnalyse(analyseName, analyseId) {
 }
 
 
-//function to get entity class by dataset
-function getEntityClassByDataset(datasetName, datasetId, typeDS) {
+//module.exports.to get entity class by dataset
+module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
   var session = driver.session();
   query = 'MATCH (e:EntityClass)<-[:hasEntityClass]-(a) WHERE '
   if (typeDS.includes("Semi-Structured")) {
@@ -635,8 +635,8 @@ function getEntityClassByDataset(datasetName, datasetId, typeDS) {
     });
 }
 
-//function to search for dataset relationship with other datasets 
-function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
+//module.exports.to search for dataset relationship with other datasets 
+module.exports.getRelationshipDSbyDataset = (dsName, dsId, type, relationName = '') => {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
   query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
@@ -688,7 +688,7 @@ function getRelationshipDSbyDataset(dsName, dsId, type, relationName = '') {
 }
 
 //Function to get relationship value between two datasets
-function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
+module.exports.getRelationshipDSAnalysisbyDataset = (dataset1, dataset2, Relationship) => {
   var session = driver.session();
   query = `MATCH (ds1)-[]-(adsr:AnalysisDSRelationship)-[]-(ds2), (adsr)-[]-(rds:RelationshipDS) 
               WHERE rds.name = "` + Relationship + `" AND ds1.uuid = "` + dataset1 + `" AND ds2.uuid = "` + dataset2 + `" 
@@ -712,7 +712,7 @@ function getRelationshipDSAnalysisbyDataset(dataset1, dataset2, Relationship) {
 }
 
 //Function to search for relationships between attribute by datasets or analysis. allow to get relationship name,value and others attributes linked to the target.
-function getRelationshipAttribute(sourceId, name = '', type, relationName = '', name2 = '') {
+module.exports.getRelationshipAttribute = (sourceId, name = '', type, relationName = '', name2 = '') => {
   var session = driver.session();
   query = `MATCH (dl)-[]-(e:EntityClass)-[]-(a),(a)-[r1:hasAttribute]-(AA:AnalysisAttribute)-[r2:useMeasure]-(RA:RelationshipAtt),(AA)-[r3:hasAttribute]-(a2)
   WHERE dl.uuid = '`+ sourceId + `'
@@ -779,7 +779,6 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
         query += ' AND RA.name ="' + relationName + '"'
       }
       query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
-      // console.log(query)
       return session
         .run(
           query)
@@ -801,7 +800,7 @@ function getRelationshipAttribute(sourceId, name = '', type, relationName = '', 
 
 //fonction de recherches des datasets avec les différents paramètres pour chaque filtre.
 //Function to search dataset metadata, with parameters for each filter.
-function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00:00:00Z', quality = [], sensitivity = 0, entityAttributeNames = "") {
+module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001-01-01T00:00:00Z', quality = [], sensitivity = 0, entityAttributeNames = "") => {
   var session = driver.session();
   //Cypher query with ifs to have the dataset type filter used.
   var query = "MATCH (ds),(a),(e:EntityClass) WHERE ("; //,(q:QualityMetric),(s:SensitivityMark), (sv:SensitivityValue)
@@ -899,7 +898,7 @@ function getDatabases(tags, type = 'defaultValue', creationdate = '0001-01-01T00
     });
 }
 
-function graphList() {
+module.exports.graphList = () => {
   var session = driver.session();
   query = 'CALL gds.graph.list() YIELD graphName'
   return session
@@ -918,7 +917,7 @@ function graphList() {
     });
 }
 
-function createGraph() {
+module.exports.createGraph = () => {
   var session = driver.session();
   query = `CALL gds.graph.create.cypher(
     'graph-DDDT',
@@ -937,7 +936,7 @@ function createGraph() {
     });
 }
 
-function createGraphAll() {
+module.exports.createGraphAll = () => {
   var session = driver.session();
   query = `CALL gds.graph.create.cypher(
     'graph-All',
@@ -956,7 +955,7 @@ function createGraphAll() {
     });
 }
 
-function algoSimilairty() {
+module.exports.algoSimilairty = () => {
   var session = driver.session();
   query = `CALL gds.nodeSimilarity.stream('graph-DDDT')
   YIELD node1, node2, similarity
@@ -978,7 +977,7 @@ function algoSimilairty() {
     });
 }
 
-function algoBetweennessCentrality() {
+module.exports.algoBetweennessCentrality = () => {
   var session = driver.session();
   query = `CALL gds.betweenness.stream('graph-All')
   YIELD nodeId, score
@@ -1001,7 +1000,7 @@ function algoBetweennessCentrality() {
     });
 }
 
-function getGraph(query) {
+module.exports.getGraph = (query) => {
   var session = driver.session();
   var nodes = []
   var edges = []
@@ -1050,12 +1049,10 @@ function getGraph(query) {
     });
 }
 
-//------------------------------------------ADD-----------------------------
-var Tag = require('./models/Tag')
+
 //-------------------------------------ADD start----------------------------
 //Function to search for analysis metadata by study id or analysis
-function getTags(tag) {
-  //console.log(tag);
+module.exports.getTags = (tag) => {
   var session = driver.session();
   //partie cypher de base pour récupérer les analyses
   //Classic cypher request to get analysis
@@ -1076,38 +1073,299 @@ function getTags(tag) {
       return session.close();
     });
 }
-exports.getTags = getTags;
+
+//-----------------------------UPLOADCSV-----------------------------------------
+//Function to create datasource in BD
+module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_CSV,entityClass_CSV) =>{
+  console.log("createDSIngestDSDLEC")
+  var session = driver.session();
+  //cypher for insert un noeud datasetsource
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_CSV["name"]
+      + "',type:'"+DatasetSource_CSV["type"]
+      + "',location:'"+DatasetSource_CSV["location"]
+      + "',owner:'"+DatasetSource_CSV["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_CSV["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_CSV["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_CSV["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
+      + "',administrator:'"+DSDatalake_CSV["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
+      + "')),size:'"+DSDatalake_CSV["size"]
+      + "',name:'"+DSDatalake_CSV["name"]
+      + "',type:'"+DSDatalake_CSV["type"]
+      + "',location:'"+DSDatalake_CSV["location"]
+      + "'})-[:hasEntityClass]->(d:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "});"
+  console.log(query)
+  return session
+      .run(query)
+      .then(result => {
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
+  console.log("createNumericAttributs");
+
+  var session = driver.session();
+
+  var $propertiestAttrNu = (attributesNumeric_CSV)
+
+  //"CALL apoc.create.nodes(['tags'], "+$propertiestTags+");" +
+  var query = "CALL apoc.create.nodes(['NumericAttribute'], "+$propertiestAttrNu+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createNominalAttributs = (attributesNominal_CSV) =>{
+  console.log("createNominalAttributs");
+  var session = driver.session();
+
+  var $propertiestAttrNo = (attributesNominal_CSV)
+
+  var query = "CALL apoc.create.nodes(['NominalAttribute'], "+$propertiestAttrNo+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createTags = (tags_CSV) => {
+  console.log("createTags");
+  var session = driver.session();
+  var $propertiestTags = (tags_CSV)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row "+
+      "MERGE (n:Tag {name:row.name});"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
+  console.log("createHasTag");
+  var session = driver.session();
+  var $propertiestTags = (tags_CSV)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
+      + "',administrator:'"+DSDatalake_CSV["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
+      + "')),size:'"+DSDatalake_CSV["size"]
+      + "',name:'"+DSDatalake_CSV["name"]
+      + "',type:'"+DSDatalake_CSV["type"]
+      + "',location:'"+DSDatalake_CSV["location"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasAttributeNumeric = (entityClass_CSV,attributesNumeric_CSV) => {
+  console.log("createHasAttributeNumeric");
+  var session = driver.session();
+  var $propertiestAttr = (attributesNumeric_CSV)
+
+  var query = "UNWIND ("+ $propertiestAttr +") as row\n" +
+      "MATCH (e:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "})\n" +
+      "MATCH (a:NumericAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount,min:row.min,max:row.max})\n" +
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CSV) => {
+  console.log("createHasAttributeNominal");
+  var session = driver.session();
+  var $propertiestAttr = (attributesNominal_CSV)
+
+  var query = "UNWIND ("+ $propertiestAttr +") as row\n" +
+      "MATCH (e:EntityClass {name:'"+entityClass_CSV["name"]
+      + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
+      + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
+      + ",numberOfNominalAttributes:"+entityClass_CSV["numberOfNominalAttributes"]
+      + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
+      + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
+      + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + "})\n" +
+      "MATCH (a:NominalAttribute {name:row.name,type:row.type,missingValuesCount:row.missingValuesCount})\n" +
+      "call apoc.create.relationship(e,'hasAttribute',{},a) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        var end = new Date();
+        return end;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
 
 
+//-----------------------------UPLOADCSV-----------------------------------------
+module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,Ingest_UnStructured,DSDatalake_UnStructured) =>{
+  console.log("createDSIngestDSDLEC_UnStructured")
+  var session = driver.session();
+  //cypher for insert un noeud datasetsource
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_UnStructured["name"]
+      + "',type:'"+DatasetSource_UnStructured["type"]
+      + "',location:'"+DatasetSource_UnStructured["location"]
+      + "',owner:'"+DatasetSource_UnStructured["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_UnStructured["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_UnStructured["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_UnStructured["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
+      + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
+      + "')),size:'"+DSDatalake_UnStructured["size"]
+      + "',name:'"+DSDatalake_UnStructured["name"]
+      + "',type:'"+DSDatalake_UnStructured["type"]
+      + "',location:'"+DSDatalake_UnStructured["location"]
+      + "',format:'"+DSDatalake_UnStructured["format"]
+      + "'});"
 
-//Exports of used functions
-exports.getProcesses = getProcesses;
-exports.getStudies = getStudies;
-exports.getAnalyses = getAnalyses;
-exports.getDatabases = getDatabases;
-exports.getQuality = getQuality;
-exports.getQualityValue = getQualityValue;
-exports.getOperations = getOperations;
-exports.getLandmarkers = getLandmarkers;
-exports.getParameter = getParameter;
-exports.getParameterSettings = getParameterSettings;
-exports.getEvaluation = getEvaluation;
-exports.getNominalFeaturesbyAnalysis = getNominalFeaturesbyAnalysis;
-exports.getNumericFeaturesbyAnalysis = getNumericFeaturesbyAnalysis;
-exports.getNumericAttributebyAnalysis = getNumericAttributebyAnalysis;
-exports.getNominalAttributebyAnalysis = getNominalAttributebyAnalysis;
-exports.getNominalAttribute = getNominalAttribute;
-exports.getNumericAttribute = getNumericAttribute;
-exports.getEntityClassByAnalyse = getEntityClassByAnalyse;
-exports.getEntityClassByDataset = getEntityClassByDataset;
-exports.getRelationshipDSbyDataset = getRelationshipDSbyDataset;
-exports.getRelationshipDSAnalysisbyDataset = getRelationshipDSAnalysisbyDataset;
-exports.getNumericAttributebyDataset = getNumericAttributebyDataset;
-exports.getNominalAttributebyDataset = getNominalAttributebyDataset;
-exports.getRelationshipAttribute = getRelationshipAttribute;
-exports.createGraph = createGraph;
-exports.createGraphAll = createGraphAll;
-exports.algoSimilairty = algoSimilairty;
-exports.graphList = graphList;
-exports.algoBetweennessCentrality = algoBetweennessCentrality;
-exports.getGraph = getGraph;
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTagUnStructured = (DSDatalake_UnStructured,tags_UnStructured) => {
+  console.log("createHasTag");
+  var session = driver.session();
+  var $propertiestTags = (tags_UnStructured)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
+      + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
+      + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
+      + "')),size:'"+DSDatalake_UnStructured["size"]
+      + "',name:'"+DSDatalake_UnStructured["name"]
+      + "',type:'"+DSDatalake_UnStructured["type"]
+      + "',location:'"+DSDatalake_UnStructured["location"]
+      + "',format:'"+DSDatalake_UnStructured["format"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        var end = new Date();
+        console.log("end")
+        console.log(end)
+        return end;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+

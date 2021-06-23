@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <link rel='stylesheet' href='../contents/neo4jcss/main.css'>
+  <link rel="stylesheet" href="../contents/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+  <script src="../contents/jquery/jquery.min.1.12.4.js"></script>
+  <script src="../contents/jquery/jquery.min.js"></script>
+  <script src="../contents/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+  <link href="../contents/bootstrap/bootstrap-3.4.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href='../css/upload.css' />
+
+  <title>Data Lake App - Semi Structured Dataset</title>
+</head>
+<body>
+<div class="elegant-aero">
+  <h3>Dataset : </h3>
+  </br>
+  <label for="owner">Owner of dataset : </label>
+  <input type="text" id="owner" required>
+  </br>
+  </br>
+  <div style="text-align: center">
+    <div class="row">
+      <div class="col-md-6">
+        <button class="file pull-right">Upload File Here<input type="file" id="fileInput" style="margin-left: 20%" required></button>
+      </div>
+      <div class="col-md-6">
+        <div class="toggle pull-left" id="delimiterDiv">
+          <input type="checkbox" checked id="delimiter">
+          <label for="delimiter">Delimiter</label>
+        </div>
+      </div>
+    </div>
+    </br>
+    <span id="fileNameUpload"></span>
+  </div>
+
+  <h3>Ingest : </h3>
+  </br>
+  <label for="ingestMode">Ingest Mode : </label><select id="ingestMode" required>
+  <option value="real-time">real-time</option>
+  <option value="batch">batch</option>
+</select>
+  </br>
+  </br>
+  <div id="ingestionTime" display="none">
+    <label for="ingestionStartTime">Start Time : </label><input id="ingestionStartTime" type="datetime-local" name="meeting-time"></br>
+    <label for="ingestionEndTime">End Time : </label><input id="ingestionEndTime" type="datetime-local" name="meeting-time"></br>
+  </div>
+
+  <h3>Tags : </h3>
+  <div style="margin-left: 33%">
+    <button id="add">+</button>
+  </div>
+  </br>
+  <div id="Tags">
+    <div class='dropdown dropdown-toggle'>
+      <label for="zone0">Tag 1:</label><input name="tagsUsers" type="text" id="zone0" data-toggle="dropdown" required>
+      <ul class='dropdown-menu' id="zoneaff0" style="margin-left:33%;height:100px;width:270px;overflow:scroll;"></ul>
+    </div>
+  </div>
+
+
+  <h3>Datalake Dataset : </h3>
+  </br>
+  <label for="urlDS">Connection URL : </label><input type="text" id="urlDS" required></br>
+  <label for="admin">Administrator : </label><input type="text" id="admin" required></br>
+  <label for="description">Description : </label><input type="text" id="description" required></br>
+  </br>
+  <div style="text-align: center" class="footer">
+    <button id="submitFile" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
+    </br>
+    <a href="index.html">Back To application</a>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">×
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          Confirmation
+        </h4>
+      </div>
+      <div id="confirmSendBox">
+        <div class="modal-body" >
+          Do you confirm to send ?
+        </div>
+        <div class="modal-footer">
+          <button id="confirmBtn" type="button" class="btn btn-primary pull-left">
+            confirm
+          </button>
+          <button type="button" class="btn btn-default"
+                  data-dismiss="modal" >no
+          </button>
+        </div>
+      </div>
+      <div id="waitingBox" style="display: none">
+        <div class="modal-body" id="resultInsert">
+          Loading...
+        </div>
+        <div class="modal-footer" id="reload" style="display: none">
+          <button id="reloadUpload" type="button" class="btn btn-primary pull-left">
+            confirm
+          </button>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--    <script src="../contents/library.js"></script>-->
+<script src="../contents/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="../contents/d3/d3.v3.min.js" type="text/javascript"></script>
+<script src="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="../../node_modules/vis-network/standalone/umd/vis-network.min.js"></script>
+<!--<script src="../renderer.js"></script>-->
+<script src="../semiStructured.js"></script>
+
+</body>
+
+
+</html>
