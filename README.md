@@ -56,13 +56,7 @@ npm install
 }
 ```
 
-6. Build the application.
-
-```
-npm run build
-```
-
-7. Start the application.
+6. Start the application.
 
 ```
 npm start
