@@ -1,5 +1,6 @@
 const api = require("../neo4jApi");
 const _ = require('lodash')
+const orcl = require("../structured");
 
 
 $("#dialog").dialog();

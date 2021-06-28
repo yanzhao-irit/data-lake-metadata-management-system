@@ -18,6 +18,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.57",
     "@electron-forge/maker-zip": "^6.0.0-beta.57",
     "electron": "^13.1.2",
+    "electron-builder": "^22.11.7",
     "webpack": "^5.39.1",
     "webpack-cli": "^4.7.2"
   },
@@ -30,7 +31,7 @@
     "jquery-ui": "^1.12.1",
     "lodash": "^4.17.21",
     "neo4j-driver": "^4.3.1",
-    "oracledb": "^5.2.0",
+    "oracledb": "https://github.com/oracle/node-oracledb/releases/download/v5.2.0/oracledb-src-5.2.0.tgz",
     "popper.js": "^1.16.1",
     "vis-network": "^9.0.4"
   },
