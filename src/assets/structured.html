@@ -19,42 +19,66 @@
 </head>
 <body>
 <div class="elegant-aero">
-  <h3>Dataset : </h3>
-  </br>
-  <label for="owner">Owner of dataset : </label>
-  <input type="text" id="owner" required>
-  </br>
-  </br>
-<!--  <div style="text-align: center">
-    <button class="file">Upload File Here<input type="file" id="fileInput" style="margin-left: 20%" required></button>
+  <div id="databaseChose">
+    <h3>Database : </h3>
+    <label for="dbOption">Please chose a BD : </label><select id="dbOption" required>
+    <option value="oracle">oracle</option>
+    <option value="postgresql">postgresql</option>
+  </select>
     </br>
-    <span id="fileNameUpload"></span>
-  </div>-->
-
-  <h3>Tags : </h3>
-  <div style="margin-left: 33%">
-    <button id="add">+</button>
+    <div style="text-align: center" class="footer">
+      <button id="chosedb" class="btn btn-primary btn-lg">Chose</button>
+      </br>
+    </div>
   </div>
-  </br>
-  <div id="Tags">
-    <div class='dropdown dropdown-toggle'>
-      <label for="zone0">Tag 1:</label><input name="tagsUsers" type="text" id="zone0" data-toggle="dropdown" required>
-      <ul class='dropdown-menu' id="zoneaff0" style="margin-left:33%;height:100px;width:270px;overflow:scroll;"></ul>
+
+  <div id="postgresqlOption" style="display: none">
+    <h3>Dataset : </h3>
+    </br>
+    <label for="ownerPostgres">Username Postgresql : </label>
+    <input type="text" id="ownerPostgres" required>
+    <label for="passwordPostgres">Password Postgresql : </label>
+    <input type="password" id="passwordPostgres" required>
+    </br>
+    </br>
+    <!--  <div style="text-align: center">
+        <button class="file">Upload File Here<input type="file" id="fileInput" style="margin-left: 20%" required></button>
+        </br>
+        <span id="fileNameUpload"></span>
+      </div>-->
+
+    <h3>Tags : </h3>
+    <div style="margin-left: 33%">
+      <button id="add">+</button>
+    </div>
+    </br>
+    <div id="Tags">
+      <div class='dropdown dropdown-toggle'>
+        <label for="zone0">Tag 1:</label><input name="tagsUsers" type="text" id="zone0" data-toggle="dropdown" required>
+        <ul class='dropdown-menu' id="zoneaff0" style="margin-left:33%;height:100px;width:270px;overflow:scroll;"></ul>
+      </div>
+    </div>
+
+
+    <h3>Datalake Dataset : </h3>
+    </br>
+    <label for="urlDS">Connection URL : </label><input type="text" id="urlDS" required></br>
+    <label for="admin">Administrator : </label><input type="text" id="admin" required></br>
+    <label for="description">Description : </label><input type="text" id="description" required></br>
+    </br>
+    <div style="text-align: center" class="footer">
+      <button id="submitFile" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
+      </br>
+      <a href="index.html">Back To application</a>
     </div>
   </div>
 
 
-  <h3>Datalake Dataset : </h3>
-  </br>
-  <label for="urlDS">Connection URL : </label><input type="text" id="urlDS" required></br>
-  <label for="admin">Administrator : </label><input type="text" id="admin" required></br>
-  <label for="description">Description : </label><input type="text" id="description" required></br>
-  </br>
-  <div style="text-align: center" class="footer">
-    <button id="submitFile" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
-    </br>
-    <a href="index.html">Back To application</a>
+  <div id="oracleOption" style="display: none">
+    <p>Oracle</p>
   </div>
+
+
 </div>
 
 <!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

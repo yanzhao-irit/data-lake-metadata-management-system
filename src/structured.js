@@ -2,9 +2,12 @@ console.log("test")
 const api = require("../postgreApi");
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
     document.getElementById("zone0").addEventListener("input", printTags);
     document.getElementById('submitFile').addEventListener('click',testApi2);
+
 /*    document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
     document.getElementById('reloadUpload').addEventListener('click',reload);*/
 
@@ -22,7 +25,15 @@ var DSDatalake_postgre = {};
 var Ingest_postgre = {};
 var EntityClass_postgre = [];
 
-window.onload = getMetaPostgre();
+function dbConfirm(){
+    document.getElementById("databaseChose").style.display="none"
+    if(document.getElementById("dbOption").value === "postgresql"){
+        document.getElementById("postgresqlOption").style.display="block"
+    }else{
+        document.getElementById("oracleOption").style.display="block"
+    }
+}
+//window.onload = getMetaPostgre();
 
 //show tags in dropdown menu
 function printTags() {
@@ -157,7 +168,14 @@ function getMetaPostgre(){
 
 function testApi2(){
     analyseMetaPostgre();
-    getInfoTable();
+    console.log(EntityClass_postgre)
+    for (var n =0;n<EntityClass_postgre.length;n++){
+        getInfoTable(EntityClass_postgre[n])
+
+    }
+    // getInfoTable(EntityClass_postgre[2])
+    console.log(EntityClass_postgre)
+    // getInfoTable(EntityClass_postgre[0])
 }
 
 function analyseMetaPostgre(){
@@ -169,56 +187,102 @@ function analyseMetaPostgre(){
         Entityclass['comment'] = tables[i][1].comment
         var columns = Object.entries(tables[i][1].columns)
         // console.log(columns)
-        var attributs = []
+        var attributsNominal = []
+        var attributsNumeric = []
         for (var j=0; j<columns.length;j++ ){
-            if(columns[j][1].dataType==="Integer"){
+            //TODO Need to find other type of numeric
+            if(columns[j][1].dataType==="integer"){
                 var numericAttribute = {}
                 numericAttribute['name'] = columns[j][0]
                 numericAttribute['type'] = columns[j][1].dataType
-                attributs.push(numericAttribute)
+                attributsNumeric.push(numericAttribute)
             }else{
                 var nominalAttribute = {}
                 nominalAttribute['name'] = columns[j][0]
                 nominalAttribute['type'] = columns[j][1].dataType
-                attributs.push(nominalAttribute)
+                attributsNominal.push(nominalAttribute)
             }
         }
-        Entityclass['attributes'] = attributs
+        Entityclass["numberOfNumericAttributes"] = attributsNumeric.length
+        Entityclass["numberOfNominalAttributes"] = attributsNominal.length
+        Entityclass['attributes'] = [attributsNumeric,attributsNominal]
         EntityClass_postgre.push(Entityclass)
     }
-    console.log(EntityClass_postgre)
 }
 
-function getInfoTable(){
-    api.getInfoTable("actor").then(p => {
-        console.log(p);
-    })
-}
 
-function preConvert() {
+function getInfoTable(EntityClass_postgre){
     var items = [];
-    // Create Object
-    api.getInfoTable("actor").then(p =>{
-        items = p.rows;
+    
+    api.getInfoTable(EntityClass_postgre.name).then(p => {
+        /*console.log(p)
+        console.log(p.rows)*/
+        items = p.rows
+        EntityClass_postgre["numberOfInstances"]=p.rowCount
+        EntityClass_postgre["numberOfAttributes"]=p.fields.length
+        var tableContentCSV = preConvert(items);
+        var rows = [];
+        var columns = [];
+        // console.log(tableContentCSV);
+        splitCSV(tableContentCSV,rows,columns);
+        // console.log(rows);
+        EntityClass_postgre["numberOfInstancesWithMissingValues"] = countInstancesWithMissingValuesEC(rows);
+        //for numeric attribute
+        // console.log(EntityClass_postgre)
+        for(var x=0;x<columns.length;x++){
+            for (var y=0;y<EntityClass_postgre["attributes"][0].length;y++){
+                if(columns[x][0]===EntityClass_postgre["attributes"][0][y].name){
+                    // console.log(EntityClass_postgre["attributes"][0][y])
+                    EntityClass_postgre.attributes[0][y]["min"] = getMinColumn(columns[x])
+                    EntityClass_postgre.attributes[0][y]["max"] = getMaxColumn(columns[x])
+                    EntityClass_postgre.attributes[0][y]["missingValuesCount"] = countMissingValue(columns[x])
+                }
+            }
+        }
+        //for nominal attributes
+        for(var a=0;a<columns.length;a++){
+            for (var b=0;b<EntityClass_postgre["attributes"][1].length;b++){
+                if(columns[a][0]===EntityClass_postgre.attributes[1][b].name){
+                    EntityClass_postgre.attributes[1][b]["missingValuesCount"] = countMissingValue(columns[a])
+                }
+            }
+        }
+        EntityClass_postgre["numberOfMissingValues"] = countMissingValueEC(EntityClass_postgre["attributes"][0]) + countMissingValueEC(EntityClass_postgre["attributes"][1])
+        // console.log(EntityClass_postgre)
     });
 
+    
+}
+
+function preConvert(items){
+
+    // console.log(items)
     // Convert Object to JSON
     var jsonObject = JSON.stringify(items);
 
     // Display JSON
-    $('#json').text(jsonObject);
+    // $('#json').text(jsonObject);
 
     // Convert JSON to CSV & Display CSV
-    $('#csv').text(ConvertToCSV(jsonObject));
+    // $('#csv').text(ConvertToCSV(jsonObject));
+    return ConvertToCSV(jsonObject);
 };
 
 function ConvertToCSV(objArray) {
     var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
     var str = '';
 
+    for (var header in array[0]) {
+        // console.log(header);
+        if(str != '')str = str + ','
+        str = str + header
+    }
+    str =str + '\r\n';
+    // console.log(str)
     for (var i = 0; i < array.length; i++) {
         var line = '';
         for (var index in array[i]) {
+
             if (line != '') line += ','
 
             line += array[i][index];
@@ -226,9 +290,91 @@ function ConvertToCSV(objArray) {
 
         str += line + '\r\n';
     }
-
+    // console.log(str);
     return str;
 }
+
+
+//Split the contents of the CSV file into rows and columns
+function splitCSV(fileContent,rows,columns){
+    var numberLigne = fileContent.split("\n").length -1
+    var contentLigne = fileContent.split("\n")
+    for (i=0 ; i<=numberLigne-1; i++){
+        var row = contentLigne[i].trim().split(",")
+        row[row.length-1] = row[row.length-1].split("\r")[0]
+        if(row[row.length-1] == ""){
+            row.pop()
+        }
+        rows.push(row)
+    }
+    for (x=0 ; x<rows[0].length; x++){
+        var column = [];
+        for(y=0 ; y<rows.length; y++){
+            // console.log(rows[y][x])
+            column.push(rows[y][x])
+        }
+        columns.push(column)
+    }
+    /*console.log(rows)
+    console.log(columns)*/
+}
+
+//count the number of null values in a column
+function countMissingValue(column){
+    var numberMissing=0
+    for (i=0;i<column.length;i++) {
+        if(column[i]==""){
+            numberMissing = numberMissing+1
+        }
+    }
+    return numberMissing
+}
+
+//get the minimum value of a column of data
+function getMinColumn(column){
+    var min=Number(column[1])
+    for (i=1;i<column.length;i++) {
+        if (Number(column[i]) < min) {
+            min = Number(column[i])
+        }
+    }
+    return min
+}
+
+//get the maximum value of a column of data
+function getMaxColumn(column){
+    var max=Number(column[1])
+    for (i=1;i<column.length;i++) {
+        if (Number(column[i]) > max) {
+            max = Number(column[i])
+        }
+    }
+    return max
+}
+
+//count missing value of a entity class
+function countMissingValueEC(attributes){
+    var numberMissingValueEC=0
+    for(i=0;i<attributes.length;i++){
+        numberMissingValueEC = attributes[i]["missingValuesCount"] + numberMissingValueEC
+    }
+    return numberMissingValueEC
+}
+
+//count the total number of Instances with missing value in a Entity Class
+function countInstancesWithMissingValuesEC(rows){
+    var numberInstancesWithMissingValuesEC=0
+    for(i=0;i<rows.length;i++){
+        // console.log(countMissingValue(rows[i]))
+        if (rows[i].indexOf("") != -1){
+            numberInstancesWithMissingValuesEC = numberInstancesWithMissingValuesEC + 1
+        }
+    }
+    return numberInstancesWithMissingValuesEC
+}
+
+
+
 
 /*function testApi(){
     api.getTables().then(p =>{

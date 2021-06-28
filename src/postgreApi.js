@@ -27,7 +27,7 @@ module.exports.openConnection =async () => {
             // ,'zzz'
         ]
     });
-    // console.log(info)
+    // console.log(info.schemas)
     return info;
 }
 
@@ -48,13 +48,8 @@ module.exports.openConnection =async () => {
 
 //example for querys
 
-module.exports.getInfoTable =async (tableName) => {
+module.exports.getInfoTable =(tableName) => {
+    var res = "new Object()";
     var selectSQLString = 'select * from '+tableName+';'
-    var res = new Object();
-    postgre.query(selectSQLString, function (error, results) {
-        console.log(typeof results)
-        res = results.valueOf();
-    });
-    console.log(res)
-    return res;
+    return postgre.query(selectSQLString);
 }
