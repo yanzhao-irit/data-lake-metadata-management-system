@@ -1,39 +1,52 @@
 console.log("test")
-const api = require("../postgreApi");
+/*const api = require("../postgreApi");*/
 
-document.addEventListener("DOMContentLoaded", () => {
+var pg = require('pg');
+const pgInfo = require('@wmfs/pg-info');
 
-    document.getElementById('chosedb').addEventListener("click", dbConfirm);
-    document.getElementById('add').addEventListener("click", addTag);
-    document.getElementById("zone0").addEventListener("input", printTags);
-    document.getElementById('submitFile').addEventListener('click',testApi2);
-
-/*    document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
-    document.getElementById('reloadUpload').addEventListener('click',reload);*/
-
-});
+const apineo4j = require("../neo4jApi");
+const _ = require('lodash')
 
 //some variable used in all function
 var today = new Date();
 
 var metaPostgre = {};
 var NumberTags = 0;
-var fileExtName ="";
 var tags_Structured = [];
 var DatasetSource_postgre = {};
 var DSDatalake_postgre = {};
 var Ingest_postgre = {};
 var EntityClass_postgre = [];
 
+var conString = ""; //tcp://username：password@localhost/dbname
+var postgre = ""  ;
+var info = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('chosedb').addEventListener("click", dbConfirm);
+    document.getElementById('add').addEventListener("click", addTag);
+    document.getElementById("zone0").addEventListener("input", printTags);
+    document.getElementById('submitFile').addEventListener('click',analyseTables);
+    document.getElementById('connectionPostgresql').addEventListener('click',getMetaPostgre);
+
+/*    document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
+    document.getElementById('reloadUpload').addEventListener('click',reload);*/
+
+});
+
+
+
 function dbConfirm(){
     document.getElementById("databaseChose").style.display="none"
     if(document.getElementById("dbOption").value === "postgresql"){
-        document.getElementById("postgresqlOption").style.display="block"
+        document.getElementById("postgresqlOption").style.display="block";
+        // connection();
+
     }else{
         document.getElementById("oracleOption").style.display="block"
     }
 }
-//window.onload = getMetaPostgre();
+// window.onload = getMetaPostgre();
 
 //show tags in dropdown menu
 function printTags() {
@@ -46,7 +59,7 @@ function printTags() {
     //To receive result of BD
     var length = 0;
     var tag = document.getElementById(zone).value;
-    api.getTags(tag).then(p => {
+    apineo4j.getTags(tag).then(p => {
         length = p.length;
         for (x = 0; x < length; x++) {
             console.log(p[x].name)
@@ -80,20 +93,22 @@ function addTag() {
 }
 
 //set the owner and location of dataset form the html page
-function setDatasetSource(){
-    DatasetSource_postgre["owner"] = document.getElementById("owner").value
-    DatasetSource_postgre["location"] = document.getElementById("urlDS").value
+function setDatasetSource_postgres(){
+    DatasetSource_postgre["owner"] = document.getElementById("ownerPostgres").value
+    DatasetSource_postgre["location"] = document.getElementById("serveurPostgres").value
+    DatasetSource_postgre["name"] = document.getElementById("dbnamePostgres").value
+    DatasetSource_postgre["type"] = "Structured dataset"
 }
 
 //set the ingest start time and end time form the html page
-function setIngest(){
+function setIngest_postgres(){
     Ingest_postgre["ingestionMode"] = "batch"
     Ingest_postgre["ingestionStartTime"] = ""
     Ingest_postgre["ingestionEndTime"] = ""
 }
 
 //set tags from the page html
-function setTags(){
+function setTags_postgres(){
     var lengthTags = document.getElementsByName("tagsUsers").length
     for (i = 0; i<lengthTags; i++){
         var tag = {};
@@ -103,16 +118,14 @@ function setTags(){
 }
 
 //set the content of datalakedataset
-function setDSDatalake(){
+function setDSDatalake_postgres(){
     DSDatalake_postgre["owner"] = DatasetSource_postgre["owner"]
     DSDatalake_postgre["location"] = DatasetSource_postgre["location"]
     DSDatalake_postgre["name"] = DatasetSource_postgre["name"]
     DSDatalake_postgre["type"] = DatasetSource_postgre["type"]
-    DSDatalake_postgre["filenameExtension"] = fileExtName
     DSDatalake_postgre["creationDate"] = getToday() +":00Z"
-    DSDatalake_postgre["description"] = document.getElementById("description").value
-    DSDatalake_postgre["connectionURL"] = document.getElementById("urlDS").value
-    DSDatalake_postgre["administrator"] = document.getElementById("admin").value
+    DSDatalake_postgre["description"] = document.getElementById("descriptionPostgres").value
+    DSDatalake_postgre["administrator"] = document.getElementById("adminPostgres").value
 }
 
 
@@ -159,25 +172,106 @@ function getToday(){
     }
 }*/
 
+
+async function openConnection() {
+    console.log(document.getElementById("ownerPostgres").value)
+    console.log(document.getElementById("passwordPostgres").value)
+    console.log(document.getElementById("serveurPostgres").value)
+    console.log(document.getElementById("dbnamePostgres").value)
+    var username = document.getElementById("ownerPostgres").value
+    var password = document.getElementById("passwordPostgres").value
+    var host = document.getElementById("serveurPostgres").value
+    var dbname = document.getElementById("dbnamePostgres").value
+    var port = document.getElementById("portPostgres").value
+
+    // conString="tcp://postgres:1111@localhost/test"
+    // conString="tcp://"+username+":"+password+"@"+host+"/"+dbname
+    conString= {
+        host: host,
+        port: port,
+        user: username,
+        password: password,
+        database: dbname,
+    }
+    /*conString= {
+        host: 'localhost',
+            port: 5432,
+            user: 'postgres',
+            password: '1111',
+            database: 'test',
+    }*/
+    postgre = new pg.Client(conString)
+
+    postgre.connect(function (error, results) {
+        if (error) {
+            postgre.end();
+            return 'clientConnectionReady Error:' + error.message;
+        }
+        return 'connection success...';
+    });
+    console.log(postgre._connected)
+    info = await pgInfo({
+        client: postgre,
+        /*schemas: [
+            'public'
+            // ,'zzz'
+        ]*/
+    });
+    // console.log(info.schemas)
+    return info;
+}
+
+function getInfoTablePostgres(tableName){
+    var selectSQLString = 'select * from '+tableName+';'
+    return postgre.query(selectSQLString);
+}
+
+function getSizeDB(dbname){
+    var selectSQLString = "SELECT pg_size_pretty(pg_database_size('"+dbname+"'));"
+    return postgre.query(selectSQLString);
+}
+
+
 function getMetaPostgre(){
-    api.openConnection().then(p =>{
+    var confirmeConnection = "Please check if the information you entered is correct, please try after 60 seconds"
+    openConnection().then(p =>{
+        console.log(p)
+        confirmeConnection = "connection succeeded"
+        document.getElementById("resultConnection").innerText=confirmeConnection;
         metaPostgre = p.schemas.public.tables;
         console.log(metaPostgre);
     })
+    document.getElementById("resultConnection").innerText=confirmeConnection;
 }
 
-function testApi2(){
+function analyseTables(){
+    setDatasetSource_postgres();
+    setIngest_postgres();
+    setTags_postgres();
+    setDSDatalake_postgres();
+
+    getSizeDB(DatasetSource_postgre["name"]).then(p =>{
+        console.log(p.rows[0]["pg_size_pretty"])
+        DSDatalake_postgre["size"] = p.rows[0]["pg_size_pretty"]
+    });
+    console.log("------------")
+    console.log(tags_Structured);
+    console.log(DatasetSource_postgre);
+    console.log(DSDatalake_postgre);
+    console.log(Ingest_postgre);
+    console.log("------------")
     analyseMetaPostgre();
     console.log(EntityClass_postgre)
+
     for (var n =0;n<EntityClass_postgre.length;n++){
         getInfoTable(EntityClass_postgre[n])
-
     }
     // getInfoTable(EntityClass_postgre[2])
     console.log(EntityClass_postgre)
     // getInfoTable(EntityClass_postgre[0])
 }
 
+// get metadata of Entity class
 function analyseMetaPostgre(){
     var tables = Object.entries(metaPostgre)
     // console.log(tables)
@@ -210,11 +304,11 @@ function analyseMetaPostgre(){
     }
 }
 
-
+//get metadata of
 function getInfoTable(EntityClass_postgre){
     var items = [];
-    
-    api.getInfoTable(EntityClass_postgre.name).then(p => {
+
+    getInfoTablePostgres(EntityClass_postgre.name).then(p => {
         /*console.log(p)
         console.log(p.rows)*/
         items = p.rows
@@ -250,10 +344,9 @@ function getInfoTable(EntityClass_postgre){
         EntityClass_postgre["numberOfMissingValues"] = countMissingValueEC(EntityClass_postgre["attributes"][0]) + countMissingValueEC(EntityClass_postgre["attributes"][1])
         // console.log(EntityClass_postgre)
     });
-
-    
 }
 
+//PreConvert the data in the table into CSV format
 function preConvert(items){
 
     // console.log(items)
@@ -268,6 +361,7 @@ function preConvert(items){
     return ConvertToCSV(jsonObject);
 };
 
+//Convert the data in the table into CSV format
 function ConvertToCSV(objArray) {
     var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
     var str = '';
@@ -373,14 +467,6 @@ function countInstancesWithMissingValuesEC(rows){
     return numberInstancesWithMissingValuesEC
 }
 
-
-
-
-/*function testApi(){
-    api.getTables().then(p =>{
-        console.log(p);
-    })
-}*/
 
 /*
 const oracledb = require('oracledb');

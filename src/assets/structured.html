@@ -33,13 +33,27 @@
   </div>
 
   <div id="postgresqlOption" style="display: none">
-    <h3>Dataset : </h3>
+    <h3>Connection : </h3>
     </br>
-    <label for="ownerPostgres">Username Postgresql : </label>
+    <label for="ownerPostgres">Username: </label>
     <input type="text" id="ownerPostgres" required>
-    <label for="passwordPostgres">Password Postgresql : </label>
+    <label for="passwordPostgres">Password: </label>
     <input type="password" id="passwordPostgres" required>
     </br>
+    <label for="serveurPostgres">Host: </label>
+    <input type="text" id="serveurPostgres" required>
+    </br>
+    <label for="portPostgres">Database port: </label>
+    <input type="text" id="portPostgres" required>
+    </br>
+    <label for="dbnamePostgres">Database name: </label>
+    <input type="text" id="dbnamePostgres" required>
+    </br>
+    <div style="text-align: center">
+      <button id="connectionPostgresql" class="btn btn-primary btn-lg">Connection</button>
+      </br>
+      <span id="resultConnection"></span>
+    </div>
     </br>
     <!--  <div style="text-align: center">
         <button class="file">Upload File Here<input type="file" id="fileInput" style="margin-left: 20%" required></button>
@@ -59,12 +73,10 @@
       </div>
     </div>
 
-
     <h3>Datalake Dataset : </h3>
     </br>
-    <label for="urlDS">Connection URL : </label><input type="text" id="urlDS" required></br>
-    <label for="admin">Administrator : </label><input type="text" id="admin" required></br>
-    <label for="description">Description : </label><input type="text" id="description" required></br>
+    <label for="adminPostgres">Administrator : </label><input type="text" id="adminPostgres" required></br>
+    <label for="descriptionPostgres">Description : </label><input type="text" id="descriptionPostgres" required></br>
     </br>
     <div style="text-align: center" class="footer">
       <button id="submitFile" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>

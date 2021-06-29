@@ -24,7 +24,7 @@ module.exports.openConnection =async () => {
         client: postgre,
         schemas: [
             'public'
-            // ,'zzz'
+            ,'zzz'
         ]
     });
     // console.log(info.schemas)
@@ -49,7 +49,6 @@ module.exports.openConnection =async () => {
 //example for querys
 
 module.exports.getInfoTable =(tableName) => {
-    var res = "new Object()";
     var selectSQLString = 'select * from '+tableName+';'
     return postgre.query(selectSQLString);
 }
