@@ -10,24 +10,26 @@ const _ = require('lodash')
 //some variable used in all function
 var today = new Date();
 
-var metaPostgre = {};
+
 var NumberTags = 0;
 var tags_Structured = [];
 var DatasetSource_postgre = {};
 var DSDatalake_postgre = {};
 var Ingest_postgre = {};
-var EntityClass_postgre = [];
 
+var metaPostgre = {};
 var conString = ""; //tcp://username：password@localhost/dbname
 var postgre = ""  ;
 var info = "";
+var schemasname =[];
+var schemas =[];
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
     document.getElementById("zone0").addEventListener("input", printTags);
     document.getElementById('submitFile').addEventListener('click',analyseTables);
-    document.getElementById('connectionPostgresql').addEventListener('click',getMetaPostgre);
+    document.getElementById('connectionPostgresql').addEventListener('click',getSchemasPostgre);
 
 /*    document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
     document.getElementById('reloadUpload').addEventListener('click',reload);*/
@@ -40,8 +42,6 @@ function dbConfirm(){
     document.getElementById("databaseChose").style.display="none"
     if(document.getElementById("dbOption").value === "postgresql"){
         document.getElementById("postgresqlOption").style.display="block";
-        // connection();
-
     }else{
         document.getElementById("oracleOption").style.display="block"
     }
@@ -184,6 +184,7 @@ async function openConnection() {
     var dbname = document.getElementById("dbnamePostgres").value
     var port = document.getElementById("portPostgres").value
 
+
     // conString="tcp://postgres:1111@localhost/test"
     // conString="tcp://"+username+":"+password+"@"+host+"/"+dbname
     conString= {
@@ -209,16 +210,9 @@ async function openConnection() {
         }
         return 'connection success...';
     });
-    console.log(postgre._connected)
-    info = await pgInfo({
-        client: postgre,
-        /*schemas: [
-            'public'
-            // ,'zzz'
-        ]*/
-    });
-    // console.log(info.schemas)
-    return info;
+    return postgre.query("SELECT schema_name " +
+        "FROM information_schema.schemata " +
+        "WHERE schema_name not in ('information_schema','pg_catalog','pg_toast');")
 }
 
 function getInfoTablePostgres(tableName){
@@ -231,17 +225,78 @@ function getSizeDB(dbname){
     return postgre.query(selectSQLString);
 }
 
+async function test(){
+    info = await pgInfo({
+        client: postgre,
+        schemas: schemasname
+    });
+    return info;
+}
 
-function getMetaPostgre(){
+function getSchemasPostgre(){
     var confirmeConnection = "Please check if the information you entered is correct, please try after 60 seconds"
     openConnection().then(p =>{
-        console.log(p)
         confirmeConnection = "connection succeeded"
         document.getElementById("resultConnection").innerText=confirmeConnection;
-        metaPostgre = p.schemas.public.tables;
-        console.log(metaPostgre);
+        /*console.log(p.rows)
+        console.log("passe")*/
+        for (var i=0;i<p.rows.length;i++){
+            schemasname.push(p.rows[i]["schema_name"])
+        }
+        console.log(schemasname)
+        console.log(test().then(res => {
+            metaPostgre = res.schemas;
+            console.log(metaPostgre);
+        }));
+
     })
     document.getElementById("resultConnection").innerText=confirmeConnection;
+}
+
+// get metadata of Entity class
+function analyseMetaPostgre(){
+    var schemaInfo = Object.entries(metaPostgre)
+    for(var x=0;x<schemaInfo.length;x++){
+        console.log(schemaInfo[x][1])
+        var s = {};
+        var EntityClass_postgre = [];
+        s["name"] = schemaInfo[x][0]
+        var tables = Object.entries(schemaInfo[x][1].tables)
+        // console.log(tables)
+        for (var i=0; i<tables.length;i++ ){
+            var Entityclass ={}
+            Entityclass['name'] = tables[i][0]
+            Entityclass['comment'] = tables[i][1].comment
+            var columns = Object.entries(tables[i][1].columns)
+            // console.log(columns)
+            var attributsNominal = []
+            var attributsNumeric = []
+            for (var j=0; j<columns.length;j++ ){
+                //TODO Need to find other type of numeric
+                if(columns[j][1].dataType==="integer"){
+                    var numericAttribute = {}
+                    numericAttribute['name'] = columns[j][0]
+                    numericAttribute['type'] = columns[j][1].dataType
+                    attributsNumeric.push(numericAttribute)
+                }else{
+                    var nominalAttribute = {}
+                    nominalAttribute['name'] = columns[j][0]
+                    nominalAttribute['type'] = columns[j][1].dataType
+                    attributsNominal.push(nominalAttribute)
+                }
+            }
+            Entityclass["numberOfNumericAttributes"] = attributsNumeric.length
+            Entityclass["numberOfNominalAttributes"] = attributsNominal.length
+            Entityclass['attributes'] = [attributsNumeric,attributsNominal]
+            EntityClass_postgre.push(Entityclass)
+            for (var n =0;n<EntityClass_postgre.length;n++){
+                getInfoTable(EntityClass_postgre[n])
+            }
+        }
+        s["entityClasss"] = EntityClass_postgre
+        schemas.push(s)
+    }
+    console.log(schemas)
 }
 
 function analyseTables(){
@@ -261,50 +316,17 @@ function analyseTables(){
     console.log(Ingest_postgre);
     console.log("------------")
     analyseMetaPostgre();
-    console.log(EntityClass_postgre)
+   /* console.log(EntityClass_postgre)
 
     for (var n =0;n<EntityClass_postgre.length;n++){
         getInfoTable(EntityClass_postgre[n])
     }
     // getInfoTable(EntityClass_postgre[2])
     console.log(EntityClass_postgre)
-    // getInfoTable(EntityClass_postgre[0])
+    // getInfoTable(EntityClass_postgre[0])*/
 }
 
-// get metadata of Entity class
-function analyseMetaPostgre(){
-    var tables = Object.entries(metaPostgre)
-    // console.log(tables)
-    for (var i=0; i<tables.length;i++ ){
-        var Entityclass ={}
-        Entityclass['name'] = tables[i][0]
-        Entityclass['comment'] = tables[i][1].comment
-        var columns = Object.entries(tables[i][1].columns)
-        // console.log(columns)
-        var attributsNominal = []
-        var attributsNumeric = []
-        for (var j=0; j<columns.length;j++ ){
-            //TODO Need to find other type of numeric
-            if(columns[j][1].dataType==="integer"){
-                var numericAttribute = {}
-                numericAttribute['name'] = columns[j][0]
-                numericAttribute['type'] = columns[j][1].dataType
-                attributsNumeric.push(numericAttribute)
-            }else{
-                var nominalAttribute = {}
-                nominalAttribute['name'] = columns[j][0]
-                nominalAttribute['type'] = columns[j][1].dataType
-                attributsNominal.push(nominalAttribute)
-            }
-        }
-        Entityclass["numberOfNumericAttributes"] = attributsNumeric.length
-        Entityclass["numberOfNominalAttributes"] = attributsNominal.length
-        Entityclass['attributes'] = [attributsNumeric,attributsNominal]
-        EntityClass_postgre.push(Entityclass)
-    }
-}
-
-//get metadata of
+//get metadata of each table
 function getInfoTable(EntityClass_postgre){
     var items = [];
 

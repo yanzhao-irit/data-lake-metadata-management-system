@@ -23,8 +23,7 @@ module.exports.openConnection =async () => {
     const info = await pgInfo({
         client: postgre,
         schemas: [
-            'public'
-            ,'zzz'
+            'public','zzz'
         ]
     });
     // console.log(info.schemas)
