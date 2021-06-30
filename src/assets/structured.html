@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
   <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   <link rel='stylesheet' href='../contents/neo4jcss/main.css'>
   <link rel="stylesheet" href="../contents/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.min.css">
@@ -28,6 +28,8 @@
     </br>
     <div style="text-align: center" class="footer">
       <button id="chosedb" class="btn btn-primary btn-lg">Chose</button>
+      </br>
+      <a href="index.html">Back To application</a>
       </br>
     </div>
   </div>
@@ -79,10 +81,12 @@
     <label for="descriptionPostgres">Description : </label><input type="text" id="descriptionPostgres" required></br>
     </br>
     <div style="text-align: center" class="footer">
-      <button id="submitFile" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
+      <button id="submitPostgres" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" disabled>Send</button>
       </br>
       <a href="index.html">Back To application</a>
     </div>
+
+
   </div>
 
 
@@ -91,9 +95,10 @@
   </div>
 
 
+
 </div>
 
-<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -127,9 +132,9 @@
           </button>
         </div>
       </div>
-    </div>&lt;!&ndash; /.modal-content &ndash;&gt;
-  </div>&lt;!&ndash; /.modal-dialog &ndash;&gt;
-</div>&lt;!&ndash; /.modal &ndash;&gt;-->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 <script src="../contents/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
