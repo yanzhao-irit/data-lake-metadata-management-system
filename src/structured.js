@@ -215,8 +215,8 @@ async function openConnection() {
         "WHERE schema_name not in ('information_schema','pg_catalog','pg_toast');")
 }
 
-function getInfoTablePostgres(tableName){
-    var selectSQLString = 'select * from '+tableName+';'
+function getInfoTablePostgres(schemaname,tableName){
+    var selectSQLString = 'select * from '+schemaname+'.'+tableName+';'
     return postgre.query(selectSQLString);
 }
 
@@ -290,7 +290,7 @@ function analyseMetaPostgre(){
             Entityclass['attributes'] = [attributsNumeric,attributsNominal]
             EntityClass_postgre.push(Entityclass)
             for (var n =0;n<EntityClass_postgre.length;n++){
-                getInfoTable(EntityClass_postgre[n])
+                getInfoTable(s["name"],EntityClass_postgre[n])
             }
         }
         s["entityClasss"] = EntityClass_postgre
@@ -327,10 +327,10 @@ function analyseTables(){
 }
 
 //get metadata of each table
-function getInfoTable(EntityClass_postgre){
+function getInfoTable(schemaname,EntityClass_postgre){
     var items = [];
 
-    getInfoTablePostgres(EntityClass_postgre.name).then(p => {
+    getInfoTablePostgres(schemaname,EntityClass_postgre.name).then(p => {
         /*console.log(p)
         console.log(p.rows)*/
         items = p.rows
