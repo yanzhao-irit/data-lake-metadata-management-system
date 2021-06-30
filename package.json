@@ -36,6 +36,7 @@
     "oracledb": "^5.2.0",
     "pg": "^8.6.0",
     "popper.js": "^1.16.1",
+    "uuid": "^8.3.2",
     "vis-network": "^9.0.4"
   },
   "config": {
