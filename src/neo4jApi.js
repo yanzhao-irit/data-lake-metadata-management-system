@@ -1509,7 +1509,7 @@ module.exports.createHasTagStructured = (DSDatalake_Structured,tags_Structured) 
       });
 }
 
-module.exports.createHasEntityClassStructured = (dlStructuredDatasets,entityClasses) => {
+/*module.exports.createHasEntityClassStructured = (dlStructuredDatasets,entityClasses) => {
   console.log("createHasEntityClassStructured");
   var session = driver.session();
   var $propertiestTags = (tags_Structured)
@@ -1539,7 +1539,7 @@ module.exports.createHasEntityClassStructured = (dlStructuredDatasets,entityClas
       .finally(() => {
         return session.close();
       });
-}
+}*/
 
 
 
