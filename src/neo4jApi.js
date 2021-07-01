@@ -1290,7 +1290,7 @@ module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CS
 }
 
 
-//-----------------------------UPLOADCSV-----------------------------------------
+//-----------------------------UPLOADUnStructured-----------------------------------------
 module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,Ingest_UnStructured,DSDatalake_UnStructured) =>{
   console.log("createDSIngestDSDLEC_UnStructured")
   var session = driver.session();
@@ -1368,4 +1368,178 @@ module.exports.createHasTagUnStructured = (DSDatalake_UnStructured,tags_UnStruct
         return session.close();
       });
 }
+
+//-----------------------------UPLOADStructured-----------------------------------------
+module.exports.createDSIngestDSDLECStructured = (DatasetSource_Structured,Ingest_Structured,DSDatalake_Structured) =>{
+/*  console.log("createDSIngestDSDLEC_Structured")
+  console.log(DSDatalake_Structured)*/
+  var session = driver.session();
+  //cypher for insert  noeud datasetsource
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_Structured["name"]
+      + "',type:'"+DatasetSource_Structured["type"]
+      + "',location:'"+DatasetSource_Structured["location"]
+      + "',owner:'"+DatasetSource_Structured["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_Structured["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_Structured["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_Structured["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "'});"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createAnalysisDSRelationships = (analysisDSRelationships) =>{
+  console.log("createAnalysisDSRelationships");
+  var session = driver.session();
+  var $analysisDSRelationships = (analysisDSRelationships)
+
+  var query = "CALL apoc.create.nodes(['AnalysisDSRelationship'], "+$analysisDSRelationships+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createDLDSSchemas = (dlStructuredDatasets) =>{
+  console.log("createDLDSSchemas");
+  var session = driver.session();
+  var $dlStructuredDatasets = (dlStructuredDatasets)
+
+  var query = "CALL apoc.create.nodes(['DLStructuredDataset'], "+$dlStructuredDatasets+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createEntityClasses = (entityClasses) =>{
+  console.log("createDLDSSchemas");
+  var session = driver.session();
+  var $entityClasses = (entityClasses)
+
+  var query = "CALL apoc.create.nodes(['EntityClass'], "+$entityClasses+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTagStructured = (DSDatalake_Structured,tags_Structured) => {
+  console.log("createHasTag");
+  var session = driver.session();
+  var $propertiestTags = (tags_Structured)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasEntityClassStructured = (dlStructuredDatasets,entityClasses) => {
+  console.log("createHasEntityClassStructured");
+  var session = driver.session();
+  var $propertiestTags = (tags_Structured)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+
 

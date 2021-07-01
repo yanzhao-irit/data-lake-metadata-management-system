@@ -262,7 +262,7 @@ function analyseMetaPostgre(){
                 getInfoTable(s["name"],EntityClass_postgre[n]);
             }
         }
-        s["entityClasss"] = EntityClass_postgre;
+        s["entityClasses"] = EntityClass_postgre;
         schemas.push(s);
     }
 }
@@ -464,6 +464,7 @@ function countInstancesWithMissingValuesEC(rows){
 
 //when user confirme to insert all metadatas in Neo4j, excute the insert function and record the time
 function confirmInsert(){
+
     console.log("------------");
     console.log(tags_Structured);
     console.log(DatasetSource_postgre);
@@ -472,6 +473,44 @@ function confirmInsert(){
     console.log(schemas);
     console.log("------------");
 
+    var analysisDSRelationships = [];
+    var dlStructuredDatasets = [];
+    var entityClasses = [];
+    var numericAttributes = [];
+    var nominalAttributes = [];
+
+    prepareNoeuds(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes);
+
+    console.log(entityClasses);
+
+    analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\"/g, "")
+    analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    analysisDSRelationships = analysisDSRelationships.replace(/^\"|\"$/g,'')
+
+    dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\"/g, "")
+    dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    dlStructuredDatasets = dlStructuredDatasets.replace(/^\"|\"$/g,'')
+
+    entityClasses = JSON.stringify(entityClasses).replace(/\"/g, "")
+    entityClasses = JSON.stringify(entityClasses).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    entityClasses = entityClasses.replace(/^\"|\"$/g,'')
+
+    numericAttributes = JSON.stringify(numericAttributes).replace(/\"/g, "")
+    numericAttributes = JSON.stringify(numericAttributes).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    numericAttributes = numericAttributes.replace(/^\"|\"$/g,'')
+
+    nominalAttributes = JSON.stringify(nominalAttributes).replace(/\"/g, "")
+    nominalAttributes = JSON.stringify(nominalAttributes).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    nominalAttributes = nominalAttributes.replace(/^\"|\"$/g,'')
+
+    console.log(tags_Structured)
+    console.log(analysisDSRelationships)
+    console.log(dlStructuredDatasets)
+    console.log(entityClasses)
+    console.log(numericAttributes)
+    console.log(nominalAttributes)
+
+
     //TODO for record the time
     /*var start = new Date();
     console.log(start)*/
@@ -479,19 +518,80 @@ function confirmInsert(){
     document.getElementById("confirmSendBox").style.display="none";
 
     //TODO insert function
-
+    insertNeo4jNoeud(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes);
+    insertNeo4jRelationships();
     //TODO after insert or the last insert function is finished, user can reload this page
-    var timeMS = 3000
+/*    var timeMS = 3000
     var timeS = timeMS/1000
     setTimeout(function(){
         document.getElementById("resultInsert").innerText="Completed, it took "+timeS +" s";
         document.getElementById("reload").style.display="block";
-        }, timeMS);
+        }, timeMS);*/
+}
+
+//
+function prepareNoeuds(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes){
+    tags_Structured = JSON.stringify(tags_Structured).replace(/\"/g, "")
+    tags_Structured = JSON.stringify(tags_Structured).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    tags_Structured = tags_Structured.replace(/^\"|\"$/g,'')
+
+    for(var i = 0; i<schemas.length ; i++){
+        analysisDSRelationships.push({name:DSDatalake_postgre["name"]+" contain "+schemas[i]["name"]});
+        dlStructuredDatasets.push({name:schemas[i]["name"]});
+        for(var j=0; j<schemas[i]["entityClasses"].length;j++){
+            entityClasses.push({name:schemas[i]["entityClasses"][j]["name"],
+                name:schemas[i]["entityClasses"][j]["name"],
+                comment:schemas[i]["entityClasses"][j]["comment"],
+                numberOfAttributes:schemas[i]["entityClasses"][j]["numberOfAttributes"],
+                numberOfInstances:schemas[i]["entityClasses"][j]["numberOfInstances"],
+                numberOfInstancesWithMissingValues:schemas[i]["entityClasses"][j]["numberOfInstancesWithMissingValues"],
+                numberOfMissingValues:schemas[i]["entityClasses"][j]["numberOfMissingValues"],
+                numberOfNominalAttributes:schemas[i]["entityClasses"][j]["numberOfNominalAttributes"],
+                numberOfNumericAttributes:schemas[i]["entityClasses"][j]["numberOfNumericAttributes"]
+            });
+            /*//for numeric attributes
+            for (var x=0;x<schemas[i]["entityClasses"][j]["attributes"][0].length;x++){
+                // console.log(schemas[i]["entityClasses"][j]["attributes"][0][x])
+                numericAttributes.push({name:schemas[i]["entityClasses"][j]["attributes"][0][x]["name"],
+                    type:schemas[i]["entityClasses"][j]["attributes"][0][x]["type"],
+                    missingValuesCount:schemas[i]["entityClasses"][j]["attributes"][0][x]["missingValuesCount"],
+                    min:schemas[i]["entityClasses"][j]["attributes"][0][x]["min"],
+                    max:schemas[i]["entityClasses"][j]["attributes"][0][x]["max"]
+                })
+            }
+            //for nominal attributes
+            for (var y=0;y<schemas[i]["entityClasses"][j]["attributes"][1].length;y++){
+                nominalAttributes.push({name:schemas[i]["entityClasses"][j]["attributes"][1][y]["name"],
+                    type:schemas[i]["entityClasses"][j]["attributes"][1][y]["type"],
+                    missingValuesCount:schemas[i]["entityClasses"][j]["attributes"][1][y]["missingValuesCount"]
+                })
+            }*/
+        }
+    }
+
 }
 
 //When the insert into Neo4j is finished, reload this page
 function reload(){
     location.reload();
+}
+
+//Call function Neo4jApi for insert
+function insertNeo4jNoeud(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes){
+    // console.log(DSDatalake_postgre)
+    apineo4j.createDSIngestDSDLECStructured(DatasetSource_postgre,Ingest_postgre,DSDatalake_postgre);
+    apineo4j.createTags(tags_Structured);
+    apineo4j.createAnalysisDSRelationships(analysisDSRelationships);
+    apineo4j.createDLDSSchemas(dlStructuredDatasets);
+    apineo4j.createEntityClasses(entityClasses);
+    apineo4j.createNominalAttributs(numericAttributes);
+    apineo4j.createNumericAttributs(nominalAttributes);
+}
+
+//Call function Neo4jApi for insert
+function insertNeo4jRelationships(){
+    // apineo4j.createHasTagStructured(DSDatalake_postgre,tags_Structured);
+
 }
 
 
