@@ -534,6 +534,7 @@ function confirmInsert() {
     var stock = 0;
     var interval = setInterval(function () {
         // console.log("doing")
+        //if all promise finished, start insert
         if (countSize === 1 && stock === countTable) {
             clearInterval(interval);
             var analysisDSRelationships = [];
@@ -550,52 +551,24 @@ function confirmInsert() {
 
             prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes, hasRelationshipDS, withDataset,hasEntityClass,hasAttribute);
 
-            analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\"/g, "")
-            analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            analysisDSRelationships = analysisDSRelationships.replace(/^\"|\"$/g, '')
+            analysisDSRelationships = couvertObject(analysisDSRelationships);
+            RelationshipDS = couvertObject(RelationshipDS);
+            dlStructuredDatasets = couvertObject(dlStructuredDatasets);
+            entityClasses = couvertObject(entityClasses);
+            numericAttributes = couvertObject(numericAttributes);
+            nominalAttributes = couvertObject(nominalAttributes);
 
-            RelationshipDS = JSON.stringify(RelationshipDS).replace(/\"/g, "")
-            RelationshipDS = JSON.stringify(RelationshipDS).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            RelationshipDS = RelationshipDS.replace(/^\"|\"$/g, '')
+           /* console.log(analysisDSRelationships);
+            console.log(RelationshipDS);
+            console.log(dlStructuredDatasets);
+            console.log(entityClasses);
+            console.log(numericAttributes);
+            console.log(nominalAttributes);*/
 
-            dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\"/g, "")
-            dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            dlStructuredDatasets = dlStructuredDatasets.replace(/^\"|\"$/g, '')
-
-            entityClasses = JSON.stringify(entityClasses).replace(/\"/g, "")
-            entityClasses = JSON.stringify(entityClasses).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            entityClasses = entityClasses.replace(/^\"|\"$/g, '')
-
-            numericAttributes = JSON.stringify(numericAttributes).replace(/\"/g, "")
-            numericAttributes = JSON.stringify(numericAttributes).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            numericAttributes = numericAttributes.replace(/^\"|\"$/g, '')
-
-            nominalAttributes = JSON.stringify(nominalAttributes).replace(/\"/g, "")
-            nominalAttributes = JSON.stringify(nominalAttributes).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            nominalAttributes = nominalAttributes.replace(/^\"|\"$/g, '')
-
-            console.log(analysisDSRelationships)
-            console.log(RelationshipDS)
-            console.log(dlStructuredDatasets)
-            console.log(entityClasses)
-            console.log(numericAttributes)
-            console.log(nominalAttributes)
-
-            hasRelationshipDS = JSON.stringify(hasRelationshipDS).replace(/\"/g, "")
-            hasRelationshipDS = JSON.stringify(hasRelationshipDS).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            hasRelationshipDS = hasRelationshipDS.replace(/^\"|\"$/g, '')
-
-            withDataset = JSON.stringify(withDataset).replace(/\"/g, "")
-            withDataset = JSON.stringify(withDataset).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            withDataset = withDataset.replace(/^\"|\"$/g, '')
-
-            hasEntityClass = JSON.stringify(hasEntityClass).replace(/\"/g, "")
-            hasEntityClass = JSON.stringify(hasEntityClass).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            hasEntityClass = hasEntityClass.replace(/^\"|\"$/g, '')
-
-            hasAttribute = JSON.stringify(hasAttribute).replace(/\"/g, "")
-            hasAttribute = JSON.stringify(hasAttribute).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
-            hasAttribute = hasAttribute.replace(/^\"|\"$/g, '')
+            hasRelationshipDS = couvertObject(hasRelationshipDS);
+            withDataset = couvertObject(withDataset);
+            hasEntityClass = couvertObject(hasEntityClass);
+            hasAttribute = couvertObject(hasAttribute);
 
             //call the insert function of neo4j
             insertNeo4jNoeud(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes);
@@ -605,6 +578,14 @@ function confirmInsert() {
         }
         stock = countTable;
     }, 1000)
+}
+
+//for convert Object to String
+function couvertObject(Object){
+    Object = JSON.stringify(Object).replace(/\"/g, "")
+    Object = JSON.stringify(Object).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+    var ObjectConvert = Object.replace(/^\"|\"$/g, '')
+    return ObjectConvert;
 }
 
 //for generate the GUID
