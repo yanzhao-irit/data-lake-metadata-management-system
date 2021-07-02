@@ -16,30 +16,30 @@ var DSDatalake_postgre = {};
 var Ingest_postgre = {};
 
 var countSize = 0;
-var countTable= 0;
+var countTable = 0;
 var metaPostgre = {};
 var conString = ""; //tcp://username：password@localhost/dbname
 var postgre = "";
 var info = "";
-var schemasname =[];
-var schemas =[];
+var schemasname = [];
+var schemas = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
     document.getElementById("zone0").addEventListener("input", printTags);
-    document.getElementById('connectionPostgresql').addEventListener('click',getSchemasPostgre);
-    document.getElementById('submitPostgres').addEventListener('click',setAllMetadatas);
-    document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
-    document.getElementById('reloadUpload').addEventListener('click',reload);
+    document.getElementById('connectionPostgresql').addEventListener('click', getSchemasPostgre);
+    document.getElementById('submitPostgres').addEventListener('click', setAllMetadatas);
+    document.getElementById('confirmBtn').addEventListener('click', confirmInsert);
+    document.getElementById('reloadUpload').addEventListener('click', reload);
 });
 
-function dbConfirm(){
-    document.getElementById("databaseChose").style.display="none";
-    if(document.getElementById("dbOption").value === "postgresql"){
-        document.getElementById("postgresqlOption").style.display="block";
-    }else{
-        document.getElementById("oracleOption").style.display="block";
+function dbConfirm() {
+    document.getElementById("databaseChose").style.display = "none";
+    if (document.getElementById("dbOption").value === "postgresql") {
+        document.getElementById("postgresqlOption").style.display = "block";
+    } else {
+        document.getElementById("oracleOption").style.display = "block";
     }
 }
 
@@ -49,7 +49,7 @@ function printTags() {
     var zoneaff = "zoneaff" + NumberTags;
     var lien = "lien" + NumberTags;
     var elt2 = document.getElementById(zoneaff);
-    elt2.innerText="";
+    elt2.innerText = "";
     //To receive result of BD
     var length = 0;
     var tag = document.getElementById(zone).value;
@@ -77,7 +77,7 @@ function changerInputText() {
 function addTag() {
     var elt = document.getElementById('Tags');
     NumberTags = NumberTags + 1;
-    elt.insertAdjacentHTML("beforeend", "<div class='dropdown'><label for='zone" + NumberTags + "'>Tag "+(NumberTags+1) +": </label>" +
+    elt.insertAdjacentHTML("beforeend", "<div class='dropdown'><label for='zone" + NumberTags + "'>Tag " + (NumberTags + 1) + ": </label>" +
         "<input name='tagsUsers' type='text' id='zone" + NumberTags + "' data-toggle='dropdown' required>" +
         "<ul class='dropdown-menu' id='zoneaff" + NumberTags + "' style='margin-left:33%;height:100px;width:270px;overflow:scroll;'></ul></div>");
     var zone = "zone" + NumberTags;
@@ -86,7 +86,7 @@ function addTag() {
 }
 
 //set the owner and location of dataset form the html page
-function setDatasetSource_postgres(){
+function setDatasetSource_postgres() {
     DatasetSource_postgre["owner"] = document.getElementById("ownerPostgres").value;
     DatasetSource_postgre["location"] = document.getElementById("serveurPostgres").value;
     DatasetSource_postgre["name"] = document.getElementById("dbnamePostgres").value;
@@ -94,16 +94,16 @@ function setDatasetSource_postgres(){
 }
 
 //set the ingest start time and end time form the html page
-function setIngest_postgres(){
+function setIngest_postgres() {
     Ingest_postgre["ingestionMode"] = "batch";
     Ingest_postgre["ingestionStartTime"] = "";
     Ingest_postgre["ingestionEndTime"] = "";
 }
 
 //set tags from the page html
-function setTags_postgres(){
+function setTags_postgres() {
     var lengthTags = document.getElementsByName("tagsUsers").length;
-    for (i = 0; i<lengthTags; i++){
+    for (i = 0; i < lengthTags; i++) {
         var tag = {};
         tag["name"] = document.getElementsByName("tagsUsers")[i].value;
         tags_Structured.push(tag);
@@ -111,18 +111,18 @@ function setTags_postgres(){
 }
 
 //set the content of datalakedataset
-function setDSDatalake_postgres(){
+function setDSDatalake_postgres() {
     DSDatalake_postgre["owner"] = DatasetSource_postgre["owner"];
     DSDatalake_postgre["location"] = DatasetSource_postgre["location"];
     DSDatalake_postgre["name"] = DatasetSource_postgre["name"];
     DSDatalake_postgre["type"] = DatasetSource_postgre["type"];
-    DSDatalake_postgre["creationDate"] = getToday() +":00Z";
+    DSDatalake_postgre["creationDate"] = getToday() + ":00Z";
     DSDatalake_postgre["description"] = document.getElementById("descriptionPostgres").value;
     DSDatalake_postgre["administrator"] = document.getElementById("adminPostgres").value;
 }
 
 //get th date of today
-function getToday(){
+function getToday() {
     var dd = today.getDate();
     var mm = today.getMonth() + 1; //January is 0!
     var yyyy = today.getFullYear();
@@ -158,20 +158,20 @@ async function openConnection() {
 
     // conString="tcp://postgres:1111@localhost/test"
     // conString="tcp://"+username+":"+password+"@"+host+"/"+dbname
-    conString= {
+    conString = {
         host: host,
         port: port,
         user: username,
         password: password,
         database: dbname,
     };
-/*    conString= {
-        host: 'localhost',
-            port: 5432,
-            user: 'postgres',
-            password: '1111',
-            database: 'test',
-    }*/
+    /*    conString= {
+            host: 'localhost',
+                port: 5432,
+                user: 'postgres',
+                password: '1111',
+                database: 'test',
+        }*/
     postgre = new pg.Client(conString);
 
     postgre.connect(function (error, results) {
@@ -187,19 +187,19 @@ async function openConnection() {
 }
 
 //get all the datas in a table(EntityClass)
-function getInfoTablePostgres(schemaname,tableName){
-    var selectSQLString = 'select * from '+schemaname+'.'+tableName+';'
+function getInfoTablePostgres(schemaname, tableName) {
+    var selectSQLString = 'select * from ' + schemaname + '.' + tableName + ';'
     return postgre.query(selectSQLString);
 }
 
 //get size of a database
-function getSizeDB(dbname){
-    var selectSQLString = "SELECT pg_size_pretty(pg_database_size('"+dbname+"'));"
+function getSizeDB(dbname) {
+    var selectSQLString = "SELECT pg_size_pretty(pg_database_size('" + dbname + "'));"
     return postgre.query(selectSQLString);
 }
 
 //get all metadatas of a database
-async function getMetaDB(){
+async function getMetaDB() {
     info = await pgInfo({
         client: postgre,
         schemas: schemasname
@@ -208,14 +208,14 @@ async function getMetaDB(){
 }
 
 //get metadats of schemas and alert users the result of connection
-function getSchemasPostgre(){
+function getSchemasPostgre() {
     var confirmeConnection = "Please check if the information you entered is correct, please try after 60 seconds";
-    openConnection().then(p =>{
+    openConnection().then(p => {
         confirmeConnection = "connection succeeded";
-        document.getElementById("resultConnection").innerText=confirmeConnection;
+        document.getElementById("resultConnection").innerText = confirmeConnection;
         document.getElementById("submitPostgres").disabled = false;
 
-        for (var i=0;i<p.rows.length;i++){
+        for (var i = 0; i < p.rows.length; i++) {
             schemasname.push(p.rows[i]["schema_name"]);
         }
         getMetaDB().then(res => {
@@ -223,33 +223,33 @@ function getSchemasPostgre(){
             console.log(metaPostgre);
         });
     })
-    document.getElementById("resultConnection").innerText=confirmeConnection;
+    document.getElementById("resultConnection").innerText = confirmeConnection;
 }
 
 //get and set metadata of Entity class
-function analyseMetaPostgre(){
-    var numericDataType = ["smallint","integer","bigint","decimal","numeric","real","double precision","smallserial","serial","bigserial","money"];
+function analyseMetaPostgre() {
+    var numericDataType = ["smallint", "integer", "bigint", "decimal", "numeric", "real", "double precision", "smallserial", "serial", "bigserial", "money"];
     var schemaInfo = Object.entries(metaPostgre);
-    for(var x=0;x<schemaInfo.length;x++){
+    for (var x = 0; x < schemaInfo.length; x++) {
         // console.log(schemaInfo[x][1])
         var s = {};
         var EntityClass_postgre = [];
         s["name"] = schemaInfo[x][0];
         var tables = Object.entries(schemaInfo[x][1].tables);
-        for (var i=0; i<tables.length;i++ ){
-            var Entityclass ={};
+        for (var i = 0; i < tables.length; i++) {
+            var Entityclass = {};
             Entityclass['name'] = tables[i][0];
             Entityclass['comment'] = tables[i][1].comment;
             var columns = Object.entries(tables[i][1].columns);
             var attributsNominal = [];
             var attributsNumeric = [];
-            for (var j=0; j<columns.length;j++ ){
-                if(numericDataType.includes(columns[j][1].dataType)){
+            for (var j = 0; j < columns.length; j++) {
+                if (numericDataType.includes(columns[j][1].dataType)) {
                     var numericAttribute = {};
                     numericAttribute['name'] = columns[j][0];
                     numericAttribute['type'] = columns[j][1].dataType;
                     attributsNumeric.push(numericAttribute);
-                }else{
+                } else {
                     var nominalAttribute = {};
                     nominalAttribute['name'] = columns[j][0];
                     nominalAttribute['type'] = columns[j][1].dataType;
@@ -258,11 +258,11 @@ function analyseMetaPostgre(){
             }
             Entityclass["numberOfNumericAttributes"] = attributsNumeric.length;
             Entityclass["numberOfNominalAttributes"] = attributsNominal.length;
-            Entityclass['attributes'] = [attributsNumeric,attributsNominal];
+            Entityclass['attributes'] = [attributsNumeric, attributsNominal];
             EntityClass_postgre.push(Entityclass);
-            for (var n =0;n<EntityClass_postgre.length;n++){
+            for (var n = 0; n < EntityClass_postgre.length; n++) {
 
-                getInfoTable(s["name"],EntityClass_postgre[n]);
+                getInfoTable(s["name"], EntityClass_postgre[n]);
 
             }
         }
@@ -283,7 +283,7 @@ function setAllMetadatas() {
     //get size of database
     getSizeDB(DatasetSource_postgre["name"]).then(p => {
         DSDatalake_postgre["size"] = p.rows[0]["pg_size_pretty"];
-        countSize = countSize +1
+        countSize = countSize + 1
     });
 
     console.log("------------");
@@ -297,30 +297,30 @@ function setAllMetadatas() {
 }
 
 //get metadata of each table
-function getInfoTable(schemaname,EntityClass_postgre){
+function getInfoTable(schemaname, EntityClass_postgre) {
     var items = [];
-    getInfoTablePostgres(schemaname,EntityClass_postgre.name).then(p => {
+    getInfoTablePostgres(schemaname, EntityClass_postgre.name).then(p => {
         items = p.rows;
-        EntityClass_postgre["numberOfInstances"]=p.rowCount;
-        EntityClass_postgre["numberOfAttributes"]=p.fields.length;
+        EntityClass_postgre["numberOfInstances"] = p.rowCount;
+        EntityClass_postgre["numberOfAttributes"] = p.fields.length;
         var tableContentCSV = preConvert(items);
         var rows = [];
         var columns = [];
-        splitCSV(tableContentCSV,rows,columns);
+        splitCSV(tableContentCSV, rows, columns);
         EntityClass_postgre["numberOfInstancesWithMissingValues"] = countInstancesWithMissingValuesEC(rows);
         //for numeric attribute
-        for(var x=0;x<columns.length;x++){
-            for (var y=0;y<EntityClass_postgre["attributes"][0].length;y++){
-                if(columns[x][0]===EntityClass_postgre["attributes"][0][y].name){
+        for (var x = 0; x < columns.length; x++) {
+            for (var y = 0; y < EntityClass_postgre["attributes"][0].length; y++) {
+                if (columns[x][0] === EntityClass_postgre["attributes"][0][y].name) {
                     // console.log(EntityClass_postgre["attributes"][0][y])
                     EntityClass_postgre.attributes[0][y]["missingValuesCount"] = countMissingValue(columns[x]);
                     var typeAttribute = EntityClass_postgre["attributes"][0][y]["type"];
-                    if(typeAttribute === "money"){
+                    if (typeAttribute === "money") {
                         for (let v in columns[x]) {
-                            if(!(columns[x][v] === "null")){
-                                columns[x][v] = columns[x][v].substr(0,columns[x][v].length-2);
-                                if(columns[x][v].indexOf(",") != -1){
-                                    columns[x][v] = columns[x][v].replace(",",".");
+                            if (!(columns[x][v] === "null")) {
+                                columns[x][v] = columns[x][v].substr(0, columns[x][v].length - 2);
+                                if (columns[x][v].indexOf(",") != -1) {
+                                    columns[x][v] = columns[x][v].replace(",", ".");
                                 }
                             }
                         }
@@ -331,34 +331,34 @@ function getInfoTable(schemaname,EntityClass_postgre){
             }
         }
         //for nominal attributes
-        for(var a=0;a<columns.length;a++){
-            for (var b=0;b<EntityClass_postgre["attributes"][1].length;b++){
-                if(columns[a][0]===EntityClass_postgre.attributes[1][b].name){
+        for (var a = 0; a < columns.length; a++) {
+            for (var b = 0; b < EntityClass_postgre["attributes"][1].length; b++) {
+                if (columns[a][0] === EntityClass_postgre.attributes[1][b].name) {
                     EntityClass_postgre.attributes[1][b]["missingValuesCount"] = countMissingValue(columns[a]);
                 }
             }
         }
         EntityClass_postgre["numberOfMissingValues"] = countMissingValueEC(EntityClass_postgre["attributes"][0]) + countMissingValueEC(EntityClass_postgre["attributes"][1]);
-        countTable = countTable+1;
+        countTable = countTable + 1;
 
     });
 }
 
 //Split the contents of the CSV file into rows and columns
-function splitCSV(fileContent,rows,columns){
-    var numberLigne = fileContent.split("\n").length -1;
+function splitCSV(fileContent, rows, columns) {
+    var numberLigne = fileContent.split("\n").length - 1;
     var contentLigne = fileContent.split("\n");
-    for (i=0 ; i<=numberLigne-1; i++){
+    for (i = 0; i <= numberLigne - 1; i++) {
         var row = contentLigne[i].trim().split(";");
-        row[row.length-1] = row[row.length-1].split("\r")[0];
-        if(row[row.length-1] == ""){
+        row[row.length - 1] = row[row.length - 1].split("\r")[0];
+        if (row[row.length - 1] == "") {
             row.pop();
         }
         rows.push(row);
     }
-    for (x=0 ; x<rows[0].length; x++){
+    for (x = 0; x < rows[0].length; x++) {
         var column = [];
-        for(y=0 ; y<rows.length; y++){
+        for (y = 0; y < rows.length; y++) {
             // console.log(rows[y][x])
             column.push(rows[y][x]);
         }
@@ -367,7 +367,7 @@ function splitCSV(fileContent,rows,columns){
 }
 
 //PreConvert the data in the table into CSV format
-function preConvert(items){
+function preConvert(items) {
 
     // console.log(items)
     // Convert Object to JSON
@@ -386,10 +386,10 @@ function ConvertToCSV(objArray) {
     var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
     var str = '';
     for (var header in array[0]) {
-        if(str != '')str = str + ';'
+        if (str != '') str = str + ';'
         str = str + header;
     }
-    str =str + '\r\n';
+    str = str + '\r\n';
     for (var i = 0; i < array.length; i++) {
         var line = '';
         for (var index in array[i]) {
@@ -404,25 +404,25 @@ function ConvertToCSV(objArray) {
 }
 
 //count the number of null values in a column
-function countMissingValue(column){
-    var numberMissing=0;
-    for (i=0;i<column.length;i++) {
-        if(column[i]=="" || column[i]=="null"){
-            numberMissing = numberMissing+1;
+function countMissingValue(column) {
+    var numberMissing = 0;
+    for (i = 0; i < column.length; i++) {
+        if (column[i] == "" || column[i] == "null") {
+            numberMissing = numberMissing + 1;
         }
     }
     return numberMissing;
 }
 
 //get the minimum value of a column of data
-function getMinColumn(column){
-    var i=1;
+function getMinColumn(column) {
+    var i = 1;
     var trouve = false;
-    while(i<column.length && trouve === false){
-        if(!isNaN(column[i])){
+    while (i < column.length && trouve === false) {
+        if (!isNaN(column[i])) {
             trouve = true;
-            var min=Number(column[i]);
-            for (j=i;j<column.length;j++) {
+            var min = Number(column[i]);
+            for (j = i; j < column.length; j++) {
                 if (Number(column[j]) < min) {
                     min = Number(column[j]);
                 }
@@ -431,20 +431,20 @@ function getMinColumn(column){
         }
         i++;
     }
-    if(trouve===false){
+    if (trouve === false) {
         return "no data";
     }
 }
 
 //get the maximum value of a column of data
-function getMaxColumn(column){
-    var i=1;
+function getMaxColumn(column) {
+    var i = 1;
     var trouve = false;
-    while(i<column.length && trouve === false){
-        if(!isNaN(column[i])){
+    while (i < column.length && trouve === false) {
+        if (!isNaN(column[i])) {
             trouve = true;
-            var max=Number(column[i]);
-            for (j=i;j<column.length;j++) {
+            var max = Number(column[i]);
+            for (j = i; j < column.length; j++) {
                 if (Number(column[j]) > max) {
                     max = Number(column[j]);
                 }
@@ -453,25 +453,25 @@ function getMaxColumn(column){
         }
         i++;
     }
-    if(trouve===false){
+    if (trouve === false) {
         return "no data";
     }
 }
 
 //count missing value of a entity class
-function countMissingValueEC(attributes){
-    var numberMissingValueEC=0;
-    for(i=0;i<attributes.length;i++){
+function countMissingValueEC(attributes) {
+    var numberMissingValueEC = 0;
+    for (i = 0; i < attributes.length; i++) {
         numberMissingValueEC = attributes[i]["missingValuesCount"] + numberMissingValueEC;
     }
     return numberMissingValueEC;
 }
 
 //count the total number of Instances with missing value in a Entity Class
-function countInstancesWithMissingValuesEC(rows){
-    var numberInstancesWithMissingValuesEC=0;
-    for(i=0;i<rows.length;i++){
-        if (rows[i].indexOf("") != -1 || rows[i].indexOf("null") != -1){
+function countInstancesWithMissingValuesEC(rows) {
+    var numberInstancesWithMissingValuesEC = 0;
+    for (i = 0; i < rows.length; i++) {
+        if (rows[i].indexOf("") != -1 || rows[i].indexOf("null") != -1) {
             numberInstancesWithMissingValuesEC = numberInstancesWithMissingValuesEC + 1;
         }
     }
@@ -479,54 +479,77 @@ function countInstancesWithMissingValuesEC(rows){
 }
 
 //when user confirme to insert all metadatas in Neo4j, excute the insert function and record the time
-function confirmInsert(){
+function confirmInsert() {
 
-    document.getElementById("waitingBox").style.display="block";
-    document.getElementById("confirmSendBox").style.display="none";
+    document.getElementById("waitingBox").style.display = "block";
+    document.getElementById("confirmSendBox").style.display = "none";
 
     var stock = 0;
-    var interval = setInterval(function(){
-        if(countSize === 1 && stock === countTable){
+    var interval = setInterval(function () {
+        if (countSize === 1 && stock === countTable) {
             clearInterval(interval);
             var analysisDSRelationships = [];
+            var RelationshipDS = [];
             var dlStructuredDatasets = [];
             var entityClasses = [];
             var numericAttributes = [];
             var nominalAttributes = [];
 
-            prepareNoeuds(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes);
+            var hasRelationshipDS = [];
+            var withDataset = [];
+            var hasEntityClass = [];
+            var hasAttribute = [];
 
-            console.log(analysisDSRelationships)
-            console.log(dlStructuredDatasets)
-            console.log(entityClasses)
-            console.log(numericAttributes)
-            console.log(nominalAttributes)
+
+            prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes, hasRelationshipDS, withDataset,hasEntityClass,hasAttribute);
 
             analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\"/g, "")
-            analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-            analysisDSRelationships = analysisDSRelationships.replace(/^\"|\"$/g,'')
+            analysisDSRelationships = JSON.stringify(analysisDSRelationships).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            analysisDSRelationships = analysisDSRelationships.replace(/^\"|\"$/g, '')
+
+            RelationshipDS = JSON.stringify(RelationshipDS).replace(/\"/g, "")
+            RelationshipDS = JSON.stringify(RelationshipDS).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            RelationshipDS = RelationshipDS.replace(/^\"|\"$/g, '')
 
             dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\"/g, "")
-            dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-            dlStructuredDatasets = dlStructuredDatasets.replace(/^\"|\"$/g,'')
+            dlStructuredDatasets = JSON.stringify(dlStructuredDatasets).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            dlStructuredDatasets = dlStructuredDatasets.replace(/^\"|\"$/g, '')
 
             entityClasses = JSON.stringify(entityClasses).replace(/\"/g, "")
-            entityClasses = JSON.stringify(entityClasses).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-            entityClasses = entityClasses.replace(/^\"|\"$/g,'')
+            entityClasses = JSON.stringify(entityClasses).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            entityClasses = entityClasses.replace(/^\"|\"$/g, '')
 
             numericAttributes = JSON.stringify(numericAttributes).replace(/\"/g, "")
-            numericAttributes = JSON.stringify(numericAttributes).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-            numericAttributes = numericAttributes.replace(/^\"|\"$/g,'')
+            numericAttributes = JSON.stringify(numericAttributes).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            numericAttributes = numericAttributes.replace(/^\"|\"$/g, '')
 
             nominalAttributes = JSON.stringify(nominalAttributes).replace(/\"/g, "")
-            nominalAttributes = JSON.stringify(nominalAttributes).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-            nominalAttributes = nominalAttributes.replace(/^\"|\"$/g,'')
+            nominalAttributes = JSON.stringify(nominalAttributes).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            nominalAttributes = nominalAttributes.replace(/^\"|\"$/g, '')
 
             console.log(analysisDSRelationships)
+            console.log(RelationshipDS)
             console.log(dlStructuredDatasets)
             console.log(entityClasses)
             console.log(numericAttributes)
             console.log(nominalAttributes)
+
+            hasRelationshipDS = JSON.stringify(hasRelationshipDS).replace(/\"/g, "")
+            hasRelationshipDS = JSON.stringify(hasRelationshipDS).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            hasRelationshipDS = hasRelationshipDS.replace(/^\"|\"$/g, '')
+
+            withDataset = JSON.stringify(withDataset).replace(/\"/g, "")
+            withDataset = JSON.stringify(withDataset).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            withDataset = withDataset.replace(/^\"|\"$/g, '')
+
+            hasEntityClass = JSON.stringify(hasEntityClass).replace(/\"/g, "")
+            hasEntityClass = JSON.stringify(hasEntityClass).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            hasEntityClass = hasEntityClass.replace(/^\"|\"$/g, '')
+
+            hasAttribute = JSON.stringify(hasAttribute).replace(/\"/g, "")
+            hasAttribute = JSON.stringify(hasAttribute).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+            hasAttribute = hasAttribute.replace(/^\"|\"$/g, '')
+
 
             //TODO for record the time
             /*var start = new Date();
@@ -534,8 +557,10 @@ function confirmInsert(){
 
 
             //TODO insert function
-                insertNeo4jNoeud(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes);
-                insertNeo4jRelationships();
+            insertNeo4jNoeud(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes);
+            setTimeout(function () {
+                insertNeo4jRelationships(hasRelationshipDS,withDataset,hasEntityClass,hasAttribute)
+            }, 1000);
             //TODO after insert or the last insert function is finished, user can reload this page
 
             /*    var timeMS = 3000
@@ -548,63 +573,99 @@ function confirmInsert(){
         stock = countTable;
     }, 1000)
 
-
 }
 
-//
-function prepareNoeuds(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes){
-    tags_Structured = JSON.stringify(tags_Structured).replace(/\"/g, "")
-    tags_Structured = JSON.stringify(tags_Structured).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-    tags_Structured = tags_Structured.replace(/^\"|\"$/g,'')
+//for generate the GUID
+function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
-    for(var i = 0; i<schemas.length ; i++){
-        analysisDSRelationships.push({name:DSDatalake_postgre["name"]+" contain "+schemas[i]["name"]});
-        dlStructuredDatasets.push({name:schemas[i]["name"]});
-        for(var j=0; j<schemas[i]["entityClasses"].length;j++){
+//prepare Noeuds of insert into Neo4j
+function prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes, hasRelationshipDS,withDataset,hasEntityClass,hasAttribute) {
+    tags_Structured = JSON.stringify(tags_Structured).replace(/\"/g, "")
+    tags_Structured = JSON.stringify(tags_Structured).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
+    tags_Structured = tags_Structured.replace(/^\"|\"$/g, '')
+
+    for (var i = 0; i < schemas.length; i++) {
+        RelationshipDS.push({name: "contain", uuid: uuid()});
+        analysisDSRelationships.push({
+            name: DSDatalake_postgre["name"] + " contain " + schemas[i]["name"],
+            uuid: uuid()
+        });
+        hasRelationshipDS.push({
+            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["uuid"],
+            RelationshipDS: RelationshipDS[RelationshipDS.length - 1]["uuid"]
+        })
+        dlStructuredDatasets.push({name: schemas[i]["name"], uuid: uuid()});
+        withDataset.push({
+            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["uuid"],
+            dlStructuredDataset: dlStructuredDatasets[dlStructuredDatasets.length - 1]["uuid"]
+        })
+        for (var j = 0; j < schemas[i]["entityClasses"].length; j++) {
             console.log(schemas[i]["entityClasses"][j])
-            entityClasses.push({name:schemas[i]["entityClasses"][j]["name"],
-                name:schemas[i]["entityClasses"][j]["name"],
-                comment:schemas[i]["entityClasses"][j]["comment"],
-                numberOfAttributes:schemas[i]["entityClasses"][j]["numberOfAttributes"],
-                numberOfInstances:schemas[i]["entityClasses"][j]["numberOfInstances"],
-                numberOfInstancesWithMissingValues:schemas[i]["entityClasses"][j]["numberOfInstancesWithMissingValues"],
-                numberOfMissingValues:schemas[i]["entityClasses"][j]["numberOfMissingValues"],
-                numberOfNominalAttributes:schemas[i]["entityClasses"][j]["numberOfNominalAttributes"],
-                numberOfNumericAttributes:schemas[i]["entityClasses"][j]["numberOfNumericAttributes"]
+            entityClasses.push({
+                name: schemas[i]["entityClasses"][j]["name"],
+                comment: schemas[i]["entityClasses"][j]["comment"],
+                numberOfAttributes: schemas[i]["entityClasses"][j]["numberOfAttributes"],
+                numberOfInstances: schemas[i]["entityClasses"][j]["numberOfInstances"],
+                numberOfInstancesWithMissingValues: schemas[i]["entityClasses"][j]["numberOfInstancesWithMissingValues"],
+                numberOfMissingValues: schemas[i]["entityClasses"][j]["numberOfMissingValues"],
+                numberOfNominalAttributes: schemas[i]["entityClasses"][j]["numberOfNominalAttributes"],
+                numberOfNumericAttributes: schemas[i]["entityClasses"][j]["numberOfNumericAttributes"],
+                uuid: uuid()
             });
+            hasEntityClass.push({
+                dlStructuredDataset: dlStructuredDatasets[dlStructuredDatasets.length - 1]["uuid"],
+                entityClass:entityClasses[entityClasses.length -1]["uuid"]
+            })
             //for numeric attributes
-            for (var x=0;x<schemas[i]["entityClasses"][j]["attributes"][0].length;x++){
+            for (var x = 0; x < schemas[i]["entityClasses"][j]["attributes"][0].length; x++) {
                 // console.log(schemas[i]["entityClasses"][j]["attributes"][0][x])
-                numericAttributes.push({name:schemas[i]["entityClasses"][j]["attributes"][0][x]["name"],
-                    type:schemas[i]["entityClasses"][j]["attributes"][0][x]["type"],
-                    missingValuesCount:schemas[i]["entityClasses"][j]["attributes"][0][x]["missingValuesCount"],
-                    min:schemas[i]["entityClasses"][j]["attributes"][0][x]["min"],
-                    max:schemas[i]["entityClasses"][j]["attributes"][0][x]["max"]
+                numericAttributes.push({
+                    name: schemas[i]["entityClasses"][j]["attributes"][0][x]["name"],
+                    type: schemas[i]["entityClasses"][j]["attributes"][0][x]["type"],
+                    missingValuesCount: schemas[i]["entityClasses"][j]["attributes"][0][x]["missingValuesCount"],
+                    min: schemas[i]["entityClasses"][j]["attributes"][0][x]["min"],
+                    max: schemas[i]["entityClasses"][j]["attributes"][0][x]["max"],
+                    uuid: uuid()
+                })
+                hasAttribute.push({
+                    entityClass:entityClasses[entityClasses.length -1]["uuid"],
+                    attributes:numericAttributes[numericAttributes.length -1]["uuid"]
                 })
             }
             //for nominal attributes
-            for (var y=0;y<schemas[i]["entityClasses"][j]["attributes"][1].length;y++){
-                nominalAttributes.push({name:schemas[i]["entityClasses"][j]["attributes"][1][y]["name"],
-                    type:schemas[i]["entityClasses"][j]["attributes"][1][y]["type"],
-                    missingValuesCount:schemas[i]["entityClasses"][j]["attributes"][1][y]["missingValuesCount"]
+            for (var y = 0; y < schemas[i]["entityClasses"][j]["attributes"][1].length; y++) {
+                nominalAttributes.push({
+                    name: schemas[i]["entityClasses"][j]["attributes"][1][y]["name"],
+                    type: schemas[i]["entityClasses"][j]["attributes"][1][y]["type"],
+                    missingValuesCount: schemas[i]["entityClasses"][j]["attributes"][1][y]["missingValuesCount"],
+                    uuid: uuid()
+                })
+                hasAttribute.push({
+                    entityClass:entityClasses[entityClasses.length -1]["uuid"],
+                    attributes:nominalAttributes[nominalAttributes.length -1]["uuid"]
                 })
             }
         }
     }
-
 }
 
 //When the insert into Neo4j is finished, reload this page
-function reload(){
+function reload() {
     location.reload();
 }
 
 //Call function Neo4jApi for insert
-function insertNeo4jNoeud(analysisDSRelationships,dlStructuredDatasets,entityClasses,numericAttributes,nominalAttributes){
+function insertNeo4jNoeud(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes) {
     // console.log(DSDatalake_postgre)
-    apineo4j.createDSIngestDSDLECStructured(DatasetSource_postgre,Ingest_postgre,DSDatalake_postgre);
+    apineo4j.createDSIngestDSDLECStructured(DatasetSource_postgre, Ingest_postgre, DSDatalake_postgre);
     apineo4j.createTags(tags_Structured);
     apineo4j.createAnalysisDSRelationships(analysisDSRelationships);
+    apineo4j.createRelationshipDS(RelationshipDS);
     apineo4j.createDLDSSchemas(dlStructuredDatasets);
     apineo4j.createEntityClasses(entityClasses);
     apineo4j.createNominalAttributs(numericAttributes);
@@ -612,8 +673,13 @@ function insertNeo4jNoeud(analysisDSRelationships,dlStructuredDatasets,entityCla
 }
 
 //Call function Neo4jApi for insert
-function insertNeo4jRelationships(){
-    apineo4j.createHasTagStructured(DSDatalake_postgre,tags_Structured);
+function insertNeo4jRelationships(hasRelationshipDS,withDataset,hasEntityClass,hasAttribute) {
+    apineo4j.createHasTagStructured(DSDatalake_postgre, tags_Structured);
+    apineo4j.createHasRelationshipDS(hasRelationshipDS);
+    apineo4j.createWithDataset(withDataset);
+    apineo4j.createWithDatasetDB(withDataset,DSDatalake_postgre);
+    apineo4j.createHasEntityClassStructured(hasEntityClass);
+    apineo4j.createHasAttributeStructured(hasAttribute);
 
 }
 
