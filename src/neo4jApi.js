@@ -1654,7 +1654,8 @@ module.exports.createHasAttributeStructured = (hasAttribute) => {
   return session
       .run(query)
       .then(result => {
-        return result.records;
+        var end = new Date();
+        return end;
       })
       .catch(error => {
         throw error;

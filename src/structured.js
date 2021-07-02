@@ -24,6 +24,8 @@ var info = "";
 var schemasname = [];
 var schemas = [];
 
+var start = "";
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
@@ -32,8 +34,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('submitPostgres').addEventListener('click', setAllMetadatas);
     document.getElementById('confirmBtn').addEventListener('click', confirmInsert);
     document.getElementById('reloadUpload').addEventListener('click', reload);
+
+    document.getElementById("ownerPostgres").addEventListener('input', disabledSend);
+    document.getElementById("passwordPostgres").addEventListener('input', disabledSend);
+    document.getElementById("serveurPostgres").addEventListener('input', disabledSend);
+    document.getElementById("dbnamePostgres").addEventListener('input', disabledSend);
+    document.getElementById("portPostgres").addEventListener('input', disabledSend);
 });
 
+//chose a db option, go to the db option page
 function dbConfirm() {
     document.getElementById("databaseChose").style.display = "none";
     if (document.getElementById("dbOption").value === "postgresql") {
@@ -102,6 +111,7 @@ function setIngest_postgres() {
 
 //set tags from the page html
 function setTags_postgres() {
+    tags_Structured = [];
     var lengthTags = document.getElementsByName("tagsUsers").length;
     for (i = 0; i < lengthTags; i++) {
         var tag = {};
@@ -143,13 +153,19 @@ function getToday() {
     return yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minute;
 }
 
+//make sure every time database options change, user need to test connection
+function disabledSend(){
+    document.getElementById("submitPostgres").disabled = true;
+    document.getElementById("resultConnection").innerText = "";
+}
+
 //creation of connection of postgresql
 async function openConnection() {
-    console.log(document.getElementById("ownerPostgres").value);
-    console.log(document.getElementById("passwordPostgres").value);
-    console.log(document.getElementById("serveurPostgres").value);
-    console.log(document.getElementById("portPostgres").value);
-    console.log(document.getElementById("dbnamePostgres").value);
+    // console.log(document.getElementById("ownerPostgres").value);
+    // console.log(document.getElementById("passwordPostgres").value);
+    // console.log(document.getElementById("serveurPostgres").value);
+    // console.log(document.getElementById("portPostgres").value);
+    // console.log(document.getElementById("dbnamePostgres").value);
     var username = document.getElementById("ownerPostgres").value;
     var password = document.getElementById("passwordPostgres").value;
     var host = document.getElementById("serveurPostgres").value;
@@ -200,6 +216,7 @@ function getSizeDB(dbname) {
 
 //get all metadatas of a database
 async function getMetaDB() {
+    info="";
     info = await pgInfo({
         client: postgre,
         schemas: schemasname
@@ -209,21 +226,42 @@ async function getMetaDB() {
 
 //get metadats of schemas and alert users the result of connection
 function getSchemasPostgre() {
-    var confirmeConnection = "Please check if the information you entered is correct, please try after 60 seconds";
-    openConnection().then(p => {
-        confirmeConnection = "connection succeeded";
-        document.getElementById("resultConnection").innerText = confirmeConnection;
-        document.getElementById("submitPostgres").disabled = false;
+    //if the the dn change, initialize the object
+    metaPostgre = {};
+    schemas=[];
+    schemasname=[];
 
-        for (var i = 0; i < p.rows.length; i++) {
-            schemasname.push(p.rows[i]["schema_name"]);
+    var confirmeConnection = "Please check if the information you entered is correct, please try after 60 seconds";
+
+    var username = document.getElementById("ownerPostgres").value;
+    var password = document.getElementById("passwordPostgres").value;
+    var host = document.getElementById("serveurPostgres").value;
+    var dbname = document.getElementById("dbnamePostgres").value;
+    var port = document.getElementById("portPostgres").value;
+
+    //if the user didn't enter db options, they can't send or analyse metadatas of db postgres
+    if(username === "" || password==="" || host==="" || dbname==="" || port===""){
+        document.getElementById("resultConnection").innerText = "Please fill in all database connection settings";
+        document.getElementById("submitPostgres").disabled = true;
+    }else{
+        openConnection().then(p => {
+            confirmeConnection = "connection succeeded";
+            document.getElementById("resultConnection").innerText = confirmeConnection;
+            document.getElementById("submitPostgres").disabled = false;
+
+            for (var i = 0; i < p.rows.length; i++) {
+                schemasname.push(p.rows[i]["schema_name"]);
+            }
+            getMetaDB().then(res => {
+                metaPostgre = res.schemas;
+                console.log(metaPostgre);
+            });
+        })
+        document.getElementById("resultConnection").innerText = confirmeConnection;
+        if(confirmeConnection === "Please check if the information you entered is correct, please try after 60 seconds") {
+            document.getElementById("submitPostgres").disabled = true;
         }
-        getMetaDB().then(res => {
-            metaPostgre = res.schemas;
-            console.log(metaPostgre);
-        });
-    })
-    document.getElementById("resultConnection").innerText = confirmeConnection;
+    }
 }
 
 //get and set metadata of Entity class
@@ -273,18 +311,25 @@ function analyseMetaPostgre() {
 
 //prepare all the metadatas needs
 function setAllMetadatas() {
-    //analyse all metadatas of schemas
-    analyseMetaPostgre();
+
     //set metadatas of dataset
     setDatasetSource_postgres();
     setIngest_postgres();
     setTags_postgres();
     setDSDatalake_postgres();
-    //get size of database
-    getSizeDB(DatasetSource_postgre["name"]).then(p => {
-        DSDatalake_postgre["size"] = p.rows[0]["pg_size_pretty"];
-        countSize = countSize + 1
-    });
+
+    //if the db don't change
+    if(schemas.length===0){
+        countTable = 0;
+        countSize=0;
+        //analyse all metadatas of schemas
+        analyseMetaPostgre();
+        //get size of database
+        getSizeDB(DatasetSource_postgre["name"]).then(p => {
+            DSDatalake_postgre["size"] = p.rows[0]["pg_size_pretty"];
+            countSize = countSize + 1
+        });
+    }
 
     console.log("------------");
     console.log(tags_Structured);
@@ -480,12 +525,15 @@ function countInstancesWithMissingValuesEC(rows) {
 
 //when user confirme to insert all metadatas in Neo4j, excute the insert function and record the time
 function confirmInsert() {
+    start = new Date();
+    console.log(start)
 
     document.getElementById("waitingBox").style.display = "block";
     document.getElementById("confirmSendBox").style.display = "none";
 
     var stock = 0;
     var interval = setInterval(function () {
+        // console.log("doing")
         if (countSize === 1 && stock === countTable) {
             clearInterval(interval);
             var analysisDSRelationships = [];
@@ -499,7 +547,6 @@ function confirmInsert() {
             var withDataset = [];
             var hasEntityClass = [];
             var hasAttribute = [];
-
 
             prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes, hasRelationshipDS, withDataset,hasEntityClass,hasAttribute);
 
@@ -550,29 +597,14 @@ function confirmInsert() {
             hasAttribute = JSON.stringify(hasAttribute).replace(/\:/g, "\:\"").replace(/\,/g, "\"\,").replace(/\}\]/g, "\"\}\]").replace(/\}\"\,\{/g, "\"\}\,\{")
             hasAttribute = hasAttribute.replace(/^\"|\"$/g, '')
 
-
-            //TODO for record the time
-            /*var start = new Date();
-            console.log(start)*/
-
-
-            //TODO insert function
+            //call the insert function of neo4j
             insertNeo4jNoeud(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes);
             setTimeout(function () {
                 insertNeo4jRelationships(hasRelationshipDS,withDataset,hasEntityClass,hasAttribute)
             }, 1000);
-            //TODO after insert or the last insert function is finished, user can reload this page
-
-            /*    var timeMS = 3000
-                var timeS = timeMS/1000
-                setTimeout(function(){
-                    document.getElementById("resultInsert").innerText="Completed, it took "+timeS +" s";
-                    document.getElementById("reload").style.display="block";
-                    }, timeMS);*/
         }
         stock = countTable;
     }, 1000)
-
 }
 
 //for generate the GUID
@@ -605,7 +637,7 @@ function prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredData
             dlStructuredDataset: dlStructuredDatasets[dlStructuredDatasets.length - 1]["uuid"]
         })
         for (var j = 0; j < schemas[i]["entityClasses"].length; j++) {
-            console.log(schemas[i]["entityClasses"][j])
+            // console.log(schemas[i]["entityClasses"][j])
             entityClasses.push({
                 name: schemas[i]["entityClasses"][j]["name"],
                 comment: schemas[i]["entityClasses"][j]["comment"],
@@ -679,44 +711,17 @@ function insertNeo4jRelationships(hasRelationshipDS,withDataset,hasEntityClass,h
     apineo4j.createWithDataset(withDataset);
     apineo4j.createWithDatasetDB(withDataset,DSDatalake_postgre);
     apineo4j.createHasEntityClassStructured(hasEntityClass);
-    apineo4j.createHasAttributeStructured(hasAttribute);
+    apineo4j.createHasAttributeStructured(hasAttribute).then(p =>{
+        var s1 = new Date(p).getTime(),s2 = start.getTime();
+        var total = (s1-s2)/1000;
+        document.getElementById("resultInsert").innerText="Completed, it took "+total +" s"
+        document.getElementById("reload").style.display="block"
 
+        // var day = parseInt(total / (24*60*60));//Calculate integer days
+        // var afterDay = total - day*24*60*60;//Get the number of seconds remaining after calculating the number of days
+        // var hour = parseInt(afterDay/(60*60));//Calculate whole number of hours
+        // var afterHour = total - day*24*60*60 - hour*60*60;//Get the number of seconds remaining after calculating the number of hours
+        // var min = parseInt(afterHour/60);//Calculate whole minutes
+        // var afterMin = total - day*24*60*60 - hour*60*60 - min*60;//Get the number of seconds remaining after calculating the number of minutes
+    });
 }
-
-
-/*
-const oracledb = require('oracledb');
-
-// oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
-
-
-async function run() {
-
-    let connection;
-
-    try {
-        connection = await oracledb.getConnection( {
-            user          : "xe",
-            password      : "Oracle1111",
-            connectString : "localhost/XEPDB1"
-        });
-
-        const result = await connection.execute(
-            `SELECT sysdate FROM dual`,
-        );
-        console.log(result);
-
-    } catch (err) {
-        console.error(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
-}
-
-run();*/

@@ -2856,7 +2856,6 @@ $(function () {
     showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList, omNames.value)
   });
 
-
 });
 
 async function showSimilarity() {
