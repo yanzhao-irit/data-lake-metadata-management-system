@@ -23,6 +23,8 @@ var schemasP = [];
 
 var start = "";
 
+var uuids =[];
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
@@ -38,6 +40,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dbnamePostgres").addEventListener('input', disabledSend);
     document.getElementById("portPostgres").addEventListener('input', disabledSend);
 });
+
+window.onload= getUUID();
+function getUUID(){
+    api.getUUID().then(result => {
+        for(var i =0; i<result.length;i++){
+            console.log(result[i]._fields[0]);
+            uuids.push(result[i]._fields[0].toString());
+        }
+    })
+}
 
 //chose a db option, go to the db option page
 function dbConfirm() {
@@ -546,6 +558,8 @@ function confirmInsert() {
             var hasEntityClass = [];
             var hasAttribute = [];
 
+
+
             prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredDatasets, entityClasses, numericAttributes, nominalAttributes, hasRelationshipDS, withDataset,hasEntityClass,hasAttribute);
 
             analysisDSRelationships = couvertObject(analysisDSRelationships);
@@ -587,6 +601,19 @@ function couvertObject(Object){
 
 //for generate the GUID
 function uuid() {
+    console.log(uuids)
+    var uuidGenerate = generateUUIDRandom();
+    console.log(uuidGenerate);
+    var repeat = uuids.includes(uuidGenerate);
+    console.log(repeat);
+    while (repeat){
+        uuidGenerate = generateUUIDRandom();
+        repeat = uuids.includes(uuidGenerate);
+    }
+    return uuidGenerate;
+}
+
+function generateUUIDRandom(){
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);

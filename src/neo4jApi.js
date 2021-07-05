@@ -1665,3 +1665,24 @@ module.exports.createHasAttributeStructured = (hasAttribute) => {
       });
 }
 
+module.exports.getUUID = () => {
+  console.log("uuid");
+  var session = driver.session();
+
+  var query = "match (n) where exists(n.uuid) return n.uuid\n"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
