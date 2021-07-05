@@ -30,13 +30,25 @@ var DatasetSource_CSV = {};
 var DSDatalake_CSV = {};
 var Ingest_CSV = {};
 var start = ""
+var uuids = [];
+var hasAttribute = [];
 
 //The ingest start time and end time is before today
 window.onload = setMaxDate();
 function setMaxDate() {
-  getToday()
+  getToday(today);
   document.getElementById("ingestionStartTime").setAttribute("max", today);
   document.getElementById("ingestionEndTime").setAttribute("max", today);
+}
+
+window.onload= getUUID();
+function getUUID(){
+  api.getUUID().then(result => {
+    for(var i =0; i<result.length;i++){
+      //console.log(result[i]._fields[0]);
+      uuids.push(result[i]._fields[0].toString());
+    }
+  })
 }
 
 //If ingest Mode is batch , don't need ingest start time or end time
@@ -103,7 +115,7 @@ function setDatasetSource(){
 //set file upload and name,type of datasource
 function selectedFileChanged() {
   if (this.files.length === 0) {
-    console.log('please change！');
+    console.log('please upload un file！');
     return;
   }
   const reader = new FileReader();
@@ -174,13 +186,18 @@ function setAttributes(columns){
     attribut["name"]=columns[i][0]
     attribut["missingValuesCount"]=countMissingValue(columns[i])
     attribut["type"]=getType(columns[i])
+    attribut["uuid"]= uuid();
     if (attribut["type"]=="Numeric"){
       attribut["min"]=getMinColumn(columns[i])
       attribut["max"]=getMaxColumn(columns[i])
-      attributesNumeric_CSV.push(attribut)
+            attributesNumeric_CSV.push(attribut)
     }else{
       attributesNominal_CSV.push(attribut)
     }
+    hasAttribute.push({
+      entityClass:entityClass_CSV["uuid"],
+      attributes:attribut["uuid"]
+    })
   }
 }
 
@@ -251,6 +268,33 @@ function setEntityClass(attributesNumeric_CSV,attributesNominal_CSV,rows,columns
   entityClass_CSV["numberOfMissingValues"] = countMissingValueEC(attributesNumeric_CSV) + countMissingValueEC(attributesNominal_CSV)
 }
 
+//for generate the GUID
+function uuid() {
+  var uuidGenerate = generateUUIDRandom();
+  var repeat = uuids.includes(uuidGenerate);
+  while (repeat){
+    // numbertest = numbertest +1;
+    uuidGenerate = generateUUIDRandom();
+    repeat = uuids.includes(uuidGenerate);
+  }
+  //In order to ensure that the uuid of each node to be added to the database is not repeated
+  uuids.push(uuidGenerate);
+  return uuidGenerate;
+}
+
+function generateUUIDRandom(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  //for test the repeat of uuid
+  /*return 'df80626e-bf56-4a17-955d-b23e55dd626' + 'x'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });*/
+}
+
+
 //count missing value of a entity class
 function countMissingValueEC(attributes_CSV){
   var numberMissingValueEC=0
@@ -301,14 +345,14 @@ function setDSDatalake(){
   DSDatalake_CSV["name"] = DatasetSource_CSV["name"]
   DSDatalake_CSV["type"] = DatasetSource_CSV["type"]
   DSDatalake_CSV["filenameExtension"] = fileExtName
-  DSDatalake_CSV["creationDate"] = today +":00Z"
+  DSDatalake_CSV["creationDate"] = getToday(new Date()) +":00Z"
   DSDatalake_CSV["description"] = document.getElementById("description").value
   DSDatalake_CSV["connectionURL"] = document.getElementById("urlDS").value
   DSDatalake_CSV["administrator"] = document.getElementById("admin").value
 }
 
 //get th date of today
-function getToday(){
+function getToday(today){
   var dd = today.getDate();
   var mm = today.getMonth() + 1; //January is 0!
   var yyyy = today.getFullYear();
@@ -327,43 +371,14 @@ function getToday(){
     minute = '0' + minute
   }
   today = yyyy + '-' + mm + '-' + dd + 'T' + hh + ':' + minute;
+  return today;
 }
 
 //When click Send, collect all datas in page and call function to insert in BD
 function analyseCSV(){
-  if (fileExtName === "csv"){
-    setDelimiter()
-    /*console.log("delimiter")
-    console.log(delimiter)*/
-    splitCSV(fileContent)
-    setAttributes(columns)
-    setEntityClass(attributesNumeric_CSV,attributesNominal_CSV,rows,columns)
-    setTags();
-    setDatasetSource();
-    setDSDatalake();
-    setIngest();
-    attributesNumeric_CSV = JSON.stringify(attributesNumeric_CSV).replace(/\"/g, "")
-    attributesNumeric_CSV = JSON.stringify(attributesNumeric_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-    attributesNumeric_CSV = attributesNumeric_CSV.replace(/^\"|\"$/g,'')
-
-    attributesNominal_CSV = JSON.stringify(attributesNominal_CSV).replace(/\"/g, "")
-    attributesNominal_CSV = JSON.stringify(attributesNominal_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-    attributesNominal_CSV = attributesNominal_CSV.replace(/^\"|\"$/g,'')
-
-    tags_CSV = JSON.stringify(tags_CSV).replace(/\"/g, "")
-    tags_CSV = JSON.stringify(tags_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
-    tags_CSV = tags_CSV.replace(/^\"|\"$/g,'')
-
-    console.log("---------")
-    console.log(fileContent)
-    console.log(columns)
-    console.log(rows)
-    console.log(entityClass_CSV)
-    console.log(attributesNumeric_CSV)
-    console.log(attributesNominal_CSV)
-    console.log(tags_CSV)
-    console.log("---------")
-  }
+  console.log(fileContent)
+  console.log(columns)
+  console.log(rows)
 }
 
 //Call function Neo4jApi for insert
@@ -385,8 +400,21 @@ function insertNeo4jHasTag(){
 
 //Call function Neo4jApi for insert
 function insertNeo4jHasAttriibute(){
+api.createHasAttributeStructured(hasAttribute).then(p =>{
+  var s1 = new Date(p).getTime(),s2 = start.getTime();
+  var total = (s1-s2)/1000;
+  document.getElementById("resultInsert").innerText="Completed, it took "+total +" s"
+  document.getElementById("reload").style.display="block"
 
-  api.createHasAttributeNumeric(entityClass_CSV,attributesNumeric_CSV)
+  // var day = parseInt(total / (24*60*60));//Calculate integer days
+  // var afterDay = total - day*24*60*60;//Get the number of seconds remaining after calculating the number of days
+  // var hour = parseInt(afterDay/(60*60));//Calculate whole number of hours
+  // var afterHour = total - day*24*60*60 - hour*60*60;//Get the number of seconds remaining after calculating the number of hours
+  // var min = parseInt(afterHour/60);//Calculate whole minutes
+  // var afterMin = total - day*24*60*60 - hour*60*60 - min*60;//Get the number of seconds remaining after calculating the number of minutes
+})
+
+/*  api.createHasAttributeNumeric(entityClass_CSV,attributesNumeric_CSV)
   api.createHasAttributeNominal(entityClass_CSV,attributesNominal_CSV).then(p =>{
     var s1 = new Date(p).getTime(),s2 = start.getTime();
     var total = (s1-s2)/1000;
@@ -399,7 +427,7 @@ function insertNeo4jHasAttriibute(){
     // var afterHour = total - day*24*60*60 - hour*60*60;//Get the number of seconds remaining after calculating the number of hours
     // var min = parseInt(afterHour/60);//Calculate whole minutes
     // var afterMin = total - day*24*60*60 - hour*60*60 - min*60;//Get the number of seconds remaining after calculating the number of minutes
-  })
+  })*/
 }
 
 function confirmInsert(){
@@ -407,9 +435,50 @@ function confirmInsert(){
   console.log(start)
   document.getElementById("waitingBox").style.display="block"
   document.getElementById("confirmSendBox").style.display="none"
-  insertNeo4jNoeud();
-  setTimeout(insertNeo4jHasTag,500)
-  setTimeout(insertNeo4jHasAttriibute,500)
+
+  if (fileExtName === "csv"){
+    setDelimiter()
+    /*console.log("delimiter")
+    console.log(delimiter)*/
+    splitCSV(fileContent)
+    entityClass_CSV["uuid"] = uuid();
+    setAttributes(columns)
+    setEntityClass(attributesNumeric_CSV,attributesNominal_CSV,rows,columns)
+    setTags();
+    setDatasetSource();
+    setDSDatalake();
+    setIngest();
+    attributesNumeric_CSV = JSON.stringify(attributesNumeric_CSV).replace(/\"/g, "")
+    attributesNumeric_CSV = JSON.stringify(attributesNumeric_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    attributesNumeric_CSV = attributesNumeric_CSV.replace(/^\"|\"$/g,'')
+
+    attributesNominal_CSV = JSON.stringify(attributesNominal_CSV).replace(/\"/g, "")
+    attributesNominal_CSV = JSON.stringify(attributesNominal_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    attributesNominal_CSV = attributesNominal_CSV.replace(/^\"|\"$/g,'')
+
+    tags_CSV = JSON.stringify(tags_CSV).replace(/\"/g, "")
+    tags_CSV = JSON.stringify(tags_CSV).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    tags_CSV = tags_CSV.replace(/^\"|\"$/g,'')
+
+    hasAttribute = JSON.stringify(hasAttribute).replace(/\"/g, "")
+    hasAttribute = JSON.stringify(hasAttribute).replace(/\:/g,"\:\"").replace(/\,/g,"\"\,").replace(/\}\]/g,"\"\}\]").replace(/\}\"\,\{/g,"\"\}\,\{")
+    hasAttribute = hasAttribute.replace(/^\"|\"$/g,'')
+
+    console.log("---------")
+    console.log(fileContent)
+    console.log(columns)
+    console.log(rows)
+    console.log(entityClass_CSV)
+    console.log(attributesNumeric_CSV)
+    console.log(attributesNominal_CSV)
+    console.log(tags_CSV)
+    console.log(hasAttribute)
+    console.log("---------")
+
+    insertNeo4jNoeud();
+    setTimeout(insertNeo4jHasTag,500)
+    setTimeout(insertNeo4jHasAttriibute,500)
+  }
 }
 
 function reload(){

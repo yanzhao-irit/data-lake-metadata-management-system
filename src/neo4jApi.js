@@ -1104,7 +1104,8 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
       + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
-      + "});"
+      + ",uuid:'"+entityClass_CSV["uuid"]
+      + "'});"
   console.log(query)
   return session
       .run(query)
@@ -1671,7 +1672,7 @@ module.exports.getUUID = () => {
 
   var query = "match (n) where exists(n.uuid) return n.uuid\n"
 
-  console.log(query)
+  // console.log(query)
 
   return session
       .run(query)

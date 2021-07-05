@@ -45,7 +45,7 @@ window.onload= getUUID();
 function getUUID(){
     api.getUUID().then(result => {
         for(var i =0; i<result.length;i++){
-            console.log(result[i]._fields[0]);
+            //console.log(result[i]._fields[0]);
             uuids.push(result[i]._fields[0].toString());
         }
     })
@@ -601,14 +601,19 @@ function couvertObject(Object){
 
 //for generate the GUID
 function uuid() {
-    console.log(uuids)
+    // console.log(uuids)
     var uuidGenerate = generateUUIDRandom();
-    console.log(uuidGenerate);
+    // console.log("uuid generate "+uuidGenerate);
     var repeat = uuids.includes(uuidGenerate);
-    console.log(repeat);
+    // console.log("repeat "+repeat);
+    //for test one mmore condition && numbertest<5
+    // var numbertest = 0;
     while (repeat){
+        // numbertest = numbertest +1;
         uuidGenerate = generateUUIDRandom();
         repeat = uuids.includes(uuidGenerate);
+        /*console.log("repeat in while "+repeat);
+        console.log("uuid in while "+uuidGenerate);*/
     }
     //In order to ensure that the uuid of each node to be added to the database is not repeated
     uuids.push(uuidGenerate);
@@ -620,6 +625,11 @@ function generateUUIDRandom(){
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+    //for test the repeat of uuid
+    /*return 'df80626e-bf56-4a17-955d-b23e55dd626' + 'x'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });*/
 }
 
 //prepare Noeuds of insert into Neo4j
