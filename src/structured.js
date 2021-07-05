@@ -610,6 +610,8 @@ function uuid() {
         uuidGenerate = generateUUIDRandom();
         repeat = uuids.includes(uuidGenerate);
     }
+    //In order to ensure that the uuid of each node to be added to the database is not repeated
+    uuids.push(uuidGenerate);
     return uuidGenerate;
 }
 
