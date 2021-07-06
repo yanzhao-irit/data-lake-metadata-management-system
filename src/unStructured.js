@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('submitFile').addEventListener('click',analyseCSV);
   document.getElementById('confirmBtn').addEventListener('click',confirmInsert);
   document.getElementById('reloadUpload').addEventListener('click',reload);
-
 });
 
 //some variable used in all function

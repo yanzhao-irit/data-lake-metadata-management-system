@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = (userId, pwd, host, port, sid) = {
     user          : process.env.NODE_ORACLEDB_USER || "stage",
   
     // Get the password from the environment variable
