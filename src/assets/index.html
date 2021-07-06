@@ -19,11 +19,6 @@
 </head>
 
 <body>
-    <div>
-        <a href="semiStructured.html">semiStructured Ingest</a>
-        <a href="unStructured.html">unStructured Ingest</a>
-        <a href="structured.html">Structured Ingest</a>
-    </div>
     <div role="navigation" class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="row">
@@ -32,6 +27,8 @@
                         <div class="form-group">
                             Enter your tags here : <select multiple data-role="tagsinput" id="tagsinput"></select>
                             <button id='switchSearchMod'>Advanced Cypher Request</button>
+                            <button id='ingestChoses' type="button" data-toggle="modal"
+                                    data-target="#ingestModal">Ingest</button>
                         </div>
                     </li>
                 </ul>
@@ -397,6 +394,27 @@
 
 
     <!-- Modal -->
+    <div class="modal fade" id="ingestModal" tabindex="-1" role="dialog" aria-labelledby="ingestModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h3 class="modal-title">Please Chose A Ingest Type</h3>
+                </div>
+                <div class="modal-body">
+                    </br>
+                    <table id="ingestTable" style="margin: auto;">
+                        <tr><td style="width:75%">Structured Dataset </td><td><a href="structured.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Semi Structured Dataset </td><td><a href="semiStructured.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Un Structured Dataset </td><td><a href="unStructured.html"> Click To Go</a></td></tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="AttributeModal" tabindex="-1" role="dialog" aria-labelledby="AttributeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">

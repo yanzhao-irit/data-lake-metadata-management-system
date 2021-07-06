@@ -1335,10 +1335,10 @@ $(function () {
             })
             if (p) {
               $("#EntityClassNames").empty()
-
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
+              $list.append("<div style='height:500px; overflow-y:scroll;'></div>");
               for (var i = 0; i < p.length; i++) {
-                $list.append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
                 showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name)
               }
             }
