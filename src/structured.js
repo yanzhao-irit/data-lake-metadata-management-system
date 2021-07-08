@@ -6,7 +6,7 @@ const api = require("../neo4jApi");
 const _ = require('lodash')
 
 
-$( "#dialog" ).dialog();
+$("#dialog").dialog();
 
 if (process.platform === 'win32') { // Windows
     oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_19_11' });
@@ -19,9 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // document.getElementById('user').addEventListener("keyup", getUser);
     // document.getElementById("pwd").addEventListener("input", getPwd);
     // document.getElementById('host').addEventListener('change', getHost);
-    // document.getElementById('port').addEventListener('click',getPort);
-    document.getElementById('submitInfo').addEventListener('click',ingestNeo4j);
-  });
+    document.getElementById('try').addEventListener('click',tryConnection);
+    document.getElementById('add').addEventListener("click", addTag);
+    document.getElementById('submitInfo').addEventListener('click', ingestNeo4j);
+});
 
 var nodesDatasetSource = []
 var nodesIngest = []
@@ -29,13 +30,85 @@ var nodesDataSetDataLake = []
 var nodesEntityCLass = []
 var nodesAttributes = []
 var relationship = []
+var NumberTags = []
 
 async function ingestNeo4j() {
+    var t1 = Date.now()
     getMetadata()
+    setTags()
+    var t2 = Date.now()
+    console.log(t1)
+    console.log(t2)
+    console.log(t2 - t1 + 'ms')
+}
 
+function addTag() {
+    var elt = document.getElementById('Tags');
+    NumberTags = NumberTags + 1;
+    elt.insertAdjacentHTML("beforeend", "<div class='dropdown'><label for='zone" + NumberTags + "'>Tag " + (NumberTags + 1) + ": </label>" +
+        "<input name='tagsUsers' type='text' id='zone" + NumberTags + "' data-toggle='dropdown' required>" +
+        "<ul class='dropdown-menu' id='zoneaff" + NumberTags + "' style='margin-left:33%;height:100px;width:270px;overflow:scroll;'></ul></div>");
+    var zone = "zone" + NumberTags;
+    console.log(document.getElementById(zone));
+    document.getElementById(zone).addEventListener("input", printTags);
+}
+function setTags() {
+    tags_Structured = [];
+    var lengthTags = document.getElementsByName("tagsUsers").length;
+    for (i = 0; i < lengthTags; i++) {
+        var tag = {};
+        tag["name"] = document.getElementsByName("tagsUsers")[i].value;
+        tags_Structured.push(tag);
+    }
+}
+
+function printTags() {
+    var zone = "zone" + NumberTags;
+    var zoneaff = "zoneaff" + NumberTags;
+    var lien = "lien" + NumberTags;
+    var elt2 = document.getElementById(zoneaff);
+    elt2.innerText = "";
+    //To receive result of BD
+    var length = 0;
+    var tag = document.getElementById(zone).value;
+    api.getTags(tag).then(p => {
+        length = p.length;
+        for (x = 0; x < length; x++) {
+            elt2.insertAdjacentHTML('beforeend', "<li><a name='" + lien + "'>" + p[x].name + "</a></li>");
+        }
+        var elt3 = document.getElementsByName(lien);
+        for (j = 0; j < elt3.length; j++) {
+            elt3[j].addEventListener("click", changerInputText);
+        }
+    })
 }
 
 
+async function tryConnection() {
+    let connection;
+    try {
+        console.log('before connection')
+        pool = await oracledb.createPool({
+            user: process.env.NODE_ORACLEDB_USER || document.getElementById('user').value,
+            password: process.env.NODE_ORACLEDB_PASSWORD || document.getElementById("pwd").value,
+            connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING || "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + document.getElementById("host").value + ")(PORT=" + document.getElementById("port").value + "))(CONNECT_DATA=(SERVER=DEDICATED)(SID=" + document.getElementById("sid").value + ")))",
+            externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
+        });
+        connection = await pool.getConnection()
+        console.log('after connection')
+        console.log(connection)
+    }catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+}
 
 async function getMetadata() {
     let connection;
@@ -44,11 +117,11 @@ async function getMetadata() {
         let sql, binds, options, result;
         console.log('before connection')
         pool = await oracledb.createPool({
-            user          : process.env.NODE_ORACLEDB_USER || document.getElementById('user').value,
-            password      : process.env.NODE_ORACLEDB_PASSWORD || document.getElementById("pwd").value,
-            connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST="+document.getElementById("host").value+")(PORT="+document.getElementById("port").value+"))(CONNECT_DATA=(SERVER=DEDICATED)(SID="+document.getElementById("sid").value+")))",
-            externalAuth  : process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
-          });
+            user: process.env.NODE_ORACLEDB_USER || document.getElementById('user').value,
+            password: process.env.NODE_ORACLEDB_PASSWORD || document.getElementById("pwd").value,
+            connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING || "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + document.getElementById("host").value + ")(PORT=" + document.getElementById("port").value + "))(CONNECT_DATA=(SERVER=DEDICATED)(SID=" + document.getElementById("sid").value + ")))",
+            externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
+        });
         connection = await pool.getConnection()
         console.log('after connection')
         console.log(connection)
@@ -58,11 +131,11 @@ async function getMetadata() {
 
         var stmts = [
             `SELECT OWNER FROM ALL_OBJECTS WHERE ALL_OBJECTS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ORACLE_MAINTAINED = 'N' GROUP BY OWNER HAVING COUNT(*) != 0`
-            ];
+        ];
 
         for (const s of stmts) {
             try {
-                result_dataSource  = await connection.execute(s);
+                result_dataSource = await connection.execute(s);
             } catch (e) {
                 if (e.errorNum != 942)
                     console.error(e);
@@ -70,14 +143,14 @@ async function getMetadata() {
         }
         console.log('Schema / Users')
         console.dir(result_dataSource.rows[0])
-        
+
         stmts = [
             `SELECT OWNER,OBJECT_NAME FROM ALL_OBJECTS WHERE ALL_OBJECTS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ALL_OBJECTS.OBJECT_TYPE = 'TABLE' AND ORACLE_MAINTAINED = 'N'`
         ];
 
         for (const s of stmts) {
             try {
-                result_EC  = await connection.execute(s);
+                result_EC = await connection.execute(s);
             } catch (e) {
                 if (e.errorNum != 942)
                     console.error(e);
@@ -93,7 +166,7 @@ async function getMetadata() {
 
         for (const s of stmts) {
             try {
-                result_attribut  = await connection.execute(s);
+                result_attribut = await connection.execute(s);
             } catch (e) {
                 if (e.errorNum != 942)
                     console.error(e);
@@ -105,7 +178,7 @@ async function getMetadata() {
         stmts = [`SELECT OWNER,TABLE_NAME,COUNT(COLUMN_NAME) AS nb_attribute FROM ALL_TAB_COLUMNS WHERE ALL_TAB_COLUMNS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') GROUP BY OWNER,TABLE_NAME`]
         for (const s of stmts) {
             try {
-                result_nbAttribute  = await connection.execute(s);
+                result_nbAttribute = await connection.execute(s);
             } catch (e) {
                 if (e.errorNum != 942)
                     console.error(e);
@@ -118,7 +191,7 @@ async function getMetadata() {
             `select round((sum(bytes)/1024/1024/1024),2) from v$datafile`
         ];
 
-        for(const s of stmts){
+        for (const s of stmts) {
             try {
                 result_size = await connection.execute(s);
             } catch (e) {
@@ -130,80 +203,31 @@ async function getMetadata() {
         console.dir(result_size.rows)
 
 
-        nodesDatasetSource.push({'name' : document.getElementById('DBName').value, 'owner' : document.getElementById('owner').value, 'type' : 'Relationnal Database Oracle', 'size' : result_size.rows[0][0] + ' Go'})
-        for(var i = 0; i<result_dataSource.rows.length; i++){
-            nodesDataSetDataLake.push({'name': result_dataSource.rows[i][0]})
+        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
+        for (var i = 0; i < result_dataSource.rows.length; i++) {
+            nodesDataSetDataLake.push({ 'name': result_dataSource.rows[i][0] })
         }
-        for(var i = 0; i<result_nbAttribute.rows.length; i++){
-                nodesEntityCLass.push([result_nbAttribute.rows[i][0],{'name' : result_nbAttribute.rows[i][1], 'numberOfAttributes' : result_nbAttribute.rows[i][2]}])
-            
+        for (var i = 0; i < result_nbAttribute.rows.length; i++) {
+            nodesEntityCLass.push([result_nbAttribute.rows[i][0], { 'name': result_nbAttribute.rows[i][1], 'numberOfAttributes': result_nbAttribute.rows[i][2] }])
+
         }
-        for(var i = 0; i<result_attribut.rows.length; i++){
-            nodesAttributes.push([result_attribut.rows[i][1],{'name' : result_attribut.rows[i][2], 'type': result_attribut.rows[i][3]}])
+        for (var i = 0; i < result_attribut.rows.length; i++) {
+            nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
         }
 
         console.log(nodesDatasetSource)
         console.log(nodesDataSetDataLake)
         console.log(nodesEntityCLass)
         console.log(nodesAttributes)
+        console.log(tags_Structured)
+
+
 
         api.
-            ingestOracle(nodesDatasetSource,nodesDataSetDataLake,nodesEntityCLass,nodesAttributes)
-        //
-        // Insert three rows
-        //
+            ingestFromOracle(nodesDatasetSource, nodesDataSetDataLake, nodesEntityCLass, nodesAttributes, tags_Structured)
 
-        // sql = `INSERT INTO no_example VALUES (:1, :2)`;
 
-        // binds = [
-        //     [101, "Alpha"],
-        //     [102, "Beta"],
-        //     [103, "Gamma"]
-        // ];
 
-        // // For a complete list of options see the documentation.
-        // options = {
-        //     autoCommit: true,
-        //     // batchErrors: true,  // continue processing even if there are data errors
-        //     bindDefs: [
-        //         { type: oracledb.NUMBER },
-        //         { type: oracledb.STRING, maxSize: 20 }
-        //     ]
-        // };
-        // console.log('before result')
-        // result = await connection.executeMany(sql, binds, options);
-        // console.log('after result')
-        // console.log("Number of rows inserted:", result.rowsAffected);
-
-        // //
-        // Query the data
-        //
-
-        sql = `SELECT * FROM no_example`;
-
-        binds = {};
-
-        // For a complete list of options see the documentation.
-        options = {
-            outFormat: oracledb.OUT_FORMAT_OBJECT,   // query result format
-            extendedMetaData: true,               // get extra metadata
-        };
-
-        result = await connection.execute(sql, binds, options);
-
-        console.log("Metadata: ");
-        console.dir(result.metaData, { depth: null });
-        console.log("Query results: ");
-        console.dir(result.rows, { depth: null });
-
-        //
-        // Show the date.  The value of ORA_SDTZ affects the output
-        //
-
-        sql = `SELECT TO_CHAR(CURRENT_DATE, 'DD-Mon-YYYY HH24:MI') AS CD FROM DUAL`;
-        result = await connection.execute(sql, binds, options);
-        console.log("Current date query results: ");
-        console.log(result.rows[0]['CD']);
 
     } catch (err) {
         console.error(err);

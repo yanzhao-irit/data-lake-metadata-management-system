@@ -1369,19 +1369,22 @@ module.exports.createHasTagUnStructured = (DSDatalake_UnStructured, tags_UnStruc
     });
 }
 
-module.exports.ingestOracle = (datasetSource, datasetDatalake, eC, attribute) => {
-  console.log(datasetDatalake.length)
+module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute, tags) => {
+  var session = driver.session();
   query = `MERGE (dsource:DatasetSource {name:'` + datasetSource[0].name + `',owner:'` + datasetSource[0].owner + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid()})
             MERGE (dsDl:DLStructuredDataset {name:'` + datasetSource[0].name + `',size:'` + datasetSource[0].size + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid(), creationDate: datetime()})
             CREATE (ingest:Ingest {ingestionMode:'Batch', ingestionStartTime : datetime()})
             CREATE (dsource)<-[:ingestFrom]-(ingest)-[:ingestTo]->(dsDl)
             MERGE (rds:RelationshipDS {name:'Contains', description:'The database is part of a bigger database'})`
-  for (var i = 0; i<datasetDatalake.length; i++) {
-    console.log('hello')
+  for (var t = 0; t < tags.length; t++) {
+    query += `MERGE (t` + t + `:Tag {name:'` + tags[t].name + `'})
+                          MERGE (t`+ t + `)<-[:hasTag]-(dsDl)`
+  }
+  for (var i = 0; i < datasetDatalake.length; i++) {
     query += `MERGE (dsDl` + i + `:DLStructuredDataset {name: '` + datasetDatalake[i].name + `', uuid: apoc.create.uuid()})
-                CREATE (aDSR`+i+`:analysisDSRelationship {name:'contains'})
-                CREATE (aDSR`+i+`)-[:hasRelationshipDataset]->(rds)
-                CREATE (dsDl)<-[:withDataset]-(aDSR`+i+`)-[:withDataset]->(dsDl` + i + `)`
+                CREATE (aDSR`+ i + `:AnalysisDSRelationship {name:'contains'})
+                CREATE (aDSR`+ i + `)-[:hasRelationshipDataset]->(rds)
+                CREATE (dsDl)<-[:withDataset]-(aDSR`+ i + `)-[:withDataset]->(dsDl` + i + `)`
     for (var j = 0; j < eC.length; j++) {
       if (eC[j][0] == datasetDatalake[i].name) {
         query += `CREATE (ec` + i + j + `:EntityCLass {name:'` + eC[j][1].name + `',numberOfAttributes:'` + eC[j][1].numberOfAttributes + `'})
@@ -1401,4 +1404,13 @@ module.exports.ingestOracle = (datasetSource, datasetDatalake, eC, attribute) =>
     }
   }
   console.log(query)
+  return session
+    .run(query)
+    .then()
+    .catch(error => {
+      throw error;
+    })
+    .finally(() => {
+      return session.close();
+    });
 }
