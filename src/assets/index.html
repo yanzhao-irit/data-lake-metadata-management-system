@@ -20,18 +20,23 @@
 
 <body>
     <div role="navigation" class="navbar navbar-default navbar-static-top">
-        <div class="container">
+<!--        <div class="container">-->
             <div class="row">
+                <div class="col-md-1" style="text-align: left">
+                    <button id='ingestChoses' type="button" data-toggle="modal"
+                            data-target="#ingestModal">Ingest</button>
+                </div>
+                <div class="col-md-11">
                 <ul class="nav navbar-nav">
                     <li>
                         <div class="form-group">
                             Enter your tags here : <select multiple data-role="tagsinput" id="tagsinput"></select>
                             <button id='switchSearchMod'>Advanced Cypher Request</button>
-                            <button id='ingestChoses' type="button" data-toggle="modal"
-                                    data-target="#ingestModal">Ingest</button>
+
                         </div>
                     </li>
                 </ul>
+                </div>
             </div>
             <div class="filter" id="filter">
                 <h3>Filter</h3>
@@ -218,7 +223,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+<!--        </div>-->
     </div>
     <div class="row" id='mainSearch'>
         <div class="collapse in">
@@ -405,8 +410,8 @@
                     </br>
                     <table id="ingestTable" style="margin: auto;">
                         <tr><td style="width:75%">Structured Dataset </td><td><a href="structured.html"> Click To Go</a></td></tr>
-                        <tr><td style="width:75%">Semi Structured Dataset </td><td><a href="semiStructured.html"> Click To Go</a></td></tr>
-                        <tr><td style="width:75%">Un Structured Dataset </td><td><a href="unStructured.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Semi-Structured Dataset </td><td><a href="semiStructured.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Unstructured Dataset </td><td><a href="unStructured.html"> Click To Go</a></td></tr>
                     </table>
                 </div>
                 <div class="modal-footer">

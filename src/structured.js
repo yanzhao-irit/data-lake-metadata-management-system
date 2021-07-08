@@ -639,18 +639,18 @@ function prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredData
     tags_Structured = tags_Structured.replace(/^\"|\"$/g, '')
 
     for (var i = 0; i < schemasP.length; i++) {
-        RelationshipDS.push({name: "contain", uuid: uuid()});
+        RelationshipDS.push({name: "contain"});
         analysisDSRelationships.push({
             name: DSDatalake_postgre["name"] + " contain " + schemasP[i]["name"],
-            uuid: uuid()
+            // uuid: uuid()
         });
         hasRelationshipDS.push({
-            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["uuid"],
-            RelationshipDS: RelationshipDS[RelationshipDS.length - 1]["uuid"]
+            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["name"],
+            // RelationshipDS: RelationshipDS[RelationshipDS.length - 1]["uuid"]
         })
         dlStructuredDatasets.push({name: schemasP[i]["name"], uuid: uuid()});
         withDataset.push({
-            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["uuid"],
+            analysisDSRelationship: analysisDSRelationships[analysisDSRelationships.length - 1]["name"],
             dlStructuredDataset: dlStructuredDatasets[dlStructuredDatasets.length - 1]["uuid"]
         })
         for (var j = 0; j < schemasP[i]["entityClasses"].length; j++) {

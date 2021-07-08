@@ -1437,7 +1437,9 @@ module.exports.createRelationshipDS = (RelationshipDS) =>{
   var session = driver.session();
   var $RelationshipDS = (RelationshipDS)
 
-  var query = "CALL apoc.create.nodes(['RelationshipDS'], "+$RelationshipDS+");"
+  // var query = "CALL apoc.create.nodes(['RelationshipDS'], "+$RelationshipDS+");"
+  var query = "UNWIND ("+ $RelationshipDS +") as row "+
+      "MERGE (n:RelationshipDS {name:row.name})"
 
   console.log(query)
 
@@ -1539,8 +1541,8 @@ module.exports.createHasRelationshipDS = (hasRelationshipDS) => {
   var $hasRelationshipDS = (hasRelationshipDS)
 
   var query = "UNWIND ("+ $hasRelationshipDS +") as row\n" +
-      "MATCH (ads:AnalysisDSRelationship {uuid:row.analysisDSRelationship})\n" +
-      "MATCH (ds:RelationshipDS {uuid:row.RelationshipDS})\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
+      "MATCH (ds:RelationshipDS {name:'contain'})\n" +
       "call apoc.create.relationship(ads,'hasRelationshipDS',{},ds) yield rel RETURN rel"
 
   console.log(query)
@@ -1564,7 +1566,7 @@ module.exports.createWithDataset = (withdataset) => {
   var $withdataset = (withdataset)
 
   var query = "UNWIND ("+ $withdataset +") as row\n" +
-      "MATCH (ads:AnalysisDSRelationship {uuid:row.analysisDSRelationship})\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
       "MATCH (dl:DLStructuredDataset {uuid:row.dlStructuredDataset})\n" +
       "call apoc.create.relationship(ads,'withDataset',{},dl) yield rel RETURN rel"
 
@@ -1589,7 +1591,7 @@ module.exports.createWithDatasetDB = (withdataset,DSDatalake_Structured) => {
   var $withdataset = (withdataset)
 
   var query = "UNWIND ("+ $withdataset +") as row\n" +
-      "MATCH (ads:AnalysisDSRelationship {uuid:row.analysisDSRelationship})\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
       "MATCH (dl:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
       + "',administrator:'"+DSDatalake_Structured["administrator"]
       + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
