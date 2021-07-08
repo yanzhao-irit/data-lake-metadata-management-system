@@ -138,6 +138,7 @@ function setDSDatalake_postgres() {
     DSDatalake_postgre["creationDate"] = getToday() + ":00Z";
     DSDatalake_postgre["description"] = document.getElementById("descriptionPostgres").value;
     DSDatalake_postgre["administrator"] = document.getElementById("adminPostgres").value;
+    DSDatalake_postgre["uuid"] = uuid();
 }
 
 //get th date of today
@@ -639,9 +640,9 @@ function prepareNoeuds(analysisDSRelationships, RelationshipDS, dlStructuredData
     tags_Structured = tags_Structured.replace(/^\"|\"$/g, '')
 
     for (var i = 0; i < schemasP.length; i++) {
-        RelationshipDS.push({name: "contain"});
+        RelationshipDS.push({name: "Contains"});
         analysisDSRelationships.push({
-            name: DSDatalake_postgre["name"] + " contain " + schemasP[i]["name"],
+            name: DSDatalake_postgre["name"] + " contains " + schemasP[i]["name"],
             // uuid: uuid()
         });
         hasRelationshipDS.push({

@@ -1402,16 +1402,22 @@ $(function () {
               for (var i = 0; i < p.length; i++) {
                 relationlist.push(p[i].name)
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
-                $listContent.append(`
-                <div id='`+ p[i].name + `' class="tab-pane fade">
-                    <table class='relationshiptable'>
-                    <tbody id='dataset_` + p[i].name + `'><tbody>
-                    </table>
-                </div>`)
+                if(!(p[i].name==="Contains")){
+                  console.log(p[i].name)
+                  console.log('whyyyyyyyyyyyyyyyy')
+                  $listContent.append(`
+                    <div id='`+ p[i].name + `' class="tab-pane fade">
+                        <table class='relationshiptable'>
+                        <tbody id='dataset_` + p[i].name + `'><tbody>
+                        </table>
+                    </div>`)
+                }
               }
               for (var i = 0; i < relationlist.length; i++) {
-                //for each relation get dataset and relation value
-                getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
+                if(!(relationlist[i]==="Contains")){
+                  //for each relation get dataset and relation value
+                  getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
+                }
               }
               for (var j = 0; j < relationlist.length; j++) {
                 /*console.log(relationlistAtt[j])*/
@@ -2984,11 +2990,15 @@ function getGrapheViz4Seuil() {
     query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
+          (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
+          AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and round(toFloat(adrR.value),5)<=toFloat(` + value + `)
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6,r7`
   } else {
     query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl),(adrR)-[r7]->(rDS:RelationshipDS)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
+          AND
+          (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
           AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ this.id.substring(2) + `' and round(toFloat(adrR.value),5)>=toFloat(` + value + `)
           RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6,r7`
@@ -3440,11 +3450,22 @@ function getGrapheViz4Init() {
   document.getElementById("viz4").style.display = "block"
   var relationDS = this.id.substring(2)
   //query4 for dataset relationship
-  query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl) 
+  /*query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl)
           WHERE dl.name CONTAINS '`+ datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
           AND
+          (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
+          AND
           (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset) and rDS.name='`+ relationDS + `'
-          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`
+          RETURN DISTINCT dl,rDS,autreDS,adrR,r1,r2,r3,r4,r5,r6`*/
+  query4 = `MATCH (dl)<-[r1:withDataset]-(a)-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(a)-[r3:withDataset]->(dl2)
+            WHERE dl.name CONTAINS '` + datasetChosed[0] + `' and dl.uuid = '` + datasetChosed[1] + `'
+            AND
+            (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
+            AND
+            (dl2:DLStructuredDataset OR dl2:DLSemistructuredDataset OR dl2:DLUnstructuredDataset)
+            RETURN DISTINCT dl,dl2,rDS,a,r1,r2,r3`
+  console.log("query4")
+  console.log(query4)
   api.getGraph(query4).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);
@@ -3477,6 +3498,7 @@ function getGrapheViz5Init() {
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
+  console.log(query5);
   api.getGraph(query5).then(p => {
     // create an array with nodes
     var nodes = new vis.DataSet(p[p.length - 1][0]);

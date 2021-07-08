@@ -639,8 +639,10 @@ module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
 module.exports.getRelationshipDSbyDataset = (dsName, dsId, type, relationName = '') => {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
-  query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
+  query = `MATCH (dl)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
     WHERE dl.name CONTAINS '` + dsName + `' and dl.uuid = '` + dsId + `'
+    AND
+    (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
     AND
     (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
     AND
@@ -1391,6 +1393,7 @@ module.exports.createDSIngestDSDLECStructured = (DatasetSource_Structured,Ingest
       + "',name:'"+DSDatalake_Structured["name"]
       + "',type:'"+DSDatalake_Structured["type"]
       + "',location:'"+DSDatalake_Structured["location"]
+      + "',uuid:'"+DSDatalake_Structured["uuid"]
       + "'});"
 
   console.log(query)
@@ -1542,8 +1545,8 @@ module.exports.createHasRelationshipDS = (hasRelationshipDS) => {
 
   var query = "UNWIND ("+ $hasRelationshipDS +") as row\n" +
       "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
-      "MATCH (ds:RelationshipDS {name:'contain'})\n" +
-      "call apoc.create.relationship(ads,'hasRelationshipDS',{},ds) yield rel RETURN rel"
+      "MATCH (ds:RelationshipDS {name:'Contains'})\n" +
+      "call apoc.create.relationship(ads,'hasRelationshipDataset',{},ds) yield rel RETURN rel"
 
   console.log(query)
 
@@ -1599,6 +1602,7 @@ module.exports.createWithDatasetDB = (withdataset,DSDatalake_Structured) => {
       + "',name:'"+DSDatalake_Structured["name"]
       + "',type:'"+DSDatalake_Structured["type"]
       + "',location:'"+DSDatalake_Structured["location"]
+      + "',uuid:'"+DSDatalake_Structured["uuid"]
       + "'})\n" +
       "call apoc.create.relationship(ads,'withDataset',{},dl) yield rel RETURN rel"
 
