@@ -3463,6 +3463,7 @@ function getGrapheViz4Init() {
             (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
             AND
             (dl2:DLStructuredDataset OR dl2:DLSemistructuredDataset OR dl2:DLUnstructuredDataset)
+            and rDS.name='`+ relationDS + `'
             RETURN DISTINCT dl,dl2,rDS,a,r1,r2,r3`
   console.log("query4")
   console.log(query4)
