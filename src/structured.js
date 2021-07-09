@@ -54,6 +54,7 @@ function getUUID(){
 //chose a db option, go to the db option page
 function dbConfirm() {
     document.getElementById("databaseChose").style.display = "none";
+    document.getElementById("tagsZone").style.display = "block";
     if (document.getElementById("dbOption").value === "postgresql") {
         document.getElementById("postgresqlOption").style.display = "block";
     } else {
