@@ -31,15 +31,13 @@ var nodesEntityCLass = []
 var nodesAttributes = []
 var relationship = []
 var NumberTags = []
+var t1;
+var t2;
 
 async function ingestNeo4j() {
-    var t1 = Date.now()
+    
     getMetadata()
     setTags()
-    var t2 = Date.now()
-    console.log(t1)
-    console.log(t2)
-    console.log(t2 - t1 + 'ms')
 }
 
 function addTag() {
@@ -85,6 +83,7 @@ function printTags() {
 
 
 async function tryConnection() {
+    
     let connection;
     try {
         console.log('before connection')
@@ -111,6 +110,7 @@ async function tryConnection() {
 }
 
 async function getMetadata() {
+    t1 = Date.now()
     let connection;
     try {
 
@@ -130,7 +130,7 @@ async function getMetadata() {
         //
 
         var stmts = [
-            `SELECT OWNER FROM ALL_OBJECTS WHERE ALL_OBJECTS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ORACLE_MAINTAINED = 'N' GROUP BY OWNER HAVING COUNT(*) != 0`
+            `SELECT OWNER FROM DBA_OBJECTS WHERE DBA_OBJECTS.OWNER NOT IN ('ORACLE_OCM','HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ORACLE_MAINTAINED = 'N' GROUP BY OWNER HAVING COUNT(*) != 0`
         ];
 
         for (const s of stmts) {
@@ -144,8 +144,10 @@ async function getMetadata() {
         console.log('Schema / Users')
         console.dir(result_dataSource.rows[0])
 
+        
+
         stmts = [
-            `SELECT OWNER,OBJECT_NAME FROM ALL_OBJECTS WHERE ALL_OBJECTS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ALL_OBJECTS.OBJECT_TYPE = 'TABLE' AND ORACLE_MAINTAINED = 'N'`
+            `SELECT OWNER,OBJECT_NAME FROM DBA_OBJECTS WHERE DBA_OBJECTS.OWNER NOT IN ('HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND DBA_OBJECTS.OBJECT_TYPE = 'TABLE' AND ORACLE_MAINTAINED = 'N'`
         ];
 
         for (const s of stmts) {
@@ -158,10 +160,21 @@ async function getMetadata() {
         }
         console.log('Entity Class')
         console.dir(result_EC.rows)
-
+        var result_count = [];
+        for(var i =0; i<result_EC.rows.length; i++){
+            stmts = [`SELECT COUNT(*) FROM `+ result_EC.rows[i][0]+`.`+result_EC.rows[i][1]]
+            for (const s of stmts) {
+                try {
+                    result_count.push(await connection.execute(s));
+                } catch (e) {
+                    if (e.errorNum != 942)
+                        console.error(e);
+                }
+            }
+        }
 
         stmts = [
-            `SELECT OWNER,TABLE_NAME,COLUMN_NAME,DATA_TYPE FROM ALL_TAB_COLUMNS WHERE ALL_TAB_COLUMNS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS')`
+            `SELECT * FROM DBA_TAB_COLUMNS WHERE DBA_TAB_COLUMNS.OWNER NOT IN ('OJVMSYS','DBSFWUSER','HR','OUTLN','APPQOSSYS','DBSNMP','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS')`
         ];
 
         for (const s of stmts) {
@@ -175,7 +188,7 @@ async function getMetadata() {
         console.log('Attribut')
         console.dir(result_attribut.rows)
 
-        stmts = [`SELECT OWNER,TABLE_NAME,COUNT(COLUMN_NAME) AS nb_attribute FROM ALL_TAB_COLUMNS WHERE ALL_TAB_COLUMNS.OWNER NOT IN ('SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') GROUP BY OWNER,TABLE_NAME`]
+        stmts = [`SELECT OWNER,TABLE_NAME,COUNT(COLUMN_NAME) AS nb_attribute FROM DBA_TAB_COLUMNS WHERE DBA_TAB_COLUMNS.OWNER NOT IN ('DBSFWUSER','OUTLN','OJVMSYS','APPQOSSYS','DBSNMP','HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') GROUP BY OWNER,TABLE_NAME`]
         for (const s of stmts) {
             try {
                 result_nbAttribute = await connection.execute(s);
@@ -228,10 +241,14 @@ async function getMetadata() {
 
 
 
-
     } catch (err) {
         console.error(err);
     } finally {
+        
+    t2 = Date.now()
+    console.log(t1)
+    console.log(t2)
+    console.log(t2 - t1 + 'ms')
         if (connection) {
             try {
                 await connection.close();

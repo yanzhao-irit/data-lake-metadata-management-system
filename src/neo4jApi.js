@@ -1370,6 +1370,7 @@ module.exports.createHasTagUnStructured = (DSDatalake_UnStructured, tags_UnStruc
 }
 
 module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute, tags) => {
+  var t1 = Date.now()
   var session = driver.session();
   query = `MERGE (dsource:DatasetSource {name:'` + datasetSource[0].name + `',owner:'` + datasetSource[0].owner + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid()})
             MERGE (dsDl:DLStructuredDataset {name:'` + datasetSource[0].name + `',size:'` + datasetSource[0].size + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid(), creationDate: datetime()})
@@ -1411,6 +1412,8 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
       throw error;
     })
     .finally(() => {
+      var t2 = Date.now()
+      console.log(t2-t1)
       return session.close();
     });
 }
