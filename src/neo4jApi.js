@@ -1106,7 +1106,6 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
       + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
-      + ",uuid:'"+entityClass_CSV["uuid"]
       + "'});"
   console.log(query)
   return session
@@ -1121,6 +1120,8 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
         return session.close();
       });
 }
+
+
 
 module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
   console.log("createNumericAttributs");
