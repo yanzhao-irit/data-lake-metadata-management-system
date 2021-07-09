@@ -6,6 +6,7 @@ process.env.ORA_SDTZ = 'UTC';
 const oracledb = require('oracledb');
 //const dbConfig = require('./dbconfig.js');
 
+
 $("#dialog").dialog();
 
 if (process.platform === 'win32') { // Windows
@@ -252,6 +253,7 @@ function changerInputText() {
 
 //When click "+", create new zone of input text
 function addTag() {
+    console.log('why')
     var elt = document.getElementById('Tags');
     NumberTags = NumberTags + 1;
     elt.insertAdjacentHTML("beforeend", "<div class='dropdown'><label for='zone" + NumberTags + "'>Tag " + (NumberTags + 1) + ": </label>" +
@@ -272,5 +274,6 @@ function setTags() {
         tags_Structured.push(tag);
     }
 }
+
 
 

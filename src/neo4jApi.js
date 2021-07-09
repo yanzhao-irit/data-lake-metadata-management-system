@@ -1715,16 +1715,16 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
                 CREATE (dsDl)<-[:withDataset]-(aDSR`+ i + `)-[:withDataset]->(dsDl` + i + `)`
     for (var j = 0; j < eC.length; j++) {
       if (eC[j][0] == datasetDatalake[i].name) {
-        query += `CREATE (ec` + i + j + `:EntityCLass {name:'` + eC[j][1].name + `',numberOfAttributes:'` + eC[j][1].numberOfAttributes + `'})
-                    CREATE (ec` + i + j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
+        query += `CREATE (ec` + i + `0` +j + `:EntityCLass {name:'` + eC[j][1].name + `',numberOfAttributes:'` + eC[j][1].numberOfAttributes + `'})
+                    CREATE (ec` + i + `0` +j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
         for (var k = 0; k < attribute.length; k++) {
           if (eC[j][1].name == attribute[k][0]) {
             if (attribute[k][1].type == 'NUMBER') {
-              query += `CREATE (att` + i + j + k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
-                    CREATE (att` + i + j + k + `)<-[:hasAttribute]-(ec` + i + j + `)`
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
+                    CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
             } else {
-              query += `CREATE (att` + i + j + k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})
-                    CREATE (att` + i + j + k + `)<-[:hasAttribute]-(ec` + i + j + `)`
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})
+                    CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
             }
           }
         }
@@ -1744,4 +1744,3 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
         return session.close();
       });
 }
-

@@ -20,7 +20,7 @@
 <body>
 <div class="elegant-aero">
 
-  <div id="postgresqlOption" style="display: none">
+  <div id="postgresqlOption" >
     <h3>Connection : </h3>
     </br>
     <label for="ownerPostgres">Username: </label>
@@ -49,17 +49,6 @@
         <span id="fileNameUpload"></span>
       </div>-->
 
-    <h3>Datalake Dataset : </h3>
-    </br>
-    <label for="adminPostgres">Administrator : </label><input type="text" id="adminPostgres" required></br>
-    <label for="descriptionPostgres">Description : </label><input type="text" id="descriptionPostgres" required></br>
-    </br>
-    <div style="text-align: center" class="footer">
-      <button id="submitPostgres" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" disabled>Send</button>
-      </br>
-      <a href="index.html">Back To application</a>
-    </div>
-
     <h3>Tags : </h3>
     <div style="margin-left: 33%">
       <button id="add">+</button>
@@ -72,45 +61,20 @@
       </div>
     </div>
 
-  </div>
-
-
-  <div id="oracleOption" style="display: none">
-    <h3>Oracle connection : </h3>
-    <br/>
-    <label for="user">Connection User : </label>
-    <input type="text" id="user" required>
-    <br/>
-    <label for="pwd">Connection Password : </label>
-    <input type="password" id="pwd" required>
-    <br/>
-    <label for="host">Connection Host : </label>
-    <input type="text" id="host" required>
-    <br/>
-    <label for="port">Connection Port : </label>
-    <input type="text" id="port" required>
-    <br/>
-    <label for="sid">Connection SID : </label>
-    <input type="text" id="sid" required>
-    <br/>
-    <button id="try" class="btn btn-primary btn-lg" >Try connection</button>
-    <h3>Dataset : </h3>
+    <h3>Datalake Dataset : </h3>
     </br>
-    <label for="owner">Owner of database : </label>
-    <input type="text" id="owner" required>
-    </br>
-    <label for="DBName">Name of Database : </label>
-    <input type="text" id="DBName" required>
-    </br>
-    </br>
-
+    <label for="adminPostgres">Administrator : </label><input type="text" id="adminPostgres" required></br>
+    <label for="descriptionPostgres">Description : </label><input type="text" id="descriptionPostgres" required></br>
     </br>
     <div style="text-align: center" class="footer">
-      <button id="submitInfo" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
+      <button id="submitPostgres" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" disabled>Send</button>
       </br>
       <a href="index.html">Back To application</a>
     </div>
+
+
   </div>
+
 
 
 
