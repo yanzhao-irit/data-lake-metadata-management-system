@@ -1106,6 +1106,7 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
       + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
+      + ",uuid:'"+entityClass_CSV["uuid"]
       + "'});"
   console.log(query)
   return session
@@ -1690,6 +1691,56 @@ module.exports.getUUID = () => {
         throw error;
       })
       .finally(() => {
+        return session.close();
+      });
+}
+
+//-----------------------------------uploadOracle-----------------------------
+module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute, tags) => {
+  var t1 = Date.now()
+  var session = driver.session();
+  query = `MERGE (dsource:DatasetSource {name:'` + datasetSource[0].name + `',owner:'` + datasetSource[0].owner + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid()})
+            MERGE (dsDl:DLStructuredDataset {name:'` + datasetSource[0].name + `',size:'` + datasetSource[0].size + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid(), creationDate: datetime()})
+            CREATE (ingest:Ingest {ingestionMode:'Batch', ingestionStartTime : datetime()})
+            CREATE (dsource)<-[:ingestFrom]-(ingest)-[:ingestTo]->(dsDl)
+            MERGE (rds:RelationshipDS {name:'Contains', description:'The database is part of a bigger database'})`
+  for (var t = 0; t < tags.length; t++) {
+    query += `MERGE (t` + t + `:Tag {name:'` + tags[t].name + `'})
+                          MERGE (t`+ t + `)<-[:hasTag]-(dsDl)`
+  }
+  for (var i = 0; i < datasetDatalake.length; i++) {
+    query += `MERGE (dsDl` + i + `:DLStructuredDataset {name: '` + datasetDatalake[i].name + `', uuid: apoc.create.uuid()})
+                CREATE (aDSR`+ i + `:AnalysisDSRelationship {name:'contains'})
+                CREATE (aDSR`+ i + `)-[:hasRelationshipDataset]->(rds)
+                CREATE (dsDl)<-[:withDataset]-(aDSR`+ i + `)-[:withDataset]->(dsDl` + i + `)`
+    for (var j = 0; j < eC.length; j++) {
+      if (eC[j][0] == datasetDatalake[i].name) {
+        query += `CREATE (ec` + i + j + `:EntityCLass {name:'` + eC[j][1].name + `',numberOfAttributes:'` + eC[j][1].numberOfAttributes + `'})
+                    CREATE (ec` + i + j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
+        for (var k = 0; k < attribute.length; k++) {
+          if (eC[j][1].name == attribute[k][0]) {
+            if (attribute[k][1].type == 'NUMBER') {
+              query += `CREATE (att` + i + j + k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
+                    CREATE (att` + i + j + k + `)<-[:hasAttribute]-(ec` + i + j + `)`
+            } else {
+              query += `CREATE (att` + i + j + k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})
+                    CREATE (att` + i + j + k + `)<-[:hasAttribute]-(ec` + i + j + `)`
+            }
+          }
+        }
+      }
+    }
+  }
+  console.log(query)
+  return session
+      .run(query)
+      .then()
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        var t2 = Date.now()
+        console.log(t2-t1)
         return session.close();
       });
 }

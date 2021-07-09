@@ -8,9 +8,6 @@ process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
 //const dbConfig = require('./dbconfig.js');
-const api = require("../neo4jApi");
-const _ = require('lodash')
-
 
 $("#dialog").dialog();
 
