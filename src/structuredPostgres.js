@@ -4,20 +4,6 @@ const pgInfo = require('@wmfs/pg-info');
 const api = require("../neo4jApi");
 const _ = require('lodash');
 
-process.env.ORA_SDTZ = 'UTC';
-
-const oracledb = require('oracledb');
-//const dbConfig = require('./dbconfig.js');
-
-$("#dialog").dialog();
-
-if (process.platform === 'win32') { // Windows
-    oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_19_11' });
-} else if (process.platform === 'darwin') { // macOS
-    console.log('ios')
-    oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
-}
-
 //some variable used in all function
 var today = new Date();
 var NumberTags = 0;
@@ -39,17 +25,7 @@ var start = "";
 
 var uuids =[];
 
-var nodesDatasetSource = []
-// var nodesIngest = []
-var nodesDataSetDataLake = []
-var nodesEntityCLass = []
-var nodesAttributes = []
-// var relationship = []
-var t1;
-var t2;
-
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('chosedb').addEventListener("click", dbConfirm);
     document.getElementById('add').addEventListener("click", addTag);
     document.getElementById("zone0").addEventListener("input", printTags);
     document.getElementById('connectionPostgresql').addEventListener('click', getSchemasPostgre);
@@ -62,13 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("serveurPostgres").addEventListener('input', disabledSend);
     document.getElementById("dbnamePostgres").addEventListener('input', disabledSend);
     document.getElementById("portPostgres").addEventListener('input', disabledSend);
-
-    // document.getElementById('user').addEventListener("keyup", getUser);
-    // document.getElementById("pwd").addEventListener("input", getPwd);
-    // document.getElementById('host').addEventListener('change', getHost);
-    document.getElementById('try').addEventListener('click',tryConnection);
-    document.getElementById('add').addEventListener("click", addTag);
-    document.getElementById('submitInfo').addEventListener('click', ingestNeo4j);
 });
 
 window.onload= getUUID();
@@ -79,199 +48,6 @@ function getUUID(){
             uuids.push(result[i]._fields[0].toString());
         }
     })
-}
-
-async function ingestNeo4j() {
-    getMetadata()
-    setTags_postgres()
-}
-
-async function tryConnection() {
-
-    let connection;
-    try {
-        console.log('before connection')
-        pool = await oracledb.createPool({
-            user: process.env.NODE_ORACLEDB_USER || document.getElementById('user').value,
-            password: process.env.NODE_ORACLEDB_PASSWORD || document.getElementById("pwd").value,
-            connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING || "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + document.getElementById("host").value + ")(PORT=" + document.getElementById("port").value + "))(CONNECT_DATA=(SERVER=DEDICATED)(SID=" + document.getElementById("sid").value + ")))",
-            externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
-        });
-        connection = await pool.getConnection()
-        console.log('after connection')
-        console.log(connection)
-    }catch (err) {
-        console.error(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
-}
-
-async function getMetadata() {
-    t1 = Date.now()
-    let connection;
-    try {
-
-        let sql, binds, options, result;
-        console.log('before connection')
-        pool = await oracledb.createPool({
-            user: process.env.NODE_ORACLEDB_USER || document.getElementById('user').value,
-            password: process.env.NODE_ORACLEDB_PASSWORD || document.getElementById("pwd").value,
-            connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING || "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + document.getElementById("host").value + ")(PORT=" + document.getElementById("port").value + "))(CONNECT_DATA=(SERVER=DEDICATED)(SID=" + document.getElementById("sid").value + ")))",
-            externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
-        });
-        connection = await pool.getConnection()
-        console.log('after connection')
-        console.log(connection)
-        //
-        // Create a table
-        //
-
-        var stmts = [
-            `SELECT OWNER FROM DBA_OBJECTS WHERE DBA_OBJECTS.OWNER NOT IN ('ORACLE_OCM','HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND ORACLE_MAINTAINED = 'N' GROUP BY OWNER HAVING COUNT(*) != 0`
-        ];
-
-        for (const s of stmts) {
-            try {
-                result_dataSource = await connection.execute(s);
-            } catch (e) {
-                if (e.errorNum != 942)
-                    console.error(e);
-            }
-        }
-        console.log('Schema / Users')
-        console.dir(result_dataSource.rows[0])
-
-
-
-        stmts = [
-            `SELECT OWNER,OBJECT_NAME FROM DBA_OBJECTS WHERE DBA_OBJECTS.OWNER NOT IN ('HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') AND DBA_OBJECTS.OBJECT_TYPE = 'TABLE' AND ORACLE_MAINTAINED = 'N'`
-        ];
-
-        for (const s of stmts) {
-            try {
-                result_EC = await connection.execute(s);
-            } catch (e) {
-                if (e.errorNum != 942)
-                    console.error(e);
-            }
-        }
-        console.log('Entity Class')
-        console.dir(result_EC.rows)
-        var result_count = [];
-        for(var i =0; i<result_EC.rows.length; i++){
-            stmts = [`SELECT COUNT(*) FROM `+ result_EC.rows[i][0]+`.`+result_EC.rows[i][1]]
-            for (const s of stmts) {
-                try {
-                    result_count.push(await connection.execute(s));
-                } catch (e) {
-                    if (e.errorNum != 942)
-                        console.error(e);
-                }
-            }
-        }
-
-        stmts = [
-            `SELECT * FROM DBA_TAB_COLUMNS WHERE DBA_TAB_COLUMNS.OWNER NOT IN ('OJVMSYS','DBSFWUSER','HR','OUTLN','APPQOSSYS','DBSNMP','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS')`
-        ];
-
-        for (const s of stmts) {
-            try {
-                result_attribut = await connection.execute(s);
-            } catch (e) {
-                if (e.errorNum != 942)
-                    console.error(e);
-            }
-        }
-        console.log('Attribut')
-        console.dir(result_attribut.rows)
-
-        stmts = [`SELECT OWNER,TABLE_NAME,COUNT(COLUMN_NAME) AS nb_attribute FROM DBA_TAB_COLUMNS WHERE DBA_TAB_COLUMNS.OWNER NOT IN ('DBSFWUSER','OUTLN','OJVMSYS','APPQOSSYS','DBSNMP','HR','SYS','PUBLIC','SYSTEM','CTXSYS','DVSYS','DVF','GSMADMIN_INTERNAL','ORDPLUGINS','ORDDATA','MDSYS','OLAPSYS','LBACSYS','XDB','WMSYS','ORDSYS','AUDSYS') GROUP BY OWNER,TABLE_NAME`]
-        for (const s of stmts) {
-            try {
-                result_nbAttribute = await connection.execute(s);
-            } catch (e) {
-                if (e.errorNum != 942)
-                    console.error(e);
-            }
-        }
-        console.log('Attribut')
-        console.dir(result_nbAttribute.rows)
-
-        stmts = [
-            `select round((sum(bytes)/1024/1024/1024),2) from v$datafile`
-        ];
-
-        for (const s of stmts) {
-            try {
-                result_size = await connection.execute(s);
-            } catch (e) {
-                if (e.errorNum != 942)
-                    console.error(e);
-            }
-        }
-        console.log('Taille de la base en Gb')
-        console.dir(result_size.rows)
-
-
-        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
-        for (var i = 0; i < result_dataSource.rows.length; i++) {
-            nodesDataSetDataLake.push({ 'name': result_dataSource.rows[i][0] })
-        }
-        for (var i = 0; i < result_nbAttribute.rows.length; i++) {
-            nodesEntityCLass.push([result_nbAttribute.rows[i][0], { 'name': result_nbAttribute.rows[i][1], 'numberOfAttributes': result_nbAttribute.rows[i][2] }])
-
-        }
-        for (var i = 0; i < result_attribut.rows.length; i++) {
-            nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
-        }
-
-        console.log(nodesDatasetSource)
-        console.log(nodesDataSetDataLake)
-        console.log(nodesEntityCLass)
-        console.log(nodesAttributes)
-        console.log(tags_Structured)
-
-
-
-        api.
-        ingestFromOracle(nodesDatasetSource, nodesDataSetDataLake, nodesEntityCLass, nodesAttributes, tags_Structured)
-
-
-
-    } catch (err) {
-        console.error(err);
-    } finally {
-
-        t2 = Date.now()
-        console.log(t1)
-        console.log(t2)
-        console.log(t2 - t1 + 'ms')
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
-}
-
-//chose a db option, go to the db option page
-function dbConfirm() {
-    document.getElementById("databaseChose").style.display = "none";
-    document.getElementById("tagsZone").style.display = "block";
-    if (document.getElementById("dbOption").value === "postgresql") {
-        document.getElementById("postgresqlOption").style.display = "block";
-    } else {
-        document.getElementById("oracleOption").style.display = "block";
-    }
 }
 
 //show tags in dropdown menu

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <link rel='stylesheet' href='../contents/neo4jcss/main.css'>
+  <link rel="stylesheet" href="../contents/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+  <script src="../contents/jquery/jquery.min.1.12.4.js"></script>
+  <script src="../contents/jquery/jquery.min.js"></script>
+  <script src="../contents/bootstrap/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+  <link href="../contents/bootstrap/bootstrap-3.4.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href='../css/upload.css' />
+
+  <title>Data Lake App - Un Structured Dataset</title>
+</head>
+<body>
+<div class="elegant-aero">
+  <div id="databaseChose">
+    <h3>Database : </h3>
+    <label for="dbOption">Please chose a BD : </label><select id="dbOption" required>
+    <option value="oracle">oracle</option>
+    <option value="postgresql">postgresql</option>
+  </select>
+    </br>
+    <div style="text-align: center" class="footer">
+      <button id="chosedb" class="btn btn-primary btn-lg">Chose</button>
+      </br>
+      <a href="index.html">Back To application</a>
+      </br>
+    </div>
+  </div>
+
+
+</div>
+
+
+<script src="../contents/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="../contents/d3/d3.v3.min.js" type="text/javascript"></script>
+<script src="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="../../node_modules/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="../dbChoix.js"></script>
+</body>
+</html>

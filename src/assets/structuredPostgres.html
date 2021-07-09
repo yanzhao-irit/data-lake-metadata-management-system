@@ -19,34 +19,6 @@
 </head>
 <body>
 <div class="elegant-aero">
-  <div id="databaseChose">
-    <h3>Database : </h3>
-    <label for="dbOption">Please chose a BD : </label><select id="dbOption" required>
-    <option value="oracle">oracle</option>
-    <option value="postgresql">postgresql</option>
-  </select>
-    </br>
-    <div style="text-align: center" class="footer">
-      <button id="chosedb" class="btn btn-primary btn-lg">Chose</button>
-      </br>
-      <a href="index.html">Back To application</a>
-      </br>
-    </div>
-  </div>
-
-  <div id="tagsZone" style="display: none">
-    <h3>Tags : </h3>
-    <div style="margin-left: 33%">
-      <button id="add">+</button>
-    </div>
-    </br>
-    <div id="Tags">
-      <div class='dropdown dropdown-toggle'>
-        <label for="zone0">Tag 1:</label><input name="tagsUsers" type="text" id="zone0" data-toggle="dropdown" required>
-        <ul class='dropdown-menu' id="zoneaff0" style="margin-left:33%;height:100px;width:270px;overflow:scroll;"></ul>
-      </div>
-    </div>
-  </div>
 
   <div id="postgresqlOption" style="display: none">
     <h3>Connection : </h3>
@@ -77,7 +49,6 @@
         <span id="fileNameUpload"></span>
       </div>-->
 
-
     <h3>Datalake Dataset : </h3>
     </br>
     <label for="adminPostgres">Administrator : </label><input type="text" id="adminPostgres" required></br>
@@ -89,6 +60,17 @@
       <a href="index.html">Back To application</a>
     </div>
 
+    <h3>Tags : </h3>
+    <div style="margin-left: 33%">
+      <button id="add">+</button>
+    </div>
+    </br>
+    <div id="Tags">
+      <div class='dropdown dropdown-toggle'>
+        <label for="zone0">Tag 1:</label><input name="tagsUsers" type="text" id="zone0" data-toggle="dropdown" required>
+        <ul class='dropdown-menu' id="zoneaff0" style="margin-left:33%;height:100px;width:270px;overflow:scroll;"></ul>
+      </div>
+    </div>
 
   </div>
 
@@ -177,6 +159,6 @@
 <script src="../contents/d3/d3.v3.min.js" type="text/javascript"></script>
 <script src="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript" src="../../node_modules/vis-network/standalone/umd/vis-network.min.js"></script>
-<script src="../structured.js"></script>
+<script src="../structuredPostgres.js"></script>
 </body>
 </html>
