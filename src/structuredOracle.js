@@ -10,7 +10,7 @@ const oracledb = require('oracledb');
 $("#dialog").dialog();
 
 if (process.platform === 'win32') { // Windows
-    oracledb.initOracleClient({ libDir: 'C:\\Program Files\\Oracle\\instantclient_19_11' });
+    oracledb.initOracleClient({ libDir: 'C:\\instantclient_19_11' });
 } else if (process.platform === 'darwin') { // macOS
     console.log('ios')
     oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
