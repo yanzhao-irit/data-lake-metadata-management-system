@@ -618,7 +618,10 @@ module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
       }
     }
   }
-  query += ' AND a.name = "' + datasetName + '" AND a.uuid = "' + datasetId + '" RETURN DISTINCT e';
+  query += 'a.name = "' + datasetName + '" AND a.uuid = "' + datasetId + '" RETURN DISTINCT e';
+
+  console.log(query);
+
   return session
     .run(
       query)
