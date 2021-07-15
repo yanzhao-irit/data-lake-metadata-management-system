@@ -19,21 +19,24 @@
 </head>
 
 <body>
-    <div>
-        <a href="semiStructured.html">semiStructured Ingest</a>
-        <a href="unStructured.html">unStructured Ingest</a>
-    </div>
     <div role="navigation" class="navbar navbar-default navbar-static-top">
-        <div class="container">
+<!--        <div class="container">-->
             <div class="row">
+                <div class="col-md-1" style="text-align: left">
+                    <button id='ingestChoses' type="button" data-toggle="modal"
+                            data-target="#ingestModal">Ingest</button>
+                </div>
+                <div class="col-md-11">
                 <ul class="nav navbar-nav">
                     <li>
                         <div class="form-group">
                             Enter your tags here : <select multiple data-role="tagsinput" id="tagsinput"></select>
                             <button id='switchSearchMod'>Advanced Cypher Request</button>
+
                         </div>
                     </li>
                 </ul>
+                </div>
             </div>
             <div class="filter" id="filter">
                 <h3>Filter</h3>
@@ -220,7 +223,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+<!--        </div>-->
     </div>
     <div class="row" id='mainSearch'>
         <div class="collapse in">
@@ -229,10 +232,10 @@
                     <div class="panel-heading" style="position:relative">Dataset Results
                         <div style="position: absolute;top:8%;right:2%">
                             <button type="button" class="btn btn-primary pull-right" id="sortDataset">Importance</button>
-                            <button type="button" class="btn btn-primary pull-right" data-toggle="modal"
+                            <!--<button type="button" class="btn btn-primary pull-right" data-toggle="modal"
                                     data-target="#EntityClassModal" id="EntityClassButtonDataset" style="display: none">
                                 Entity Class
-                            </button>
+                            </button>-->
                         </div>
                     </div>
                     <table id="results" class="table table-striped table-hover">
@@ -396,6 +399,27 @@
 
 
     <!-- Modal -->
+    <div class="modal fade" id="ingestModal" tabindex="-1" role="dialog" aria-labelledby="ingestModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="text-align: center">
+                    <h3 class="modal-title">Please Chose A Ingest Type</h3>
+                </div>
+                <div class="modal-body">
+                    </br>
+                    <table id="ingestTable" style="margin: auto;">
+                        <tr><td style="width:75%">Structured Dataset </td><td><a href="dbChoix.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Semi-Structured Dataset </td><td><a href="semiStructured.html"> Click To Go</a></td></tr>
+                        <tr><td style="width:75%">Unstructured Dataset </td><td><a href="unStructured.html"> Click To Go</a></td></tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="AttributeModal" tabindex="-1" role="dialog" aria-labelledby="AttributeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">

@@ -618,7 +618,10 @@ module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
       }
     }
   }
-  query += ' AND a.name = "' + datasetName + '" AND a.uuid = "' + datasetId + '" RETURN DISTINCT e';
+  query += 'a.name = "' + datasetName + '" AND a.uuid = "' + datasetId + '" RETURN DISTINCT e';
+
+  console.log(query);
+
   return session
     .run(
       query)
@@ -639,8 +642,10 @@ module.exports.getEntityClassByDataset = (datasetName, datasetId, typeDS) => {
 module.exports.getRelationshipDSbyDataset = (dsName, dsId, type, relationName = '') => {
   var session = driver.session();
   //Cypher request to get relationships and datasets that have relation with the target
-  query = `MATCH (dl:DLSemistructuredDataset)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
+  query = `MATCH (dl)<-[]-()-[]->(rDS:RelationshipDS),(autreDS),(adrR:AnalysisDSRelationship)
     WHERE dl.name CONTAINS '` + dsName + `' and dl.uuid = '` + dsId + `'
+    AND
+    (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
     AND
     (autreDS:DLStructuredDataset OR autreDS:DLSemistructuredDataset OR autreDS:DLUnstructuredDataset)
     AND
@@ -1104,7 +1109,8 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + ",numberOfNumericAttributes:"+entityClass_CSV["numberOfNumericAttributes"]
       + ",numberOfInstancesWithMissingValues:"+entityClass_CSV["numberOfInstancesWithMissingValues"]
       + ",numberOfMissingValues:"+entityClass_CSV["numberOfMissingValues"]
-      + "});"
+      + ",uuid:'"+entityClass_CSV["uuid"]
+      + "'});"
   console.log(query)
   return session
       .run(query)
@@ -1118,6 +1124,8 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
         return session.close();
       });
 }
+
+
 
 module.exports.createNumericAttributs = (attributesNumeric_CSV)=>{
   console.log("createNumericAttributs");
@@ -1290,7 +1298,7 @@ module.exports.createHasAttributeNominal = (entityClass_CSV,attributesNominal_CS
 }
 
 
-//-----------------------------UPLOADCSV-----------------------------------------
+//-----------------------------UPLOADUnStructured-----------------------------------------
 module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,Ingest_UnStructured,DSDatalake_UnStructured) =>{
   console.log("createDSIngestDSDLEC_UnStructured")
   var session = driver.session();
@@ -1369,3 +1377,373 @@ module.exports.createHasTagUnStructured = (DSDatalake_UnStructured,tags_UnStruct
       });
 }
 
+//-----------------------------UPLOADStructured-----------------------------------------
+module.exports.createDSIngestDSDLECStructured = (DatasetSource_Structured,Ingest_Structured,DSDatalake_Structured) =>{
+/*  console.log("createDSIngestDSDLEC_Structured")
+  console.log(DSDatalake_Structured)*/
+  var session = driver.session();
+  //cypher for insert  noeud datasetsource
+  var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_Structured["name"]
+      + "',type:'"+DatasetSource_Structured["type"]
+      + "',location:'"+DatasetSource_Structured["location"]
+      + "',owner:'"+DatasetSource_Structured["owner"]
+      + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_Structured["ingestionMode"]
+      + "',ingestionStartTime:'"+Ingest_Structured["ingestionStartTime"]
+      + "',ingestionEndTime:'"+Ingest_Structured["ingestionEndTime"]
+      + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
+      + "-[:ingestTo]->(c:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "',uuid:'"+DSDatalake_Structured["uuid"]
+      + "'});"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createAnalysisDSRelationships = (analysisDSRelationships) =>{
+  console.log("createAnalysisDSRelationships");
+  var session = driver.session();
+  var $analysisDSRelationships = (analysisDSRelationships)
+
+  var query = "CALL apoc.create.nodes(['AnalysisDSRelationship'], "+$analysisDSRelationships+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createRelationshipDS = (RelationshipDS) =>{
+  console.log("createRelationshipDS");
+  var session = driver.session();
+  var $RelationshipDS = (RelationshipDS)
+
+  // var query = "CALL apoc.create.nodes(['RelationshipDS'], "+$RelationshipDS+");"
+  var query = "UNWIND ("+ $RelationshipDS +") as row "+
+      "MERGE (n:RelationshipDS {name:row.name})"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createDLDSSchemas = (dlStructuredDatasets) =>{
+  console.log("createDLDSSchemas");
+  var session = driver.session();
+  var $dlStructuredDatasets = (dlStructuredDatasets)
+
+  var query = "CALL apoc.create.nodes(['DLStructuredDataset'], "+$dlStructuredDatasets+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createEntityClasses = (entityClasses) =>{
+  console.log("createEntityClasses");
+  var session = driver.session();
+  var $entityClasses = (entityClasses)
+
+  var query = "CALL apoc.create.nodes(['EntityClass'], "+$entityClasses+");"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasTagStructured = (DSDatalake_Structured,tags_Structured) => {
+  console.log("createHasTagStructured");
+  var session = driver.session();
+  var $propertiestTags = (tags_Structured)
+
+  var query = "UNWIND ("+ $propertiestTags +") as row\n" +
+      "MATCH (dl:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "'})\n" +
+      "MATCH (t:Tag {name:row.name})\n" +
+      "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasRelationshipDS = (hasRelationshipDS) => {
+  console.log("createHasRelationshipDS");
+  var session = driver.session();
+  var $hasRelationshipDS = (hasRelationshipDS)
+
+  var query = "UNWIND ("+ $hasRelationshipDS +") as row\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
+      "MATCH (ds:RelationshipDS {name:'Contains'})\n" +
+      "call apoc.create.relationship(ads,'hasRelationshipDataset',{},ds) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createWithDataset = (withdataset) => {
+  console.log("createWithDataset");
+  var session = driver.session();
+  var $withdataset = (withdataset)
+
+  var query = "UNWIND ("+ $withdataset +") as row\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
+      "MATCH (dl:DLStructuredDataset {uuid:row.dlStructuredDataset})\n" +
+      "call apoc.create.relationship(ads,'withDataset',{},dl) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createWithDatasetDB = (withdataset,DSDatalake_Structured) => {
+  console.log("createWithDatasetDB");
+  var session = driver.session();
+  var $withdataset = (withdataset)
+
+  var query = "UNWIND ("+ $withdataset +") as row\n" +
+      "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
+      "MATCH (dl:DLStructuredDataset {description:'"+DSDatalake_Structured["description"]
+      + "',administrator:'"+DSDatalake_Structured["administrator"]
+      + "',creationDate:toString(datetime('"+DSDatalake_Structured["creationDate"]
+      + "')),size:'"+DSDatalake_Structured["size"]
+      + "',name:'"+DSDatalake_Structured["name"]
+      + "',type:'"+DSDatalake_Structured["type"]
+      + "',location:'"+DSDatalake_Structured["location"]
+      + "',uuid:'"+DSDatalake_Structured["uuid"]
+      + "'})\n" +
+      "call apoc.create.relationship(ads,'withDataset',{},dl) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasEntityClassStructured = (hasEntityClass) => {
+  console.log("createHasEntityClassStructured");
+  var session = driver.session();
+  var $hasEntityClass = (hasEntityClass)
+
+  var query = "UNWIND ("+ $hasEntityClass +") as row\n" +
+      "MATCH (dl:DLStructuredDataset {uuid:row.dlStructuredDataset})\n" +
+      "MATCH (ec:EntityClass {uuid:row.entityClass})\n" +
+      "call apoc.create.relationship(dl,'hasEntityClass',{},ec) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.createHasAttributeStructured = (hasAttribute) => {
+  console.log("createHasAttributeStructured");
+  var session = driver.session();
+  var $hasAttribute = (hasAttribute)
+
+  var query = "UNWIND ("+ $hasAttribute +") as row\n" +
+      "MATCH (ec:EntityClass {uuid:row.entityClass})\n" +
+      "MATCH (a) where a.uuid = row.attributes\n" +
+      "call apoc.create.relationship(ec,'hasAttribute',{},a) yield rel RETURN rel"
+
+  console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        var end = new Date();
+        return end;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+module.exports.getUUID = () => {
+  console.log("uuid");
+  var session = driver.session();
+
+  var query = "match (n) where exists(n.uuid) return n.uuid\n"
+
+  // console.log(query)
+
+  return session
+      .run(query)
+      .then(result => {
+        return result.records;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
+
+//-----------------------------------uploadOracle-----------------------------
+module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute, tags) => {
+  var t1 = Date.now()
+  var session = driver.session();
+  query = `MERGE (dsource:DatasetSource {name:'` + datasetSource[0].name + `',owner:'` + datasetSource[0].owner + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid()})
+            MERGE (dsDl:DLStructuredDataset {name:'` + datasetSource[0].name + `',size:'` + datasetSource[0].size + `' ,type:'` + datasetSource[0].type + `' , uuid: apoc.create.uuid(), creationDate: datetime()})
+            CREATE (ingest:Ingest {ingestionMode:'Batch', ingestionStartTime : datetime()})
+            CREATE (dsource)<-[:ingestFrom]-(ingest)-[:ingestTo]->(dsDl)
+            MERGE (rds:RelationshipDS {name:'Contains', description:'The database is part of a bigger database'})`
+  for (var t = 0; t < tags.length; t++) {
+    query += `MERGE (t` + t + `:Tag {name:'` + tags[t].name + `'})
+                          MERGE (t`+ t + `)<-[:hasTag]-(dsDl)`
+  }
+  for (var i = 0; i < datasetDatalake.length; i++) {
+    query += `MERGE (dsDl` + i + `:DLStructuredDataset {name: '` + datasetDatalake[i].name + `', uuid: apoc.create.uuid()})
+                CREATE (aDSR`+ i + `:AnalysisDSRelationship {name:'contains'})
+                CREATE (aDSR`+ i + `)-[:hasRelationshipDataset]->(rds)
+                CREATE (dsDl)<-[:withDataset]-(aDSR`+ i + `)-[:withDataset]->(dsDl` + i + `)`
+    for (var j = 0; j < eC.length; j++) {
+      if (eC[j][0] == datasetDatalake[i].name) {
+        query += `CREATE (ec` + i + `0` +j + `:EntityCLass {name:'` + eC[j][1].name + `',numberOfAttributes:'` + eC[j][1].numberOfAttributes + `'})
+                    CREATE (ec` + i + `0` +j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
+        for (var k = 0; k < attribute.length; k++) {
+          if (eC[j][1].name == attribute[k][0]) {
+            if (attribute[k][1].type == 'NUMBER') {
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
+                    CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
+            } else {
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})
+                    CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
+            }
+          }
+        }
+      }
+    }
+  }
+  console.log(query)
+  return session
+      .run(query)
+      .then()
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        var t2 = Date.now()
+        console.log(t2-t1)
+        return session.close();
+      });
+}

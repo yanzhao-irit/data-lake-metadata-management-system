@@ -270,8 +270,7 @@ body {
   line-height: 1.428571429;
   color: #333333;
   background-color: #ffffff;
-  background: url("../image/neo4j-background.png") repeat;
-    font-family: 'Open Sans',Arial !important;
+  /*background: url("../image/neo4j-background.png") repeat;*/
 }
 input,
 button,
