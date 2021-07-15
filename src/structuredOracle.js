@@ -1,6 +1,6 @@
 const api = require("../neo4jApi");
 const _ = require('lodash');
-
+/*
 process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
@@ -14,17 +14,9 @@ if (process.platform === 'win32') { // Windows
 } else if (process.platform === 'darwin') { // macOS
     console.log('ios')
     oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
-}
+}*/
 
-//some variable used in all function
-var NumberTags = 0;
-var tags_Structured = [];
-var nodesDatasetSource = []
-var nodesDataSetDataLake = []
-var nodesEntityCLass = []
-var nodesAttributes = []
-var t1;
-var t2;
+
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('add').addEventListener("click", addTag);
@@ -38,6 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('submitInfo').addEventListener('click', ingestNeo4j);
 });
 
+//some variable used in all function
+var NumberTags = 0;
+var tags_Structured = [];
+var nodesDatasetSource = []
+var nodesDataSetDataLake = []
+var nodesEntityCLass = []
+var nodesAttributes = []
+var t1;
+var t2;
 
 async function ingestNeo4j() {
     getMetadata()
