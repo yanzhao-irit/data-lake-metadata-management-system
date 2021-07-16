@@ -1,6 +1,5 @@
 const api = require("../neo4jApi");
 const _ = require('lodash');
-/*
 process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
@@ -14,7 +13,7 @@ if (process.platform === 'win32') { // Windows
 } else if (process.platform === 'darwin') { // macOS
     console.log('ios')
     oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
-}*/
+}
 
 
 
