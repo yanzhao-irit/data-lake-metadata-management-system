@@ -62,7 +62,33 @@ In the application, users can search different elements with tags and filters.
     yarn add electron-builder --dev
     ```
 
-5. Create a file named *store-password.json* at the root repository of the application and write your neo4j password in it.
+6. Install windows-build-tools, start a cmd with administrator rights at your system with 
+```
+npm install --global --production windows-build-tools
+```
+7. Install node-gyp, start a cmd with administrator rights at your system with 
+```
+npm install --global node-gyp
+```
+8. Find python.exe, then start a cmd with administrator rights at your system and set up the python environment with
+
+```
+npm config set python "path of your python.exe"(For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
+```
+
+9. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)(The installation requires a restart of the computer)
+
+10. Restart electron builder cmd at the downloaded application repository with 
+```
+electron-rebuild
+```
+
+11. Start a windows cmd at the downloaded application repository and download all necessary dependencies with 
+```
+npm install
+```
+
+12. Create a file named *store-password.json* at the root repository of the application and write your neo4j password in it.
 
 ```json
 {
@@ -70,7 +96,7 @@ In the application, users can search different elements with tags and filters.
 }
 ```
 
-6. Start the application.
+13. Start the application at the downloaded application repository.
 
 ```
 npm start
