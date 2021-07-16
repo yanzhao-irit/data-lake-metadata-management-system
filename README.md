@@ -24,7 +24,7 @@ To prevent a data lake from becoming a data swamp which is invisible, incomprehe
 
 > [Metadata Management for Data Lakes. ADBIS 2019: 37-44 Franck Ravat, Yan Zhao
 ](https://link.springer.com/chapter/10.1007/978-3-030-30278-8_5)
-> [Metadata Management on Data Processing in Data Lakes. SOFSEM 2021: 553-562 	Imen Megdiche, Franck Ravat, Yan Zhao](https://link.springer.com/chapter/10.1007/978-3-030-67731-2_40)
+> [Metadata Management on Data Processing in Data Lakes. SOFSEM 2021: 553-562   Imen Megdiche, Franck Ravat, Yan Zhao](https://link.springer.com/chapter/10.1007/978-3-030-67731-2_40)
 
 
 ## Metadata management application
@@ -43,10 +43,11 @@ In the application, users can search different elements with tags and filters.
 
 3. Make sure that you have installed [Postgresql](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) and [Oracle base](https://www.oracle.com/fr/database/technologies/oracle-database-software-downloads.html).
 
+4. Install [oracle instant client](https://www.oracle.com/fr/database/technologies/instant-client/winx64-64-downloads.html), unzip the file and place it on the C drive(For example: C:\instantclient_19_11).
+
 4. Download or clone the application.
 
-5. Start a windows cmd at the downloaded application repository 
-- **Install yarn**:
+5. Start a windows cmd at the downloaded application repository and install yarn with:
 
     ```
     npm install --global yarn
@@ -57,54 +58,52 @@ In the application, users can search different elements with tags and filters.
     npm config rm proxy
     npm config rm https-proxy
     ```
-    In the end, rebuild electron with 
+    In the end, build electron with 
     ```
     yarn add electron-builder --dev
     ```
 
 6. Install windows-build-tools, start a cmd with administrator rights at your system with 
-```
-npm install --global --production windows-build-tools
-```
+    ```
+    npm install --global --production windows-build-tools
+    ```
+
 7. Install node-gyp, start a cmd with administrator rights at your system with 
-```
-npm install --global node-gyp
-```
+    ```
+    npm install --global node-gyp
+    ```
+
 8. Find python.exe, then start a cmd with administrator rights at your system and set up the python environment with
 
-```
-npm config set python "path of your python.exe"(For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
-```
+    ```
+    npm config set python "path of your python.exe"(For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
+    ```
 
 9. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)(The installation requires a restart of the computer)
 
-10. Restart electron builder cmd at the downloaded application repository with 
-```
-electron-rebuild
-```
 
 11. Start a windows cmd at the downloaded application repository and download all necessary dependencies with 
-```
-npm install
-```
+    ```
+    npm install
+    ```
 
 12. Create a file named *store-password.json* at the root repository of the application and write your neo4j password in it.
 
-```json
-{
-    "password" : "Your password"
-}
-```
+    ```json
+    {
+        "password" : "Your password"
+    }
+    ```
 
 13. Start the application at the downloaded application repository.
 
-```
-npm start
-```
+    ```
+    npm start
+    ```
 
-or
+    or
 
-```
-npm run start
-```
+    ```
+    npm run start
+    ```
 
