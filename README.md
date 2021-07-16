@@ -39,14 +39,28 @@ In the application, users can search different elements with tags and filters.
 
 1. Make sure you have a metadata database (Neo4j) that respects the model proposed by Yan ZHAO. We provide an [example database](https://github.com/yanzhao-irit/data-lake-metadata-management-system/tree/main/example-metadata) that you can download and test the application.
 
-2. Make sure that you have installed [Node.js](https://nodejs.org/en/download/) in your computer.
+2. Make sure that you have installed [Node.js](https://nodejs.org/en/download/) in your computer. 
 
-3. Download or clone the application.
+3. Make sure that you have installed [Postgresql](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) and [Oracle base](https://www.oracle.com/fr/database/technologies/oracle-database-software-downloads.html).
 
-4. Start a windows cmd at the downloaded application repository and download all necessary dependencies with 
-```
-npm install
-```
+4. Download or clone the application.
+
+5. Start a windows cmd at the downloaded application repository 
+- **Install yarn**:
+
+    ```
+    npm install --global yarn
+    ```
+    If you have problem with yarn install(request to https://registry.npmjs.org/yarn failed, reason: getaddrinfo ENOTFOUND myproxy.example.com), you may need to set the proxy with 
+    ```
+    npm config set proxy http://example.com:8080
+    npm config rm proxy
+    npm config rm https-proxy
+    ```
+    In the end, rebuild electron with 
+    ```
+    yarn add electron-builder --dev
+    ```
 
 5. Create a file named *store-password.json* at the root repository of the application and write your neo4j password in it.
 
