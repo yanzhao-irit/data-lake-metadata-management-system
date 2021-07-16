@@ -769,6 +769,7 @@ $(function () {
     //check which element is clicked
     console.log($(this)[0].className)
     if ($(this)[0].className == "Process") {
+      activeProperties();
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
       $('#dsRelationButton')[0].style.display = 'none';
@@ -1156,11 +1157,8 @@ $(function () {
 
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
-        document.getElementById("viz5").innerText ="";
-        document.getElementById("viz4").innerText ="";
-        document.getElementById("viz3").innerText ="";
-        document.getElementById("viz2").innerText ="";
-        document.getElementById("viz").innerText ="";
+        activeProperties();
+
         $('#featureButton')[0].style.display = 'block';
         $('#dsRelationButton')[0].style.display = 'none';
         $('#attRelationButton')[0].style.display = 'block';
@@ -1379,11 +1377,8 @@ $(function () {
 
       } else { //Event part for the Dataset
         if ($(this)[0].className == "Database") {
-          document.getElementById("viz5").innerText ="";
-          document.getElementById("viz4").innerText ="";
-          document.getElementById("viz3").innerText ="";
-          document.getElementById("viz2").innerText ="";
-          document.getElementById("viz").innerText ="";
+          activeProperties();
+
           $('#featureButton')[0].style.display = 'none';
           $('#dsRelationButton')[0].style.display = 'block';
           $('#attRelationButton')[0].style.display = 'block';
@@ -1788,11 +1783,8 @@ $(function () {
 
         } else { //Event part for the analyse
           if ($(this)[0].className == "analyse") {
-            document.getElementById("viz5").innerText ="";
-            document.getElementById("viz4").innerText ="";
-            document.getElementById("viz3").innerText ="";
-            document.getElementById("viz2").innerText ="";
-            document.getElementById("viz").innerText ="";
+            activeProperties();
+
             $('#featureButton')[0].style.display = 'block';
             $('#dsRelationButton')[0].style.display = 'none';
             $('#attRelationButton')[0].style.display = 'block';
@@ -3597,4 +3589,30 @@ function clearList(divname) {
     elt2[j].style.display = "none";
     elt2[j].childNodes[1].checked = false;
   }
+}
+
+function activeProperties(){
+  document.getElementById("viz5").innerText ="";
+  document.getElementById("viz4").innerText ="";
+  document.getElementById("viz3").innerText ="";
+  document.getElementById("viz2").innerText ="";
+  document.getElementById("viz").innerText ="";
+
+  document.getElementById("lineageButton").setAttribute("class", "");
+  document.getElementById("hyperGrapheButton").setAttribute("class", "");
+  document.getElementById("operationButton").setAttribute("class", "");
+  document.getElementById("featureButton").setAttribute("class", "");
+  document.getElementById("dsRelationButton").setAttribute("class", "");
+  document.getElementById("attRelationButton").setAttribute("class", "");
+  document.getElementById("similarityButton").setAttribute("class", "");
+  document.getElementById("propertiesButton").setAttribute("class", "active");
+
+  document.getElementById("viz").setAttribute("class", "tab-pane fade");
+  document.getElementById("viz2").setAttribute("class", "tab-pane fade");
+  document.getElementById("viz3").setAttribute("class", "tab-pane fade");
+  document.getElementById("features").setAttribute("class", "tab-pane fade");
+  document.getElementById("viz4_dataset").setAttribute("class", "tab-pane fade");
+  document.getElementById("viz5_attribute").setAttribute("class", "tab-pane fade");
+  document.getElementById("similarity").setAttribute("class", "tab-pane fade");
+  document.getElementById("properties").setAttribute("class", "tab-pane fade  in active");
 }
