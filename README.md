@@ -43,10 +43,11 @@ In the application, users can search different elements with tags and filters.
 
 3. Make sure that you have installed [Postgresql](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) and [Oracle base](https://www.oracle.com/fr/database/technologies/oracle-database-software-downloads.html).
 
+4. Install [oracle instant client](https://www.oracle.com/fr/database/technologies/instant-client/winx64-64-downloads.html), unzip the file and place it on the C drive(For example: C:\instantclient_19_11).
+
 4. Download or clone the application.
 
-5. Start a windows cmd at the downloaded application repository 
-- **Install yarn**:
+5. Start a windows cmd at the downloaded application repository and install yarn with:
 
     ```
     npm install --global yarn
