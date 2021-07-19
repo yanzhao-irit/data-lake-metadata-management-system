@@ -19,31 +19,25 @@
 </head>
 
 <body>
-<!--<ul name="NavigationBar">
-
-    <li name="NavigationBar"><a class="active" href="#home">主页</a></li>
-    <li name="NavigationBar"><a href="#news">新闻</a></li>
-    <li name="NavigationBar"><a href="#contact">联系</a></li>
-    <li name="NavigationBar" style="float:right"><a href="#about">关于</a></li>
-</ul>-->
-
     <div role="navigation" class="navbar navbar-default navbar-static-top">
-        <ul name="NavigationBar">
-            <li name="NavigationBar">
-                    <a id='ingestChoses' type="button" data-toggle="modal" data-target="#ingestModal">Ingest</a>
-            </li>
-            <li name="NavigationBar">
-                <span name="enter">Enter your tags here : </span>
-            </li>
-            <li name="NavigationBar" style="margin-top: 0.5%">
-                <select multiple  data-role="tagsinput" id="tagsinput"></select>
-            </li>
-            <li name="NavigationBar" style="float: right">
-                <a type="button" id='switchSearchMod'>Advanced Cypher Request</a>
-            </li>
-        </ul>
+<!--        <div class="container">-->
+            <div class="row">
+                <div class="col-md-1" style="text-align: left">
+                    <button id='ingestChoses' type="button" data-toggle="modal"
+                            data-target="#ingestModal">Ingest</button>
+                </div>
+                <div class="col-md-11">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <div class="form-group">
+                            Enter your tags here : <select multiple data-role="tagsinput" id="tagsinput"></select>
+                            <button id='switchSearchMod'>Advanced Cypher Request</button>
 
-
+                        </div>
+                    </li>
+                </ul>
+                </div>
+            </div>
             <div class="filter" id="filter">
                 <h3>Filter</h3>
                 <br />
