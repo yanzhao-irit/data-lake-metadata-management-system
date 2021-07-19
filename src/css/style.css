@@ -65,3 +65,39 @@ td {
     word-wrap:break-word;
     word-break:break-all;
 }
+
+/*add for css*/
+ul[name="NavigationBar"]{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li[name="NavigationBar"] {
+    float: left;
+}
+
+li[name="NavigationBar"] a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li[name="NavigationBar"] span[name="enter"] {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+li[name="NavigationBar"] select {
+    padding: 14px 16px;
+}
+
+li[name="NavigationBar"] a:hover {
+    background-color: #111;
+}
