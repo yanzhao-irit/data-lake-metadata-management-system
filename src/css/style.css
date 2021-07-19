@@ -25,7 +25,7 @@
     stroke-width: 1px;
 }
 
-#filter {
+.filter {
     text-align: center;
 }
 
@@ -71,18 +71,16 @@ ul[name="NavigationBar"]{
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    background-color: #333;
+    /*background-color: #333;*/
 }
 
 li[name="NavigationBar"] {
     float: left;
 }
 
-li[name="NavigationBar"] a {
+li[name="NavigationBar"] a[name="NavigationBar"] {
     display: block;
     color: white;
-    text-align: center;
     padding: 14px 16px;
     text-decoration: none;
 }
@@ -90,14 +88,125 @@ li[name="NavigationBar"] a {
 li[name="NavigationBar"] span[name="enter"] {
     display: block;
     color: white;
-    text-align: center;
     padding: 14px 16px;
     text-decoration: none;
 }
-li[name="NavigationBar"] select {
-    padding: 14px 16px;
+
+li[name="NavigationBar"] a:hover[name="NavigationBar"] {
+    background-color: #111;
 }
 
-li[name="NavigationBar"] a:hover {
-    background-color: #111;
+div[name="DatasetPanel"] {
+    color: white;
+    font-weight:normal;
+    border: 1px solid #1E88C7;
+    background: #1E88C7;
+    box-shadow:0 0 10px grey;
+}
+
+div[name="DatasetPanel"] div[class="panel-footer"]{
+    background: #1E88C7;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+div[name="DatasetPanel"] div[class="panel-body"]{
+     height: 120px;
+     overflow: auto;
+}
+
+div[name="ProcessPanel"] {
+    color: white;
+    font-weight:normal;
+    border: 1px solid orangered;
+    background: orangered;
+    box-shadow:0 0 10px grey;
+}
+
+div[name="ProcessPanel"] div[class="panel-footer"]{
+    background: orangered;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+div[name="ProcessPanel"] div[class="panel-body"]{
+    height: 120px;
+    overflow: auto;
+}
+
+div[name="AnalysisPanel"] {
+    color: white;
+    font-weight:normal;
+    border: 1px solid darkseagreen;
+    background: darkseagreen;
+    box-shadow:0 0 10px grey;
+}
+div[name="AnalysisPanel"] div[class="panel-footer"]{
+    background: darkseagreen;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+div[name="AnalysisPanel"] div[class="panel-body"]{
+    height: 120px;
+    overflow: auto;
+}
+
+div[name="DatasetPanel"] a{
+    color: white;
+}
+
+div[name="ProcessPanel"] a{
+    color: white;
+}
+
+div[name="AnalysisPanel"] a{
+    color: white;
+}
+
+div[name="DatasetPanel"] a:hover{
+    color: #00b3ee;
+}
+
+div[name="ProcessPanel"] a:hover{
+    color: orange;
+}
+
+div[name="AnalysisPanel"] a:hover{
+     color: greenyellow;
+ }
+
+/*.card-header {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.card-header:first-child {
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+
+.card-footer:last-child {
+    border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+}*/
+
+.card-footer {
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.cdo-menu {
+    width: 30px;
+    height: 25px;
+    border-top: 5px solid #DD575C;
+    border-bottom: 5px solid #DD575C;
+    background-color: #DD575C;
+    padding: 5px 0px;
+    cursor:pointer;
+}
+.cdo-menu:hover {
+    background-color:red;
+    border-top:5px solid red;
+    border-bottom:5px solid red;
 }
