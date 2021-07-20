@@ -1,4 +1,5 @@
-<html xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="UTF-8">
@@ -19,11 +20,10 @@
 </head>
 
 <body>
-
 <!--    <div role="navigation" class="navbar navbar-default navbar-static-top">-->
 <nav class="navbar navbar-default" role="navigation" style="background-color: #333;">
     <ul name="NavigationBar">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <li name="NavigationBar" style="text-align: left" class="dropdown">
                 <a id='ingestChoses' type="button" class="dropdown-toggle" data-toggle="dropdown" name="NavigationBar">Ingest
                     <b class="caret"></b></a>
@@ -34,7 +34,7 @@
                 </ul>
             </li>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-6">
             <li name="NavigationBar">
                 <span name="enter">Enter your tags here : </span>
             </li>
@@ -42,20 +42,11 @@
                 <input multiple data-role="tagsinput" id="tagsinput">
 
             </li>
-            <li name="NavigationBar">
+            <!--<li name="NavigationBar">
                 <a type="button" name="NavigationBar">Filter
                     <div class="cdo-menu"></div></a>
-                <!--<div class="row">
-                    <p style="color: white" class="col-md-2">Filter</p>
-                    <div style="width: 30px;
-                       height: 20px;
-                       border-top: 4px solid white;
-                       border-bottom: 4px solid white;
-                       background-color: white;
-                       padding: 4px 0;
-                       background-clip: content-box;" class="col-md-6 pull-right"></div>
-                </div>-->
-            </li>
+
+            </li>-->
         </div>
 <!--
         <div class="col-md-1 pull-left" style="padding-top: 0.8%;">
@@ -85,25 +76,24 @@
 <div id="filter">
 <!--    <h2 class="mt-4">Filter</h2>-->
     <div class="row">
-        <div class="col-xl-3 col-md-4">
+        <div class="col-sm-3 col-md-4">
             <div name="DatasetPanel" class="panel">
-                <div class="panel-body">
-                    <h3>Dataset</h3>
+                <div class="panel-body" id="datasetScroll">
+                    <h3>Dataset Filter</h3>
                     <input type="checkbox" class="dstype" id="Structured" name="Structured"/><label
-                        for="Structured">Structured</label>
+                        for="Structured" style="margin-bottom: 15px">Structured</label>
                     <input type="checkbox" class="dstype" id="Semi-Structured" name="Semi-Structured"/><label
                         for="Semi-Structured">Semi-Structured</label>
                     <input type="checkbox" class="dstype" id="Unstructured" name="Unstructured"/><label
                         for="Unstructured">Unstructured</label>
                     <br/>
                     <div id="moreDSFilter">
-                        <label for='dsDate'>Creation Date after : </label><input type='date' class='inputDate'
-                                                                                 id='dsDate' name="dsDate"
-                                                                                 value="0001-01-01">
-                        <button class="dropbtn" id="qualityLevel">Quality Level</button>
+                        <label for='dsDate' style="margin-bottom: 15px">Creation Date after : </label>
+                        <input type='date' class='inputDate' value="0001-01-01" style="color: black;margin-bottom: 15px;"></br>
+                        <button class="btn-gradient blue mini" id="qualityLevel" style="margin-bottom: 15px">Quality Level</button></br>
                         <div class="dropdown">
-                            <div id="qualityDropdown" class="dropdown-content" style="display: none">
-                                <input type="text" placeholder="Search.." id="qualityInput">
+                            <div id="qualityDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px;">
+                                <input type="text" placeholder="Search..." id="qualityInput" style="margin-bottom: 15px;">
                                 <div>
                                     <input type="range" classe="quality" name="quality" min="0" max="11"> <label
                                         for="quality">Quality of something</label>
@@ -114,11 +104,11 @@
                                 </div>
                             </div>
                         </div>
-                        <label for='sensitivityLevel'>Sensitivity Level : </label><input type='text'
+                        <label for='sensitivityLevel' style="margin-bottom: 15px">Sensitivity Level : </label><input type='text'
                                                                                          class='sensitivityLevel'
                                                                                          id='sensitivityLevel'
                                                                                          name="sensitivityLevel">
-                        <label for='inputECANames'>Entity Class or Attribute Names : </label><input type='text'
+                        <label for='inputECANames' style="margin-bottom: 15px">Entity Class or Attribute Names : </label><input type='text'
                                                                                                     class='inputECANames'
                                                                                                     id='inputECANames'
                                                                                                     name="inputECANames">
@@ -134,43 +124,42 @@
 
         <div class="col-xl-3 col-md-4">
             <div name="ProcessPanel" class="panel">
-                <div class="panel-body">
+                <div class="panel-body" id="processScroll">
 
-                    <h4>Process</h4>
-                    <button class="dropbtn" id="programLanguage">Program Language</button>
+                    <h3>Process Filter</h3>
+                    <button class="btn-gradient orange mini" id="programLanguage" style="margin-bottom: 15px">Program Language</button>
                     <div class="dropdown">
-                        <!-- <input type="text" placeholder="Search.." id="languageInput" class="dropdown-contente"
+                        <!-- <input type="text" placeholder="Search..." id="languageInput" class="dropdown-contente"
                             style="display: none"> -->
-                        <div id="languageDropDown" class="dropdown-content" style="display: none">
+                        <div id="languageDropDown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                         </div>
                     </div>
                     <div id="morePFilter" style='display: none'>
-                        <label for='pDate'>Creation Date after : </label><input type='date' class='inputDateProcess'
+                        <label for='pDate' style="margin-bottom: 15px">Creation Date after : </label><input type='date' class='inputDateProcess'
                                                                                 id='pDate' name="pDate"
-                                                                                value="0001-01-01">
-
-                        <button class="dropbtn" id="usedOpe">Used Operations</button>
+                                                                                value="0001-01-01"></br>
+                        <button class="btn-gradient orange mini" id="usedOpe" style="margin-bottom: 15px">Used Operations</button>
                         <a id="usedOpeClear" style="display: none">clear used operations</a>
                         <div class="dropdown">
-                            <div id="usedOpeDropdown" class="dropdown-content" style="display: none">
+                            <div id="usedOpeDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                                 <div class="dropdown">
-                                    <input type="text" placeholder="Search.." id="usedOpeInput"
+                                    <input type="text" placeholder="Search..." id="usedOpeInput"
                                            class="dropdown-contente" data-toggle="dropdown">
-                                    <ul class="dropdown-menu pull-right" id="DropdownMenuusedop"
-                                        style="height:100px;width:270px;overflow:scroll"></ul>
+                                    <ul class="dropdown-menu" id="DropdownMenuusedop"
+                                        style="height:100px;width:270px;overflow-y:scroll"></ul>
                                 </div>
                             </div>
                         </div>
 
-                        <button class="dropbtn" id="exeEnv">Execution Environment</button>
+                        <button class="btn-gradient orange mini" id="exeEnv" style="margin-bottom: 15px">Execution Environment</button>
                         <a id="exeEnvClear" style="display: none">clear execution environment</a>
                         <div class="dropdown">
-                            <div id="exeEnvDropdown" class="dropdown-content" style="display: none">
+                            <div id="exeEnvDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                                 <div class="dropdown">
-                                    <input type="text" placeholder="Search.." id="exeEnvInput"
+                                    <input type="text" placeholder="Search..." id="exeEnvInput"
                                            class="dropdown-contente" data-toggle="dropdown">
-                                    <ul class="dropdown-menu pull-right" id="DropdownMenuexeEnv"
-                                        style="height:100px;width:270px;overflow:scroll"></ul>
+                                    <ul class="dropdown-menu" id="DropdownMenuexeEnv"
+                                        style="height:100px;width:270px;overflow-y:scroll"></ul>
                                 </div>
                             </div>
                         </div>
@@ -184,10 +173,10 @@
         </div>
         <div class="col-xl-3 col-md-4">
             <div name="AnalysisPanel" class="panel">
-                <div class="panel-body">
-                    <h4>Analysis</h4>
+                <div class="panel-body" id="analysisScroll">
+                    <h3>Analysis Filter</h3>
                     <input type="checkbox" class="analysetype" id="machineLearning" name="machineLearning"><label
-                        for="machineLearning">Machine Learning</label>
+                        for="machineLearning" style="margin-bottom: 10px">Machine Learning</label>
                     <input type="checkbox" class="analysetype" id="otherAnalysis" name="otherAnalysis"><label
                         for="otherAnalysis">Others</label>
                     <br/>
@@ -201,28 +190,28 @@
                     <input type="checkbox" class="analysetype" id="predictive" name="predictive"
                            style="display: none"><label for="predictive" style="display: none">Predictive</label>
                     <input type="checkbox" class="analysetype" id="prescriptive" name="prescriptive"
-                           style="display: none"><label for="prescriptive" style="display: none">Prescriptive</label>
+                           style="display: none"><label for="prescriptive" style="display: none" style="margin-bottom: 15px">Prescriptive</label>
 
                     <br/>
                     <div id="moreAFilter" style='display: none'>
-                        <label for='aDate'>Creation Date after : </label><input type='date' class='inputDate'
+                        <label for='aDate' style="margin-bottom: 15px">Creation Date after : </label><input type='date' class='inputDate'
                                                                                 id='aDate' name="aDate"
-                                                                                value="0001-01-01">
-                        <button class="dropbtn" id="landmarker" style="display: none">Landmarker</button>
+                                                                                value="0001-01-01"></br>
+                        <button class="btn-gradient green mini" id="landmarker" style="display: none;margin-bottom: 15px">Landmarker</button>
                         <a id="landmarkerClear" style="display: none">clear landmarker</a>
 
                         <div class="dropdown">
-                            <div id="landmarkerDropdown" class="dropdown-content" style="display: none">
+                            <div id="landmarkerDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                                 <div class="dropdown">
-                                    <input type="text" placeholder="Search.." id="landmarkerInput"
+                                    <input type="text" placeholder="Search..." id="landmarkerInput"
                                            class="dropdown-contente" data-toggle="dropdown"/>
-                                    <ul class="dropdown-menu pull-right" id="DropdownMenulandmarker"
-                                        style="height:100px;width:270px;overflow:scroll"></ul>
+                                    <ul class="dropdown-menu" id="DropdownMenulandmarker"
+                                        style="height:100px;width:270px;overflow-y:scroll"></ul>
                                 </div>
                             </div>
                         </div>
 
-                        <label for='algoNames' style="display: none">Algorithm : </label><input type='text'
+                        <label for='algoNames' style="display: none;margin-bottom: 15px">Algorithm : </label><input type='text'
                                                                                                 class='algoinputNames'
                                                                                                 id='algoNames'
                                                                                                 name="algoNames"
@@ -236,26 +225,26 @@
                                                             style="display: none">Unsupervised</label>
                         <input type="checkbox" class="algotype" id="AlgoReinforcement" name="algoReinforcement"
                                style="display: none"><label for="algoReinforcement"
-                                                            style="display: none">Reinforcement</label>
+                                                            style="display: none;margin-bottom: 15px">Reinforcement</label>
                         <br/>
 
                         <!--                            <button class="dropbtn" id="parameter">Parameter</button>-->
                         <!--                            <div class="dropdown">-->
                         <!--                                <div id="parameterDropdown" class="dropdown-content" style="display: none">-->
-                        <!--                                    <input type="text" placeholder="Search.." id="parameterInput"-->
+                        <!--                                    <input type="text" placeholder="Search..." id="parameterInput"-->
                         <!--                                        class="dropdown-content">-->
                         <!--                                </div>-->
                         <!--                            </div>-->
-                        <button class="dropbtn" id="parameter" style="display: none">Parameter</button>
+                        <button class="btn-gradient green mini" id="parameter" style="display: none;margin-bottom: 15px">Parameter</button>
                         <a id="parameterClear" style="display: none">clear parameter</a>
 
                         <div class="dropdown">
-                            <div id="parameterDropdown" class="dropdown-content" style="display: none">
+                            <div id="parameterDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                                 <div class="dropdown">
-                                    <input type="text" placeholder="Search.." id="parameterInput"
+                                    <input type="text" placeholder="Search..." id="parameterInput"
                                            class="dropdown-contente" data-toggle="dropdown">
-                                    <ul class="dropdown-menu pull-right" id="DropdownMenuparameter"
-                                        style="height:100px;width:270px;overflow:scroll"></ul>
+                                    <ul class="dropdown-menu" id="DropdownMenuparameter"
+                                        style="height:100px;width:270px;overflow-y:scroll"></ul>
                                 </div>
                             </div>
                         </div>
@@ -266,20 +255,20 @@
                         <!--<button class="dropbtn" id="evaluation">Evaluation</button>
                         <div class="dropdown">
                             <div id="evaluationDropdown" class="dropdown-content" style="display: none">
-                                <input type="text" placeholder="Search.." id="evaluationInput"
+                                <input type="text" placeholder="Search..." id="evaluationInput"
                                     class="dropdown-content">
                             </div>
                         </div>-->
-                        <button class="dropbtn" id="evaluation" style="display: none">Evaluation</button>
+                        <button class="btn-gradient green mini" id="evaluation" style="display: none;margin-bottom: 15px">Evaluation</button>
                         <a id="evaluationClear" style="display: none">clear evaluation</a>
 
                         <div class="dropdown">
-                            <div id="evaluationDropdown" class="dropdown-content" style="display: none">
+                            <div id="evaluationDropdown" class="dropdown-content" style="display: none;margin-bottom: 15px">
                                 <div class="dropdown">
-                                    <input type="text" placeholder="Search.." id="evaluationInput"
+                                    <input type="text" placeholder="Search..." id="evaluationInput"
                                            class="dropdown-contente" data-toggle="dropdown">
-                                    <ul class="dropdown-menu pull-right" id="DropdownMenuevaluation"
-                                        style="height:100px;width:270px;overflow:scroll"></ul>
+                                    <ul class="dropdown-menu" id="DropdownMenuevaluation"
+                                        style="height:100px;width:270px;overflow-y:scroll"></ul>
                                 </div>
                             </div>
                         </div>
