@@ -1435,6 +1435,23 @@ th {
 .table-hover > tbody > tr:hover > th {
   background-color: #f5f5f5;
 }
+.table-hover[id="resultsDataset"] > tbody > tr:hover > td,
+.table-hover[id="resultsDataset"] > tbody > tr:hover > th {
+  background-color: #1E88C7;
+}
+.table-hover[id="resultsProcess"] > tbody > tr:hover > td,
+.table-hover[id="resultsProcess"] > tbody > tr:hover > th {
+  background-color: orangered;
+}
+.table-hover[id="resultsAnalysis"] > tbody > tr:hover > td,
+.table-hover[id="resultsAnalysis"] > tbody > tr:hover > th {
+  background-color: darkseagreen;
+}
+div[id="scrollDiv"] > tr:hover > td,
+div[id="scrollDiv"] > tr:hover > th {
+  background-color: darkseagreen;
+}
+
 table col[class*="col-"] {
   position: static;
   float: none;

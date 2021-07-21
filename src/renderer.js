@@ -291,6 +291,9 @@ $(function () {
   //Function onclick to go back to the search table from the graphic interface.
   $('#back').on('click', function () {
     document.getElementById("EntityClassButtonAnalyse").style.display = 'none';
+    if(document.getElementById("scrollDiv")){
+      document.getElementById("scrollDiv").remove();
+    }
     // document.getElementById("EntityClassButtonDataset").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
@@ -754,6 +757,7 @@ $(function () {
   $('.names').on('click', "td", function () {
     //To change the color of the element clicked to know which one is clicked
     $(this)[0].style.backgroundColor = '#93e2df'
+
     if (lastSelected) {
       lastSelected[0].style.backgroundColor = ''
     }
@@ -769,7 +773,10 @@ $(function () {
     //check which element is clicked
     console.log($(this)[0].className)
     if ($(this)[0].className == "Process") {
-      activeProperties();
+      $(this)[0].style.backgroundColor = 'lightsalmon';
+      // document.getElementById("title").style.backgroundColor="orangered"
+      document.getElementById("title").style.color="orangered"
+      activeProperties("orangered");
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
       $('#dsRelationButton')[0].style.display = 'none';
@@ -1157,7 +1164,10 @@ $(function () {
 
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
-        activeProperties();
+        $(this)[0].style.backgroundColor = 'darkseagreen';
+        // document.getElementById("title").style.backgroundColor="darkseagreen"
+        document.getElementById("title").style.color="darkseagreen"
+        activeProperties("darkseagreen");
 
         $('#featureButton')[0].style.display = 'block';
         $('#dsRelationButton')[0].style.display = 'none';
@@ -1363,11 +1373,12 @@ $(function () {
             if (p) {
               $("#EntityClassNames").empty()
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
-              $list.append("<div style='height:500px; overflow-y:scroll;'></div>");
+              $list.append("<div id='scrollDiv' style='height:500px; overflow-y:scroll;'></div>");
               for (var i = 0; i < p.length; i++) {
                 $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
-                showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name)
+                showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name);
               }
+
             }
           }, "json");
 
@@ -1377,7 +1388,10 @@ $(function () {
 
       } else { //Event part for the Dataset
         if ($(this)[0].className == "Database") {
-          activeProperties();
+          $(this)[0].style.backgroundColor = 'lightblue';
+          // document.getElementById("title").style.backgroundColor = '#1E88C7';
+          document.getElementById("title").style.color = '#1E88C7';
+          activeProperties("#1E88C7");
 
           $('#featureButton')[0].style.display = 'none';
           $('#dsRelationButton')[0].style.display = 'block';
@@ -1783,7 +1797,10 @@ $(function () {
 
         } else { //Event part for the analyse
           if ($(this)[0].className == "analyse") {
-            activeProperties();
+            $(this)[0].style.backgroundColor = 'darkseagreen';
+            // document.getElementById("title").style.backgroundColor = 'darkseagreen';
+            document.getElementById("title").style.color = 'darkseagreen';
+            activeProperties("darkseagreen");
 
             $('#featureButton')[0].style.display = 'block';
             $('#dsRelationButton')[0].style.display = 'none';
@@ -3591,7 +3608,7 @@ function clearList(divname) {
   }
 }
 
-function activeProperties(){
+function activeProperties(color){
   document.getElementById("viz5").innerText ="";
   document.getElementById("viz4").innerText ="";
   document.getElementById("viz3").innerText ="";
@@ -3606,6 +3623,15 @@ function activeProperties(){
   document.getElementById("attRelationButton").setAttribute("class", "");
   document.getElementById("similarityButton").setAttribute("class", "");
   document.getElementById("propertiesButton").setAttribute("class", "active");
+
+  document.getElementById("lineageButton").firstChild.style.color=color;
+  document.getElementById("hyperGrapheButton").firstChild.style.color=color;
+  document.getElementById("operationButton").firstChild.style.color=color;
+  document.getElementById("featureButton").firstChild.style.color=color;
+  document.getElementById("dsRelationButton").firstChild.style.color=color;
+  document.getElementById("attRelationButton").firstChild.style.color=color;
+  document.getElementById("similarityButton").firstChild.style.color=color;
+  document.getElementById("propertiesButton").firstChild.style.color=color;
 
   document.getElementById("viz").setAttribute("class", "tab-pane fade");
   document.getElementById("viz2").setAttribute("class", "tab-pane fade");
