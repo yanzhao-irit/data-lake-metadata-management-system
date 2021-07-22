@@ -284,7 +284,7 @@
 </div>
 <!--        </div>-->
 </div>
-<div class="row" id='mainSearch'>
+<div class="row" id='mainSearch' >
     <div class="collapse in">
         <div class="col-md-4">
             <div class="panel panel-default">
@@ -336,14 +336,13 @@
     </div>
     <div id='graphco' class='collapse'>
         <div class="col-md-8">
-            <div class="panel panel-default">
+            <div class="panel panel-default" style="border: 0px">
 
-                <div class="panel-heading" id="title" style="padding-top: 5px;padding-bottom: 4px">Graph
-                    <button id='back' class='btn btn-secondary'>Back
-                    </button>
-                </div>
 
-                <ul class="nav nav-tabs">
+                <div class="tab" name="tabPanel" id="tabPanel">
+                <ul class="nav nav-tabs" style="margin-top: 0px;height: 40px">
+
+                    <li class="pull-right"><button id='back' class='btn btn-secondary' style="margin-top: 5%">Back</button></li>
                     <li id='propertiesButton' class="active"><a data-toggle="tab" href="#properties">Properties</a></li>
                     <li id='lineageButton'><a data-toggle="tab" href="#viz">Lineage</a></li>
                     <li id='hyperGrapheButton'><a data-toggle="tab" href="#viz2">Hyper-graph</a></li>
@@ -356,11 +355,11 @@
                     <li id='similarityButton'><a data-toggle="tab" href="#similarity">Similarity*</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div id="properties" class="tab-pane fade  in active"></div>
-                    <div id="viz" class="tab-pane fade"></div>
-                    <div id="viz2" class="tab-pane fade"></div>
-                    <div id="viz3" class="tab-pane fade"></div>
-                    <div id="features" class="tab-pane fade">
+                    <div id="properties" class="tab-pane fade  in active" style="margin: 0px;border: 0px"></div>
+                    <div id="viz" class="tab-pane fade" style="margin: 0px;border: 0px"></div>
+                    <div id="viz2" class="tab-pane fade" style="margin: 0px;border: 0px"></div>
+                    <div id="viz3" class="tab-pane fade" style="margin: 0px;border: 0px"></div>
+                    <div id="features" class="tab-pane fade" style="margin: 0px;border: 0px">
                         <div class='row' style="margin-left: auto">
                             <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#AttributeModal">
@@ -388,7 +387,7 @@
                             <div class='col-m-2'></div>
                         </div>
                     </div>
-                    <div id='viz4_dataset' class='tab-pane fade'>
+                    <div id='viz4_dataset' class='tab-pane fade' style="margin: 0px;border: 0px">
                         <div class='col-m-4'>
                             <div id='RelationshipDS'>
                                 <ul class="nav nav-tabs" id='relationshipOnglet'></ul>
@@ -400,7 +399,7 @@
                         </div>
 
                     </div>
-                    <div id="viz5_attribute" class="tab-pane fade">
+                    <div id="viz5_attribute" class="tab-pane fade" style="margin: 0px;border: 0px">
 
                         <div class='col-m-4'>
 
@@ -414,7 +413,7 @@
                         </div>
 
                     </div>
-                    <div id="similarity" class="tab-pane fade">
+                    <div id="similarity" class="tab-pane fade" style="margin: 0px;border: 0px">
                         <i>* : Similarity use <a
                                 href='https://neo4j.com/docs/graph-data-science/current/algorithms/node-similarity/'
                                 data-toggle="tooltip" data-placement="top" id='tooltipsPreview' title="">Node
@@ -424,6 +423,10 @@
                     </div>
                 </div>
             </div>
+            </div>
+
+
+
         </div>
     </div>
 </div>

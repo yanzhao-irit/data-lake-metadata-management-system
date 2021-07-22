@@ -775,7 +775,9 @@ $(function () {
     if ($(this)[0].className == "Process") {
       $(this)[0].style.backgroundColor = 'lightsalmon';
       // document.getElementById("title").style.backgroundColor="orangered"
-      document.getElementById("title").style.color="orangered"
+      // document.getElementById("title").style.color="orangered"
+      document.getElementById("back").style.color="orangered"
+      document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelProcess");
       activeProperties("orangered");
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
@@ -792,7 +794,8 @@ $(function () {
             json = JSON.parse(JSON.stringify(p[0]))
             var $p = $("#properties")
             for (propriete in p[0]) {
-              if (propriete == "executionDate" || propriete == 'id') {
+              //propriete == "executionDate" ||
+              if (propriete == 'id') {
                 $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
                 $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
@@ -1166,7 +1169,9 @@ $(function () {
       if ($(this)[0].className == "Study") {
         $(this)[0].style.backgroundColor = 'darkseagreen';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
-        document.getElementById("title").style.color="darkseagreen"
+        // document.getElementById("title").style.color="darkseagreen"
+        document.getElementById("back").style.color="darkseagreen"
+        document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
         activeProperties("darkseagreen");
 
         $('#featureButton')[0].style.display = 'block';
@@ -1182,7 +1187,8 @@ $(function () {
               json = JSON.parse(JSON.stringify(p[0]))
               var $p = $("#properties")
               for (propriete in p[0]) {
-                if (propriete == "executionDate" || propriete == 'id') {
+                //propriete == "executionDate" ||
+                if ( propriete == 'id') {
                   $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
                 } else {
                   $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
@@ -1390,7 +1396,9 @@ $(function () {
         if ($(this)[0].className == "Database") {
           $(this)[0].style.backgroundColor = 'lightblue';
           // document.getElementById("title").style.backgroundColor = '#1E88C7';
-          document.getElementById("title").style.color = '#1E88C7';
+          // document.getElementById("title").style.color = '#1E88C7';
+          document.getElementById("back").style.color = '#1E88C7';
+          document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelDataset");
           activeProperties("#1E88C7");
 
           $('#featureButton')[0].style.display = 'none';
@@ -1799,7 +1807,8 @@ $(function () {
           if ($(this)[0].className == "analyse") {
             $(this)[0].style.backgroundColor = 'darkseagreen';
             // document.getElementById("title").style.backgroundColor = 'darkseagreen';
-            document.getElementById("title").style.color = 'darkseagreen';
+            // document.getElementById("title").style.color = 'darkseagreen';
+            document.getElementById("back").style.color = 'darkseagreen';
             activeProperties("darkseagreen");
 
             $('#featureButton')[0].style.display = 'block';
@@ -3624,14 +3633,16 @@ function activeProperties(color){
   document.getElementById("similarityButton").setAttribute("class", "");
   document.getElementById("propertiesButton").setAttribute("class", "active");
 
-  document.getElementById("lineageButton").firstChild.style.color=color;
+
+
+/*  document.getElementById("lineageButton").firstChild.style.color=color;
   document.getElementById("hyperGrapheButton").firstChild.style.color=color;
   document.getElementById("operationButton").firstChild.style.color=color;
   document.getElementById("featureButton").firstChild.style.color=color;
   document.getElementById("dsRelationButton").firstChild.style.color=color;
   document.getElementById("attRelationButton").firstChild.style.color=color;
   document.getElementById("similarityButton").firstChild.style.color=color;
-  document.getElementById("propertiesButton").firstChild.style.color=color;
+  document.getElementById("propertiesButton").firstChild.style.color=color;*/
 
   document.getElementById("viz").setAttribute("class", "tab-pane fade");
   document.getElementById("viz2").setAttribute("class", "tab-pane fade");
