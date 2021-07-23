@@ -543,6 +543,13 @@ div[name="AnalysisPanel"] a:hover{
     border-radius: 5px 5px 0 0;
     border-left:1px solid #1E88C7;
 }
+
+#tabPanelDataset #RelationshipDS.nav-tabs{
+    border-bottom:0 none;
+    background: whitesmoke;
+    border-radius: 5px 5px 0 0;
+    border-left:1px solid #1E88C7;
+}
 #tabPanelDataset .nav-tabs li {
 height: 40px;
 }
@@ -592,6 +599,7 @@ height: 40px;
     border: 7px solid transparent;
     border-top: 7px solid #1E88C7;
 }*/
+
 #tabPanelDataset .tab-content{
     padding-top:15px;
     color:#5a5c5d;
@@ -731,4 +739,197 @@ height: 40px;
     border-bottom:3px solid darkseagreen;
     border-left:1px solid darkseagreen;
     border-right:1px solid darkseagreen;
+}
+
+
+
+#RelationshipDS .nav-tabs{
+    border-bottom:0 none;
+    background: whitesmoke;
+    border-radius: 5px 5px 0 0;
+    border-left:0px solid #1E88C7;
+}
+#RelationshipDS .nav-tabs li {
+    height: 40px;
+}
+
+#RelationshipDS .nav-tabs li a{
+    background: transparent;
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    font-size: 14px;
+    border: none;
+    color: #1E88C7;
+    padding: 12px 8px;
+}
+/*#tabPanelDataset .nav-tabs li a i{*/
+/*    margin-right:10px;*/
+/*    color:green;*/
+/*}*/
+#RelationshipDS .nav-tabs li:first-child a{
+    border-top-left-radius:5px;
+}
+#RelationshipDS .nav-tabs li.active a{
+    border: 0 none;
+    background:#1E88C7;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipDS .nav-tabs li.active a i{
+    border: 0 none;
+    background:#1E88C7;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipDS .nav-tabs li:hover a{
+    border: 0 none;
+    background: lightblue;
+    color:black;
+    height: 40px;
+}
+/*.tab .nav-tabs li.active a:after{
+    content: "";
+    position: absolute;
+    left: 45%;
+    bottom: -14px;
+    border: 7px solid transparent;
+    border-top: 7px solid #1E88C7;
+}*/
+#RelationshipDS .tab-content{
+    padding:15px;
+    color:#5a5c5d;
+    font-size: 14px;
+    line-height:24px;
+    /*margin-top: 15px;*/
+    border-bottom:0px solid #1E88C7;
+    border-left:0px solid #1E88C7;
+    border-right:0px solid #1E88C7;
+}
+
+
+#RelationshipAtt .nav-tabs[name="blue"]{
+    border-bottom:0 none;
+    background: whitesmoke;
+    border-radius: 5px 5px 0 0;
+    border-left:0px solid #1E88C7;
+}
+#RelationshipAtt .nav-tabs[name="blue"] li {
+    height: 40px;
+}
+
+#RelationshipAtt .nav-tabs[name="blue"] li a{
+    background: transparent;
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    font-size: 14px;
+    border: none;
+    color: #1E88C7;
+    padding: 12px 8px;
+}
+/*#tabPanelDataset .nav-tabs li a i{*/
+/*    margin-right:10px;*/
+/*    color:green;*/
+/*}*/
+#RelationshipAtt .nav-tabs[name="blue"] li:first-child a{
+    border-top-left-radius:5px;
+}
+#RelationshipAtt .nav-tabs[name="blue"] li.active a{
+    border: 0 none;
+    background:#1E88C7;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipAtt .nav-tabs[name="blue"] li.active a i{
+    border: 0 none;
+    background:#1E88C7;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipAtt .nav-tabs[name="blue"] li:hover a{
+    border: 0 none;
+    background: lightblue;
+    color:black;
+    height: 40px;
+}
+/*.tab .nav-tabs li.active a:after{
+    content: "";
+    position: absolute;
+    left: 45%;
+    bottom: -14px;
+    border: 7px solid transparent;
+    border-top: 7px solid #1E88C7;
+}*/
+#RelationshipAtt .tab-content[name="blue"]{
+    padding:15px;
+    color:#5a5c5d;
+    font-size: 14px;
+    line-height:24px;
+    /*margin-top: 15px;*/
+    border-bottom:0px solid #1E88C7;
+    border-left:0px solid #1E88C7;
+    border-right:0px solid #1E88C7;
+}
+
+
+#RelationshipAtt .nav-tabs[name="green"]{
+    border-bottom:0 none;
+    background: whitesmoke;
+    border-radius: 5px 5px 0 0;
+    border-left:0px solid darkseagreen;
+}
+#RelationshipAtt .nav-tabs[name="green"] li {
+    height: 40px;
+}
+
+#RelationshipAtt .nav-tabs[name="green"] li a{
+    background: transparent;
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    font-size: 14px;
+    border: none;
+    color: darkseagreen;
+    padding: 12px 8px;
+}
+/*#tabPanelDataset .nav-tabs li a i{*/
+/*    margin-right:10px;*/
+/*    color:green;*/
+/*}*/
+#RelationshipAtt .nav-tabs[name="green"] li:first-child a{
+    border-top-left-radius:5px;
+}
+#RelationshipAtt .nav-tabs[name="green"] li.active a{
+    border: 0 none;
+    background:darkseagreen;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipAtt .nav-tabs[name="green"] li.active a i{
+    border: 0 none;
+    background:darkseagreen;
+    color:#fff;
+    height: 40px;
+}
+#RelationshipAtt .nav-tabs[name="green"] li:hover a{
+    border: 0 none;
+    background: darkseagreen;
+    color:black;
+    height: 40px;
+}
+/*.tab .nav-tabs li.active a:after{
+    content: "";
+    position: absolute;
+    left: 45%;
+    bottom: -14px;
+    border: 7px solid transparent;
+    border-top: 7px solid darkseagreen;
+}*/
+#RelationshipAtt .tab-content[name="green"]{
+    padding:15px;
+    color:#5a5c5d;
+    font-size: 14px;
+    line-height:24px;
+    /*margin-top: 15px;*/
+    border-bottom:0px solid darkseagreen;
+    border-left:0px solid darkseagreen;
+    border-right:0px solid darkseagreen;
 }

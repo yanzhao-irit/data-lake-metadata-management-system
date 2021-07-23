@@ -796,9 +796,9 @@ $(function () {
             for (propriete in p[0]) {
               //propriete == "executionDate" ||
               if (propriete == 'id') {
-                $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+                $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
-                $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
               }
             }
           }
@@ -1170,6 +1170,8 @@ $(function () {
         $(this)[0].style.backgroundColor = 'darkseagreen';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
         // document.getElementById("title").style.color="darkseagreen"
+        document.getElementById("relationshipAttOnglet").setAttribute("name","green");
+        document.getElementById("relationshipAttContent").setAttribute("name","green");
         document.getElementById("back").setAttribute("class","btn-two green rounded mini");
         document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
         activeProperties("darkseagreen");
@@ -1189,9 +1191,9 @@ $(function () {
               for (propriete in p[0]) {
                 //propriete == "executionDate" ||
                 if ( propriete == 'id') {
-                  $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete].low + "</p>");
                 } else {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
               }
             }
@@ -1397,6 +1399,8 @@ $(function () {
           $(this)[0].style.backgroundColor = 'lightblue';
           // document.getElementById("title").style.backgroundColor = '#1E88C7';
           // document.getElementById("title").style.color = '#1E88C7';
+          document.getElementById("relationshipAttOnglet").setAttribute("name","blue");
+          document.getElementById("relationshipAttContent").setAttribute("name","blue");
           document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
           document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelDataset");
           activeProperties("#1E88C7");
@@ -1433,7 +1437,7 @@ $(function () {
                 json = JSON.parse(JSON.stringify(p[0]))
                 var $p = $("#properties")
                 for (propriete in p[0]) {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
                 // $('#EntityClassProperties').empty()
                 //get entity class by dataset to create a list
@@ -1829,7 +1833,7 @@ $(function () {
                 var $p = $("#properties")
                 for (propriete in p[0][0]) {
 
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
               }, "json");
 
