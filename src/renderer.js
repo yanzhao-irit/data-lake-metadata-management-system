@@ -776,7 +776,7 @@ $(function () {
       $(this)[0].style.backgroundColor = 'lightsalmon';
       // document.getElementById("title").style.backgroundColor="orangered"
       // document.getElementById("title").style.color="orangered"
-      document.getElementById("back").style.color="orangered"
+      document.getElementById("back").setAttribute("class","btn-two orange rounded mini");
       document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelProcess");
       activeProperties("orangered");
       //Hide unused tabs
@@ -1170,7 +1170,7 @@ $(function () {
         $(this)[0].style.backgroundColor = 'darkseagreen';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
         // document.getElementById("title").style.color="darkseagreen"
-        document.getElementById("back").style.color="darkseagreen"
+        document.getElementById("back").setAttribute("class","btn-two green rounded mini");
         document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
         activeProperties("darkseagreen");
 
@@ -1397,7 +1397,7 @@ $(function () {
           $(this)[0].style.backgroundColor = 'lightblue';
           // document.getElementById("title").style.backgroundColor = '#1E88C7';
           // document.getElementById("title").style.color = '#1E88C7';
-          document.getElementById("back").style.color = '#1E88C7';
+          document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
           document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelDataset");
           activeProperties("#1E88C7");
 
@@ -1809,6 +1809,7 @@ $(function () {
             // document.getElementById("title").style.backgroundColor = 'darkseagreen';
             // document.getElementById("title").style.color = 'darkseagreen';
             document.getElementById("back").style.color = 'darkseagreen';
+            document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
             activeProperties("darkseagreen");
 
             $('#featureButton')[0].style.display = 'block';
