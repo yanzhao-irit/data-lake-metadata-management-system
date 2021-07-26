@@ -504,6 +504,7 @@ div[name="AnalysisPanel"] a:hover{
 .btn-gradient:hover {
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
+
 .btn-two {
     margin: 9px;
 }
@@ -517,6 +518,7 @@ div[name="AnalysisPanel"] a:hover{
 .btn-two.blue     {background-color: #7fb1bf;}
 .btn-two.green   {background-color: #9abf7f;}
 .btn-two.orange       {background-color: orangered;}
+
 
 
 .btn-two {

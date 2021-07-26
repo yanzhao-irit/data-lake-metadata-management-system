@@ -36,6 +36,7 @@ var tagsinput = []
 var trans = "";
 var datasetChosed = []
 var timer;
+var classname="";
 
 var options = {
   autoResize: true,
@@ -1167,6 +1168,7 @@ $(function () {
 
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
+        classname = "Study"
         $(this)[0].style.backgroundColor = 'darkseagreen';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
         // document.getElementById("title").style.color="darkseagreen"
@@ -1396,6 +1398,7 @@ $(function () {
 
       } else { //Event part for the Dataset
         if ($(this)[0].className == "Database") {
+          classname = "Database";
           $(this)[0].style.backgroundColor = 'lightblue';
           // document.getElementById("title").style.backgroundColor = '#1E88C7';
           // document.getElementById("title").style.color = '#1E88C7';
@@ -1809,11 +1812,14 @@ $(function () {
 
         } else { //Event part for the analyse
           if ($(this)[0].className == "analyse") {
+            classname = "analyse"
             $(this)[0].style.backgroundColor = 'darkseagreen';
-            // document.getElementById("title").style.backgroundColor = 'darkseagreen';
-            // document.getElementById("title").style.color = 'darkseagreen';
-            document.getElementById("back").style.color = 'darkseagreen';
-            document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
+            // document.getElementById("title").style.backgroundColor="darkseagreen"
+            // document.getElementById("title").style.color="darkseagreen"
+            document.getElementById("relationshipAttOnglet").setAttribute("name","green");
+            document.getElementById("relationshipAttContent").setAttribute("name","green");
+            document.getElementById("back").setAttribute("class","btn-two green rounded mini");
+            document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
             activeProperties("darkseagreen");
 
             $('#featureButton')[0].style.display = 'block';
@@ -3052,7 +3058,7 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
         $rangeBody = $('#' + typerelationshipDS)
         var valueMaxRounding = valueMax.toFixed(5)
         var valueMinRounding = valueMin.toFixed(5)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typerelationshipDS + "'></span><input type='button' id='b_" + typerelationshipDS + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typerelationshipDS + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6'><div class='text-right'>" + valueMaxRounding + "</div></div></div>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span style='padding-left:5px;padding-right:5px' id='seuil_" + typerelationshipDS + "'></span><input class='btn-gradient blue mini' type='button' id='b_" + typerelationshipDS + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typerelationshipDS + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6'><div class='text-right'>" + valueMaxRounding + "</div></div></div>")
         document.getElementById('r_' + typerelationshipDS).addEventListener("change", getGrapheViz4Seuil)
         document.getElementById('b_' + typerelationshipDS).addEventListener("click", changRange)
         document.getElementById('b_' + typerelationshipDS).addEventListener("click", getGrapheViz4Seuil)
@@ -3165,7 +3171,11 @@ async function getAnalyseOfRelationship(id, relationlist) {
         $rangeBody = $('#' + typeRelation)
         var valueMaxRounding = valueMax.toFixed(5)
         var valueMinRounding = valueMin.toFixed(5)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typeRelation + "'></span><input type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        if(classname==="Database"){
+          $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typeRelation + "'></span><input class='btn-gradient blue mini' type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        }else{
+          $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typeRelation + "'></span><input class='btn-gradient green mini' type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        }
         document.getElementById('r_' + typeRelation).addEventListener("change", getGrapheViz5Seuil)
         document.getElementById('b_' + typeRelation).addEventListener("click", changRange)
         document.getElementById('b_' + typeRelation).addEventListener("click", getGrapheViz5Seuil)
