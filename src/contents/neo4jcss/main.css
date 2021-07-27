@@ -269,8 +269,9 @@ body {
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
-  background-color: #ffffff;
-  /*background: url("../image/neo4j-background.png") repeat;*/
+  /*background-color: #ffffff;*/
+/*url("../image/Background.png") no-repeat center 0,*/
+  background: url("../image/Background.jpg") repeat;
 }
 input,
 button,
