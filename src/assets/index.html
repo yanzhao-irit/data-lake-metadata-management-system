@@ -15,7 +15,18 @@
     <link rel="stylesheet" href="../contents/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
     <link href="../contents/bootstrap/bootstrap-3.4.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href='../css/style.css'/>
-
+    <style>
+        ::-webkit-scrollbar{margin-left: 30px;
+            float: left;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 25px;
+            width: 6px;
+            background-color: #F5F5F5;}
+        ::-webkit-scrollbar-button{width:8px;height:0}
+        ::-webkit-scrollbar-track{background-color: #F5F5F5;}
+        ::-webkit-scrollbar-thumb{background-color: dimgray;-webkit-transition:.3s;transition:.3s}
+    </style>
     <title>Data Lake App</title>
 </head>
 
@@ -342,7 +353,7 @@
                 <div class="tab" name="tabPanel" id="tabPanel">
                 <ul class="nav nav-tabs" style="margin-top: 0px;height: 40px">
 
-                    <li class="pull-right"style="margin-right: 1%"><button id='back' style="margin-top: 10%">Back</button></li>
+                    <li class="pull-right"style="margin-right: 1%;"><button id='back' style="margin-top: 10%">Back</button></li>
                     <li id='propertiesButton' class="active"><a data-toggle="tab" href="#properties">Properties</a></li>
                     <li id='lineageButton'><a data-toggle="tab" href="#viz">Lineage</a></li>
                     <li id='hyperGrapheButton'><a data-toggle="tab" href="#viz2">Hyper-graph</a></li>
@@ -414,7 +425,7 @@
                         </div>
 
                     </div>
-                    <div id="similarity" class="tab-pane fade" style="margin: 0px;border: 0px">
+                    <div id="similarity" class="tab-pane fade" style="margin: 0px;border: 0px;padding-left: 10px;padding-bottom: 10px">
                         <i>* : Similarity use <a
                                 href='https://neo4j.com/docs/graph-data-science/current/algorithms/node-similarity/'
                                 data-toggle="tooltip" data-placement="top" id='tooltipsPreview' title="">Node
