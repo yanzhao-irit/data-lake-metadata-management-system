@@ -733,8 +733,9 @@ $(function () {
       //or by dataset
       api.getEntityClassByDataset($(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2]).then(ec => {
         json = JSON.parse(JSON.stringify(ec[0]))
+        console.log("ec[0]")
+        console.log(ec[0])
         $list = $('#EntityClassProperties')
-
 
         let arr = [];
         for (propriete in ec[0]) {
@@ -2209,6 +2210,12 @@ $(function () {
         $('#parameter')[0].style.display = 'none'
         $('#evaluation')[0].style.display = 'none'
         $('#landmarker')[0].style.display = 'none'
+        document.getElementById("landmarkerDropdown").style.display = "none"
+        document.getElementById("parameterDropdown").style.display = "none"
+        document.getElementById("evaluationDropdown").style.display = "none"
+        document.getElementById("landmarkerClear").style.display = "none"
+        document.getElementById("parameterClear").style.display = "none"
+        document.getElementById("evaluationClear").style.display = "none"
         $('label[for="algoNames"]')[0].style.display = 'none'
         $('label[for="algosupervised"]')[0].style.display = 'none'
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
@@ -2257,6 +2264,12 @@ $(function () {
         $('#parameter')[0].style.display = 'none'
         $('#evaluation')[0].style.display = 'none'
         $('#landmarker')[0].style.display = 'none'
+        document.getElementById("landmarkerDropdown").style.display = "none"
+        document.getElementById("parameterDropdown").style.display = "none"
+        document.getElementById("evaluationDropdown").style.display = "none"
+        document.getElementById("landmarkerClear").style.display = "none"
+        document.getElementById("parameterClear").style.display = "none"
+        document.getElementById("evaluationClear").style.display = "none"
         $('label[for="algoNames"]')[0].style.display = 'none'
         $('label[for="algosupervised"]')[0].style.display = 'none'
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
@@ -2284,6 +2297,12 @@ $(function () {
         $('#parameter')[0].style.display = 'none'
         $('#evaluation')[0].style.display = 'none'
         $('#landmarker')[0].style.display = 'none'
+        document.getElementById("landmarkerDropdown").style.display = "none"
+        document.getElementById("parameterDropdown").style.display = "none"
+        document.getElementById("evaluationDropdown").style.display = "none"
+        document.getElementById("landmarkerClear").style.display = "none"
+        document.getElementById("parameterClear").style.display = "none"
+        document.getElementById("evaluationClear").style.display = "none"
         $('label[for="algoNames"]')[0].style.display = 'none'
         $('label[for="algosupervised"]')[0].style.display = 'none'
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
@@ -2345,6 +2364,12 @@ $(function () {
           $('#parameter')[0].style.display = 'none'
           $('#evaluation')[0].style.display = 'none'
           $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
           $('label[for="algoNames"]')[0].style.display = 'none'
           $('label[for="algosupervised"]')[0].style.display = 'none'
           $('label[for="algoUnsupervised"]')[0].style.display = 'none'
@@ -2369,6 +2394,12 @@ $(function () {
         $('#parameter')[0].style.display = 'none'
         $('#evaluation')[0].style.display = 'none'
         $('#landmarker')[0].style.display = 'none'
+        document.getElementById("landmarkerDropdown").style.display = "none"
+        document.getElementById("parameterDropdown").style.display = "none"
+        document.getElementById("evaluationDropdown").style.display = "none"
+        document.getElementById("landmarkerClear").style.display = "none"
+        document.getElementById("parameterClear").style.display = "none"
+        document.getElementById("evaluationClear").style.display = "none"
         $('label[for="algoNames"]')[0].style.display = 'none'
         $('label[for="algosupervised"]')[0].style.display = 'none'
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
@@ -2505,6 +2536,8 @@ $(function () {
   //Event to show more filter on click
   $('#moreDS').on("click", function () {
     var display = $('#moreDSFilter')[0].style.display;
+    console.log("display")
+    console.log(display)
     if (display === "none") {
       $('#moreDSFilter')[0].style.display = "block";
 
@@ -2516,6 +2549,8 @@ $(function () {
 
   $('#moreP').on("click", function () {
     var display = $('#morePFilter')[0].style.display;
+    console.log("display")
+    console.log(display)
     if (display === "none") {
       $('#morePFilter')[0].style.display = "block";
     } else {
