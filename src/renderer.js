@@ -2193,11 +2193,14 @@ $(function () {
   $('#filter :checkbox').change(function () {
     // this will contain a reference to the checkbox
     if (this.checked) {
+      console.log(this)
       typeRecherche.push(this.id);
       console.log(typeRecherche)
       //Check the type of checkbox
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
         $("#dbNames").empty()
+        console.log("typeRecherche------------------")
+        console.log(typeRecherche)
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
@@ -2289,6 +2292,8 @@ $(function () {
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       else {
+        console.log("lllllllllllllllllllll")
+        console.log(typeRecherche)
         showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
         $('#algoNames')[0].style.display = 'none'
         $('#algosupervised')[0].style.display = 'none'
@@ -2309,6 +2314,7 @@ $(function () {
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
         if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
           $("#dbNames").empty()
+          console.log("111111111111")
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
         }
         if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
@@ -2331,6 +2337,7 @@ $(function () {
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          console.log("22222222222222222")
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'inline-block'
           $('#descriptive')[0].style.display = 'inline-block'
@@ -2346,6 +2353,7 @@ $(function () {
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          console.log("3333333333333")
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'none'
           $('#descriptive')[0].style.display = 'none'
@@ -2405,7 +2413,6 @@ $(function () {
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
       }
-
     }
   });
 
@@ -3453,6 +3460,7 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', pa
 
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
+  console.log("ggggggg")
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
