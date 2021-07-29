@@ -975,7 +975,6 @@ $(function () {
         network.fit()
         }else{
           document.getElementById("viz").innerText = "";
-
         }
       })
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
@@ -1558,8 +1557,12 @@ $(function () {
           MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
           WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path`
+          console.log("query")
+          console.log(query)
           api.getGraph(query).then(result => {
             if(!(result.length===0)){
+              console.log("result")
+              console.log(result)
               var nodes = new vis.DataSet(result[0][0])
               var edges = new vis.DataSet(result[0][1])
               var container = document.getElementById('viz')

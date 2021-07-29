@@ -339,16 +339,17 @@ function setTags(){
 }
 
 //set the content of datalakedataset
-function setDSDatalake(){
+function setDSDatalake() {
   DSDatalake_CSV["owner"] = DatasetSource_CSV["owner"]
   DSDatalake_CSV["location"] = DatasetSource_CSV["location"]
   DSDatalake_CSV["name"] = DatasetSource_CSV["name"]
   DSDatalake_CSV["type"] = DatasetSource_CSV["type"]
   DSDatalake_CSV["filenameExtension"] = fileExtName
-  DSDatalake_CSV["creationDate"] = getToday(new Date()) +":00Z"
+  DSDatalake_CSV["creationDate"] = getToday(new Date()) + ":00Z"
   DSDatalake_CSV["description"] = document.getElementById("description").value
   DSDatalake_CSV["connectionURL"] = document.getElementById("urlDS").value
   DSDatalake_CSV["administrator"] = document.getElementById("admin").value
+  DSDatalake_CSV["uuid"] = uuid();
 }
 
 //get th date of today

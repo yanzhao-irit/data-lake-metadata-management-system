@@ -1095,6 +1095,7 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
       + "-[:ingestTo]->(c:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
       + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',uuid:'"+DSDatalake_CSV["uuid"]
       + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
       + "',administrator:'"+DSDatalake_CSV["administrator"]
       + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
@@ -1315,6 +1316,7 @@ module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,In
       + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
       + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
       + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',uuid:'"+DSDatalake_UnStructured["uuid"]
       + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
       + "')),size:'"+DSDatalake_UnStructured["size"]
       + "',name:'"+DSDatalake_UnStructured["name"]
