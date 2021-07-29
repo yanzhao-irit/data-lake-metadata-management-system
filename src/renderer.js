@@ -26,7 +26,7 @@ var dsDate = "0001-01-01T00:00:00Z";
 var pDate = "0001-01-01";
 var aDate = "0001-01-01";
 var inputECAnames = "";
-var algoNames = document.getElementById("algoNames");
+var algoNames = document.getElementById("algoNames").value;
 var lastSelected;
 var cypherHistoryList = [];
 var graphListResult = [];
@@ -229,7 +229,7 @@ $(function () {
     //refresh graphic interface
     //Call for search functions with inputs
     showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     //Init filters that need database request
     languageProcessInit(tagsinput)
@@ -252,7 +252,7 @@ $(function () {
     if (!tagsinput.length == 0) {
       $(".names").empty()
       showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
       showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       languageProcessInit(tagsinput, langList, pDate, typeOpe)
       excutionEnvironmentInit(tagsinput)
@@ -1184,8 +1184,10 @@ $(function () {
         $('#operationButton')[0].style.display = 'none';
         $('#similarityButton')[0].style.display = 'none';
         document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
+        /*console.log("test!!!!!!!!!!!!!")
+        console.log(algoNames)*/
         api
-          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList)
+          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList)
           .then(p => {
             if (p) {
               json = JSON.parse(JSON.stringify(p[0]))
@@ -1369,7 +1371,7 @@ $(function () {
         api
           .getAnalyses($(this).text(), '')
           .then(p => {
-            console.log(p)
+            // console.log(p)
             console.log($(this).siblings('tr'))
             $(this).siblings('tr').empty()
             p.sort(function (a, b) {
@@ -1462,7 +1464,6 @@ $(function () {
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
                 if(!(p[i].name==="Contains")){
                   console.log(p[i].name)
-                  console.log('whyyyyyyyyyyyyyyyy')
                   $listContent.append(`
                     <div id='`+ p[i].name + `' class="tab-pane fade">
                         <table class='relationshiptable'>
@@ -1557,12 +1558,8 @@ $(function () {
           MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
           WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path`
-          console.log("query")
-          console.log(query)
           api.getGraph(query).then(result => {
             if(!(result.length===0)){
-              console.log("result")
-              console.log(result)
               var nodes = new vis.DataSet(result[0][0])
               var edges = new vis.DataSet(result[0][1])
               var container = document.getElementById('viz')
@@ -1897,8 +1894,6 @@ $(function () {
             api
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
-                console.log("llllllllllllllllll")
-                console.log(p.length)
                 var relationlistAtt = []
                 // console.log(p)
                 $listTab = $('#relationshipAttOnglet')
@@ -1967,10 +1962,8 @@ $(function () {
             WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship OR n:Study)
             AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:DLUnstructuredDataset)
             RETURN path` //Analyse
-            console.log(query)
             api.getGraph(query).then(result => {
               if(!(result.length===0)) {
-                console.log(result)
                 var nodes = new vis.DataSet(result[0][0])
                 var edges = new vis.DataSet(result[0][1])
                 var container = document.getElementById('viz')
@@ -2198,17 +2191,16 @@ $(function () {
     if (this.checked) {
       console.log(this)
       typeRecherche.push(this.id);
-      console.log(typeRecherche)
+      // console.log(typeRecherche)
       //Check the type of checkbox
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
         $("#dbNames").empty()
-        console.log("typeRecherche------------------")
-        console.log(typeRecherche)
+        // console.log(typeRecherche)
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
         $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
         $('#algoNames')[0].style.display = 'none'
         $('#algosupervised')[0].style.display = 'none'
         $('#algoUnsupervised')[0].style.display = 'none'
@@ -2291,12 +2283,11 @@ $(function () {
       $(".names").empty()
       if (typeRecherche.length == 0) {
         showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       else {
-        console.log("lllllllllllllllllllll")
-        console.log(typeRecherche)
+        // console.log(typeRecherche)
         showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
         $('#algoNames')[0].style.display = 'none'
         $('#algosupervised')[0].style.display = 'none'
@@ -2317,12 +2308,11 @@ $(function () {
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
         if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
           $("#dbNames").empty()
-          console.log("111111111111")
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
         }
         if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
           $("#analyseNames").empty()
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
           if (typeRecherche.includes("supervised")) {
             $('#algoNames')[0].style.display = 'inline-block'
             $('#algosupervised')[0].style.display = 'inline-block'
@@ -2339,8 +2329,7 @@ $(function () {
         }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-          console.log("22222222222222222")
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'inline-block'
           $('#descriptive')[0].style.display = 'inline-block'
@@ -2355,8 +2344,7 @@ $(function () {
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-          console.log("3333333333333")
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'none'
           $('#descriptive')[0].style.display = 'none'
@@ -2470,14 +2458,14 @@ $(function () {
     if (this.checked) {
       landmarkerList.push(this.id)
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }
   });
 
@@ -2538,7 +2526,7 @@ $(function () {
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       aDate = document.getElementById('aDate').value;
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }, 750);
   });
 
@@ -2546,8 +2534,6 @@ $(function () {
   //Event to show more filter on click
   $('#moreDS').on("click", function () {
     var display = $('#moreDSFilter')[0].style.display;
-    console.log("display")
-    console.log(display)
     if (display === "none") {
       $('#moreDSFilter')[0].style.display = "block";
 
@@ -2559,8 +2545,6 @@ $(function () {
 
   $('#moreP').on("click", function () {
     var display = $('#morePFilter')[0].style.display;
-    console.log("display")
-    console.log(display)
     if (display === "none") {
       $('#morePFilter')[0].style.display = "block";
     } else {
@@ -2662,6 +2646,7 @@ $(function () {
     landmarkerList = [];
     aDate = "0001-01-01";
     algoNames = "";
+    typeRecherche = [];
     $("#analyseNames").empty()
     showStudies(tagsinput);
   });
@@ -2764,7 +2749,7 @@ $(function () {
     document.getElementById('landmarkerInput').value = "";
     landmarkerList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     console.log(landmarkerList)
   });
 
@@ -2789,7 +2774,7 @@ $(function () {
     document.getElementById('parameterInput').value = "";
     parameterList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
   });
 
   $('#evaluation').on("click", function () {
@@ -2813,7 +2798,7 @@ $(function () {
     document.getElementById('evaluationInput').value = "";
     evaluationList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     console.log(evaluationList)
   });
 
@@ -2974,21 +2959,21 @@ $(function () {
   });
 
   $("#algoNames").keyup(function () {
-    console.log(algoNames.value)
+    console.log(algoNames)
     $("#analyseNames").empty();
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       algoNames = document.getElementById("algoNames");
       console.log('hello')
 
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }, 1000);
   });
 
   $("#omNames").keyup(function () {
     $("#analyseNames").empty();
     omNames = document.getElementById("omNames");
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList, omNames.value)
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList, omNames.value)
   });
 
 });
@@ -3463,8 +3448,6 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', pa
 
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
-  console.log("ggggggg")
-  console.log(ECANames)
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
@@ -3585,7 +3568,7 @@ function getParameterClick() {
     }
   }
   $("#analyseNames").empty();
-  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList)
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList)
 }
 
 //Function to draw relationDataset without condition
