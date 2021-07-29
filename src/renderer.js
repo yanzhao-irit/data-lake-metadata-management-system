@@ -2968,7 +2968,7 @@ $(function () {
     $("#dbNames").empty();
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
-      inputECAnames = document.getElementById("inputECANames");
+      inputECAnames = document.getElementById("inputECANames").value;
       showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     }, 1000);
   });
@@ -3464,6 +3464,7 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', pa
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
   console.log("ggggggg")
+  console.log(ECANames)
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
