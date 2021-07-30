@@ -2274,6 +2274,8 @@ $(function () {
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
       }
     } else {
+      console.log("sssssssssssss")
+      console.log(typeRecherche)
       //Remove the filtre of the unchecked box
       const index = typeRecherche.indexOf(this.id);
       if (index > -1) {
@@ -2281,12 +2283,16 @@ $(function () {
       }
       // the checkbox is now no longer checked
       $(".names").empty()
+      console.log("S2")
+      console.log(typeRecherche)
       if (typeRecherche.length == 0) {
         showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
         showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
       else {
+        console.log("S3")
+        console.log(typeRecherche)
         // console.log(typeRecherche)
         showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
         $('#algoNames')[0].style.display = 'none'
@@ -2307,6 +2313,8 @@ $(function () {
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
         if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
+          console.log("S4")
+          console.log(typeRecherche)
           $("#dbNames").empty()
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
         }
@@ -2328,6 +2336,8 @@ $(function () {
           }
         }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
+          console.log("S5")
+          console.log(typeRecherche)
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
@@ -2343,6 +2353,8 @@ $(function () {
           $('label[for="prescriptive"]')[0].style.display = 'inline-block'
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
+          console.log("S6")
+          console.log(typeRecherche)
           showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
           showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
@@ -2404,6 +2416,11 @@ $(function () {
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
       }
+    }
+    if (!(typeRecherche.includes("Structured")) && !(typeRecherche.includes("Semi-Structured")) && !(typeRecherche.includes("Unstructured"))) {
+      $("#dbNames").empty()
+      // console.log(typeRecherche)
+      showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
     }
   });
 
@@ -3448,6 +3465,7 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', pa
 
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
+
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
