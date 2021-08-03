@@ -110,14 +110,8 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
   var session = driver.session();
   let typeRech = Object.values(type);
   console.log('Algorithm names : ' + algoNames)
-  if (typeRech.indexOf('machineLearning') != -1) {
-    typeRech.splice(typeRech.indexOf('machineLearning'), 1)
-  }
-  if (typeRech.indexOf('otherAnalysis') != -1) {
-    typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
-  }
+  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)"
   //Classic cypher query to search for study without filter.
-  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)" 
   if(parameter.length > 0){
     query+= ',(p)'
   }
@@ -133,14 +127,25 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
       query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.description) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') )"
     }
   }
+  if (typeRech.indexOf('machineLearning') != -1 && typeRech.indexOf('otherAnalysis') == -1) {
+    query = query + ' AND toLower(a.typeAnalysis) CONTAINS toLower("Machine Learning")'
+  }else if (typeRech.indexOf('machineLearning') == -1 && typeRech.indexOf('otherAnalysis') != -1) {
+    query = query + ' AND toLower(a.typeAnalysis) CONTAINS toLower("Other Analysis")'
+  }
+  if (typeRech.indexOf('machineLearning') != -1 ) {
+    typeRech.splice(typeRech.indexOf('machineLearning'), 1)
+  }
+  if (typeRech.indexOf('otherAnalysis') != -1) {
+    typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
+  }
   //Cypher query for analysis type filter
   if (typeRech.length > 0) {
     query += ' AND ('
     for (var i = 0; i < typeRech.length; i++) {
       if (i != typeRech.length - 1) {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
+        query += ' toLower(a.subTypeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
       } else {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '")  )'
+        query += ' toLower(a.subTypeAnalysis) CONTAINS toLower("' + typeRech[i] + '")  )'
       }
     }
   }

@@ -2187,6 +2187,11 @@ $(function () {
 
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
+    /*if(document.getElementById("otherAnalysis").checked==true && document.getElementById("machineLearning").checked==false){
+      typeRecherche=[];
+    }*/
+  console.log("typeRecherche-------------")
+  console.log(typeRecherche)
     // this will contain a reference to the checkbox
     if (this.checked) {
       console.log(this)
@@ -2243,6 +2248,8 @@ $(function () {
         $('label[for="diagnostic"]')[0].style.display = 'inline-block'
         $('label[for="predictive"]')[0].style.display = 'inline-block'
         $('label[for="prescriptive"]')[0].style.display = 'inline-block'
+        $("#analyseNames").empty()
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
       }
       if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
         $('#supervised')[0].style.display = 'none'
@@ -2272,6 +2279,8 @@ $(function () {
         $('label[for="algosupervised"]')[0].style.display = 'none'
         $('label[for="algoUnsupervised"]')[0].style.display = 'none'
         $('label[for="algoReinforcement"]')[0].style.display = 'none'
+        $("#analyseNames").empty()
+        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
       }
     } else {
       console.log("sssssssssssss")
