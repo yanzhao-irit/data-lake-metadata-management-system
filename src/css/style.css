@@ -109,9 +109,9 @@ div[name="FilterPanel"] {
 div[name="DatasetPanel"] {
     color: white;
     font-weight:normal;
-    border: 1px solid #1E88C7;
-    /*border: 1px solid #1E88C7;*/
-    background: #1E88C7;
+    border: 1px solid #FFA289;
+    /*border: 1px solid #FFA289;*/
+    background: #FFA289;
     box-shadow:0 0 10px grey;
 }
 
@@ -129,7 +129,7 @@ div[name="DatasetPanel"] input{
 
 div[name="DatasetPanel"] input:focus{
     list-style: none;
-    outline-color: #1E88C7;
+    outline-color: #FFA289;
 }
 
 /*div[name="DatasetPanel"] input[type=range] {
@@ -146,21 +146,21 @@ div[name="DatasetPanel"] ul{
 }
 
 div[name="DatasetPanel"] div[class="panel-footer"]{
-    background: #1E88C7;
+    background: #FFA289;
     padding: 0.5rem 1rem;
     border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 div[name="DatasetPanel"] div[class="panel-body"]{
-     height: 140px;
+     height: 200px;
      overflow: auto;
 }
 
 div[name="ProcessPanel"] {
     color: white;
     font-weight:normal;
-    border: 1px solid orangered;
-    background: orangered;
+    border: 1px solid #6A92CC;
+    background: #6A92CC;
     box-shadow:0 0 10px grey;
 }
 
@@ -178,7 +178,7 @@ div[name="ProcessPanel"] input{
 
 div[name="ProcessPanel"] input:focus{
     list-style: none;
-    outline-color: orangered;
+    outline-color: #6A92CC;
 }
 
 div[name="ProcessPanel"] ul a{
@@ -190,21 +190,21 @@ div[name="ProcessPanel"] ul{
 }
 
 div[name="ProcessPanel"] div[class="panel-footer"]{
-    background: orangered;
+    background: #6A92CC;
     padding: 0.5rem 1rem;
     border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 div[name="ProcessPanel"] div[class="panel-body"]{
-    height: 140px;
+    height: 200px;
     overflow: auto;
 }
 
 div[name="AnalysisPanel"] {
     color: white;
     font-weight:normal;
-    border: 1px solid darkseagreen;
-    background: darkseagreen;
+    border: 1px solid #706FAB;
+    background: #706FAB;
     box-shadow:0 0 10px grey;
 }
 
@@ -222,7 +222,7 @@ div[name="AnalysisPanel"] input{
 
 div[name="AnalysisPanel"] input:focus{
     list-style: none;
-    outline-color: darkseagreen;
+    outline-color: #706FAB;
 }
 
 div[name="AnalysisPanel"] ul a{
@@ -234,13 +234,13 @@ div[name="AnalysisPanel"] ul{
 }
 
 div[name="AnalysisPanel"] div[class="panel-footer"]{
-    background: darkseagreen;
+    background: #706FAB;
     padding: 0.5rem 1rem;
     border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 div[name="AnalysisPanel"] div[class="panel-body"]{
-    height: 140px;
+    height: 200px;
     overflow: auto;
 }
 
@@ -260,15 +260,15 @@ div[name="AnalysisPanel"] a{
 }
 
 div[name="DatasetPanel"] a:hover{
-    color: #00b3ee;
+    color: lightcoral;
 }
 
 div[name="ProcessPanel"] a:hover{
-    color: orange;
+    color: rgba(102,152,203,1);
 }
 
 div[name="AnalysisPanel"] a:hover{
-     color: greenyellow;
+     color: mediumpurple;
  }
 
 /*.card-header {
@@ -308,13 +308,13 @@ div[name="AnalysisPanel"] a:hover{
 
 #datasetScroll::-webkit-scrollbar{
     width: 10px;
-    background-color: #1E88C7;
+    background-color: #FFA289;
 }
 
 #datasetScroll::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #1E90FF;
+    background-color: lightcoral;
 }
 
 #datasetScroll::-webkit-scrollbar-track {
@@ -325,13 +325,13 @@ div[name="AnalysisPanel"] a:hover{
 
 #processScroll::-webkit-scrollbar{
     width: 10px;
-    background-color: orangered;
+    background-color: #6A92CC;
 }
 
 #processScroll::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #FF6347;
+    background-color: rgba(102,152,203,1);
 }
 
 #processScroll::-webkit-scrollbar-track {
@@ -342,13 +342,13 @@ div[name="AnalysisPanel"] a:hover{
 
 #analysisScroll::-webkit-scrollbar{
     width: 10px;
-    background-color: darkseagreen;
+    background-color: #706FAB;
 }
 
 #analysisScroll::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: 	lightgreen;
+    background-color: 	mediumpurple;
 }
 
 #analysisScroll::-webkit-scrollbar-track {
@@ -359,13 +359,13 @@ div[name="AnalysisPanel"] a:hover{
 
 #scrollDiv::-webkit-scrollbar{
     width: 10px;
-    /*background-color: darkseagreen;*/
+    /*background-color: #706FAB;*/
 }
 
 #scrollDiv::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: 	darkseagreen;
+    background-color: 	#706FAB;
 }
 
 #scrollDiv::-webkit-scrollbar-track {
@@ -376,13 +376,13 @@ div[name="AnalysisPanel"] a:hover{
 
 #DropdownMenuusedop::-webkit-scrollbar{
     width: 10px;
-    background-color: orangered;
+    background-color: #6A92CC;
 }
 
 #DropdownMenuusedop::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #FF6347;
+    background-color: rgba(102,152,203,1);
 }
 
 #DropdownMenuusedop::-webkit-scrollbar-track {
@@ -393,7 +393,7 @@ div[name="AnalysisPanel"] a:hover{
 
 #DropdownMenuexeEnv::-webkit-scrollbar{
     width: 10px;
-    background-color: orangered;
+    background-color: #6A92CC;
 }
 
 #DropdownMenuexeEnv::-webkit-scrollbar-thumb {
@@ -410,7 +410,7 @@ div[name="AnalysisPanel"] a:hover{
 
 #DropdownMenulandmarker::-webkit-scrollbar{
     width: 10px;
-    background-color: darkseagreen;
+    background-color: #706FAB;
 }
 
 #DropdownMenulandmarker::-webkit-scrollbar-thumb {
@@ -427,7 +427,7 @@ div[name="AnalysisPanel"] a:hover{
 
 #DropdownMenuparameter::-webkit-scrollbar{
     width: 10px;
-    background-color: darkseagreen;
+    background-color: #706FAB;
 }
 
 #DropdownMenuparameter::-webkit-scrollbar-thumb {
@@ -444,7 +444,7 @@ div[name="AnalysisPanel"] a:hover{
 
 #DropdownMenuevaluation::-webkit-scrollbar{
     width: 10px;
-    background-color: darkseagreen;
+    background-color: #706FAB;
 }
 
 #DropdownMenuevaluation::-webkit-scrollbar-thumb {
@@ -460,6 +460,22 @@ div[name="AnalysisPanel"] a:hover{
 }
 
 .btn-gradient.blue {
+    /*background: rgba(255,105,30,1);*/
+    /*background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255,105,30,1)), to(rgba(230,95,28,1)));*/
+    /*background: -webkit-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);*/
+    /*background: -moz-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);*/
+    /*background: -o-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);*/
+    /*background: linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);*/
+    background: lightsalmon;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(lightsalmon), to(lightcoral));
+    background: -webkit-linear-gradient(lightsalmon 0%, lightcoral 100%);
+    background: -moz-linear-gradient(lightsalmon 0%, lightcoral 100%);
+    background: -o-linear-gradient(lightsalmon 0%, lightcoral 100%);
+    background: linear-gradient(lightsalmon 0%, lightcoral 100%);
+}
+
+.btn-gradient.orange {
+
     background: rgba(102,152,203,1);
     background: -moz-linear-gradient(top, rgba(102,152,203,1) 0%, rgba(92,138,184,1) 100%);
     /*background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(102,152,203,1)), color-stop(100%, rgba(92,138,184,1)));*/
@@ -467,27 +483,17 @@ div[name="AnalysisPanel"] a:hover{
     background: -o-linear-gradient(top, rgba(102,152,203,1) 0%, rgba(92,138,184,1) 100%);
     background: -ms-linear-gradient(top, rgba(102,152,203,1) 0%, rgba(92,138,184,1) 100%);
     background: linear-gradient(to bottom, rgba(102,152,203,1) 0%, rgba(92,138,184,1) 100%);
-    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6698cb', endColorstr='#5c8ab8', GradientType=0 );*/
-}
 
-.btn-gradient.orange {
-    background: rgba(255,105,30,1);
-    background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255,105,30,1)), to(rgba(230,95,28,1)));
-    background: -webkit-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);
-    background: -moz-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);
-    background: -o-linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);
-    background: linear-gradient(rgba(255,105,30,1) 0%, rgba(230,95,28,1) 100%);
 }
 
 .btn-gradient.green {
-    background: rgba(130,200,160,1);
-    background: -moz-linear-gradient(top, rgba(130,200,160,1) 0%, rgba(130,199,158,1) 100%);
-    /*background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(130,200,160,1)), color-stop(100%, rgba(130,199,158,1)));*/
-    background: -webkit-linear-gradient(top, rgba(130,200,160,1) 0%, rgba(130,199,158,1) 100%);
-    background: -o-linear-gradient(top, rgba(130,200,160,1) 0%, rgba(130,199,158,1) 100%);
-    background: -ms-linear-gradient(top, rgba(130,200,160,1) 0%, rgba(130,199,158,1) 100%);
-    background: linear-gradient(to bottom, rgba(130,200,160,1) 0%, rgba(124, 185, 149, 1) 100%);
-    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#82c8a0', endColorstr='#82c79e', GradientType=0 );*/
+    background: #8968CD;
+    background: -moz-linear-gradient(top, #8968CD 0%, #706FAB 100%);
+    /*background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(102,152,203,1)), color-stop(100%, rgba(92,138,184,1)));*/
+    background: -webkit-linear-gradient(top, #8968CD 0%, #706FAB 100%);
+    background: -o-linear-gradient(top, #8968CD 0%, #706FAB 100%);
+    background: -ms-linear-gradient(top,#8968CD 0%, #706FAB 100%);
+    background: linear-gradient(to bottom, #8968CD 0%, #706FAB 100%);
 }
 
 .btn-gradient {
@@ -515,9 +521,9 @@ div[name="AnalysisPanel"] a:hover{
     font-size: 12px;
 }
 
-.btn-two.blue     {background-color: rgba(102,152,203,1);}
-.btn-two.green   {background-color: darkseagreen;}
-.btn-two.orange       {background-color: orangered;}
+.btn-two.blue     {background-color: #FFA289;}
+.btn-two.green   {background-color: #706FAB;}
+.btn-two.orange       {background-color: #6A92CC;}
 .btn-two.black       {background-color: dimgrey;}
 
 
@@ -543,14 +549,14 @@ div[name="AnalysisPanel"] a:hover{
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:1px solid #1E88C7;
+    border-left:1px solid #FFA289;
 }
 
 #tabPanelDataset #RelationshipDS.nav-tabs{
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:1px solid #1E88C7;
+    border-left:1px solid #FFA289;
 }
 #tabPanelDataset .nav-tabs li {
 height: 40px;
@@ -562,7 +568,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: #1E88C7;
+    color: #FFA289;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -575,20 +581,20 @@ height: 40px;
 }
 #tabPanelDataset .nav-tabs li.active a{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 #tabPanelDataset .nav-tabs li.active a i{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 
 #tabPanelDataset .nav-tabs li:hover a{
     border: 0 none;
-    background:lightblue;
+    background:lightcoral;
     color:black;
     height: 40px;
 }
@@ -599,7 +605,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid #1E88C7;
+    border-top: 7px solid #FFA289;
 }*/
 
 #tabPanelDataset .tab-content{
@@ -608,9 +614,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 25px;*/
-    border-bottom:3px solid #1E88C7;
-    border-left:1px solid #1E88C7;
-    /*border-right:1px solid #1E88C7;*/
+    border-bottom:3px solid #FFA289;
+    border-left:1px solid #FFA289;
+    /*border-right:1px solid #FFA289;*/
 }
 
 
@@ -619,7 +625,7 @@ height: 40px;
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:1px solid orangered;
+    border-left:1px solid #6A92CC;
 }
 #tabPanelProcess .nav-tabs li {
     height: 40px;
@@ -631,7 +637,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: orangered;
+    color: #6A92CC;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -643,19 +649,19 @@ height: 40px;
 }
 #tabPanelProcess .nav-tabs li.active a{
     border: 0 none;
-    background:orangered;
+    background:#6A92CC;
     color:#fff;
     height: 40px;
 }
 #tabPanelProcess .nav-tabs li.active a i{
     border: 0 none;
-    background:orangered;
+    background:#6A92CC;
     color:#fff;
     height: 40px;
 }
 #tabPanelProcess .nav-tabs li:hover a{
     border: 0 none;
-    background:lightsalmon;
+    background:rgba(102,152,203,1);
     color:black;
     height: 40px;
 }
@@ -665,7 +671,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid #1E88C7;
+    border-top: 7px solid #FFA289;
 }*/
 #tabPanelProcess .tab-content{
     padding-top:15px;
@@ -673,9 +679,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 25px;*/
-    border-bottom:3px solid orangered;
-    border-left:1px solid orangered;
-    /*border-right:1px solid orangered;*/
+    border-bottom:3px solid #6A92CC;
+    border-left:1px solid #6A92CC;
+    /*border-right:1px solid #6A92CC;*/
 }
 
 
@@ -684,7 +690,7 @@ height: 40px;
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:1px solid darkseagreen;
+    border-left:1px solid #706FAB;
 }
 #tabPanelStudy .nav-tabs li {
     height: 40px;
@@ -696,7 +702,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: darkseagreen;
+    color: #706FAB;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -708,19 +714,19 @@ height: 40px;
 }
 #tabPanelStudy .nav-tabs li.active a{
     border: 0 none;
-    background:darkseagreen;
+    background:#706FAB;
     color:#fff;
     height: 40px;
 }
 #tabPanelStudy .nav-tabs li.active a i{
     border: 0 none;
-    background:darkseagreen;
+    background:#706FAB;
     color:#fff;
     height: 40px;
 }
 #tabPanelStudy .nav-tabs li:hover a{
     border: 0 none;
-    background: darkseagreen;
+    background: #706FAB;
     color:black;
     height: 40px;
 }
@@ -730,7 +736,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid #1E88C7;
+    border-top: 7px solid #FFA289;
 }*/
 #tabPanelStudy .tab-content{
     padding-top:15px;
@@ -738,9 +744,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 15px;*/
-    border-bottom:3px solid darkseagreen;
-    border-left:1px solid darkseagreen;
-    /*border-right:1px solid darkseagreen;*/
+    border-bottom:3px solid #706FAB;
+    border-left:1px solid #706FAB;
+    /*border-right:1px solid #706FAB;*/
 }
 
 
@@ -749,7 +755,7 @@ height: 40px;
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:0px solid #1E88C7;
+    border-left:0px solid #FFA289;
 }
 #RelationshipDS .nav-tabs li {
     height: 40px;
@@ -761,7 +767,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: #1E88C7;
+    color: #FFA289;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -773,19 +779,19 @@ height: 40px;
 }
 #RelationshipDS .nav-tabs li.active a{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 #RelationshipDS .nav-tabs li.active a i{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 #RelationshipDS .nav-tabs li:hover a{
     border: 0 none;
-    background: lightblue;
+    background: lightcoral;
     color:black;
     height: 40px;
 }
@@ -795,7 +801,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid #1E88C7;
+    border-top: 7px solid #FFA289;
 }*/
 #RelationshipDS .tab-content{
     padding:15px;
@@ -803,9 +809,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 15px;*/
-    border-bottom:0px solid #1E88C7;
-    border-left:0px solid #1E88C7;
-    border-right:0px solid #1E88C7;
+    border-bottom:0px solid #FFA289;
+    border-left:0px solid #FFA289;
+    border-right:0px solid #FFA289;
 }
 
 
@@ -813,7 +819,7 @@ height: 40px;
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:0px solid #1E88C7;
+    border-left:0px solid #FFA289;
 }
 #RelationshipAtt .nav-tabs[name="blue"] li {
     height: 40px;
@@ -825,7 +831,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: #1E88C7;
+    color: #FFA289;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -837,19 +843,19 @@ height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="blue"] li.active a{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="blue"] li.active a i{
     border: 0 none;
-    background:#1E88C7;
+    background:#FFA289;
     color:#fff;
     height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="blue"] li:hover a{
     border: 0 none;
-    background: lightblue;
+    background: lightcoral;
     color:black;
     height: 40px;
 }
@@ -859,7 +865,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid #1E88C7;
+    border-top: 7px solid #FFA289;
 }*/
 #RelationshipAtt .tab-content[name="blue"]{
     padding:15px;
@@ -867,9 +873,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 15px;*/
-    border-bottom:0px solid #1E88C7;
-    border-left:0px solid #1E88C7;
-    border-right:0px solid #1E88C7;
+    border-bottom:0px solid #FFA289;
+    border-left:0px solid #FFA289;
+    border-right:0px solid #FFA289;
 }
 
 
@@ -877,7 +883,7 @@ height: 40px;
     border-bottom:0 none;
     background: whitesmoke;
     border-radius: 5px 5px 0 0;
-    border-left:0px solid darkseagreen;
+    border-left:0px solid #706FAB;
 }
 #RelationshipAtt .nav-tabs[name="green"] li {
     height: 40px;
@@ -889,7 +895,7 @@ height: 40px;
     border-top-right-radius:5px;
     font-size: 14px;
     border: none;
-    color: darkseagreen;
+    color: #706FAB;
     padding: 12px 8px;
 }
 /*#tabPanelDataset .nav-tabs li a i{*/
@@ -901,19 +907,19 @@ height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="green"] li.active a{
     border: 0 none;
-    background:darkseagreen;
+    background:#706FAB;
     color:#fff;
     height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="green"] li.active a i{
     border: 0 none;
-    background:darkseagreen;
+    background:#706FAB;
     color:#fff;
     height: 40px;
 }
 #RelationshipAtt .nav-tabs[name="green"] li:hover a{
     border: 0 none;
-    background: darkseagreen;
+    background: #706FAB;
     color:black;
     height: 40px;
 }
@@ -923,7 +929,7 @@ height: 40px;
     left: 45%;
     bottom: -14px;
     border: 7px solid transparent;
-    border-top: 7px solid darkseagreen;
+    border-top: 7px solid #706FAB;
 }*/
 #RelationshipAtt .tab-content[name="green"]{
     padding:15px;
@@ -931,9 +937,9 @@ height: 40px;
     font-size: 14px;
     line-height:24px;
     /*margin-top: 15px;*/
-    border-bottom:0px solid darkseagreen;
-    border-left:0px solid darkseagreen;
-    border-right:0px solid darkseagreen;
+    border-bottom:0px solid #706FAB;
+    border-left:0px solid #706FAB;
+    border-right:0px solid #706FAB;
 }
 
 textarea{

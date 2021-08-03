@@ -1438,19 +1438,23 @@ th {
 }
 .table-hover[id="resultsDataset"] > tbody > tr:hover > td,
 .table-hover[id="resultsDataset"] > tbody > tr:hover > th {
-  background-color: #1E88C7;
+  background-color: #FFA289;
+  opacity:0.8;
 }
 .table-hover[id="resultsProcess"] > tbody > tr:hover > td,
 .table-hover[id="resultsProcess"] > tbody > tr:hover > th {
-  background-color: orangered;
+  background-color: #6A92CC;
+  opacity:0.8;
 }
 .table-hover[id="resultsAnalysis"] > tbody > tr:hover > td,
 .table-hover[id="resultsAnalysis"] > tbody > tr:hover > th {
-  background-color: darkseagreen;
+  background-color: #706FAB;
+  opacity:0.8;
 }
 div[id="scrollDiv"] > tr:hover > td,
 div[id="scrollDiv"] > tr:hover > th {
-  background-color: darkseagreen;
+  background-color: #706FAB;
+  opacity:0.8;
 }
 
 table col[class*="col-"] {

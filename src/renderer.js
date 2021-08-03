@@ -775,12 +775,12 @@ $(function () {
     //check which element is clicked
     console.log($(this)[0].className)
     if ($(this)[0].className == "Process") {
-      $(this)[0].style.backgroundColor = 'lightsalmon';
+      $(this)[0].style.backgroundColor = 'rgba(102,152,203,1)';
       // document.getElementById("title").style.backgroundColor="orangered"
       // document.getElementById("title").style.color="orangered"
       document.getElementById("back").setAttribute("class","btn-two orange rounded mini");
       document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelProcess");
-      activeProperties("orangered");
+      activeProperties("#6A92CC");
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
       $('#dsRelationButton')[0].style.display = 'none';
@@ -1169,14 +1169,14 @@ $(function () {
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
         classname = "Study"
-        $(this)[0].style.backgroundColor = 'darkseagreen';
+        $(this)[0].style.backgroundColor = '#706FAB';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
         // document.getElementById("title").style.color="darkseagreen"
         document.getElementById("relationshipAttOnglet").setAttribute("name","green");
         document.getElementById("relationshipAttContent").setAttribute("name","green");
         document.getElementById("back").setAttribute("class","btn-two green rounded mini");
         document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
-        activeProperties("darkseagreen");
+        activeProperties("#68228B");
 
         $('#featureButton')[0].style.display = 'block';
         $('#dsRelationButton')[0].style.display = 'none';
@@ -1401,14 +1401,14 @@ $(function () {
       } else { //Event part for the Dataset
         if ($(this)[0].className == "Database") {
           classname = "Database";
-          $(this)[0].style.backgroundColor = 'lightblue';
+          $(this)[0].style.backgroundColor = 'lightsalmon';
           // document.getElementById("title").style.backgroundColor = '#1E88C7';
           // document.getElementById("title").style.color = '#1E88C7';
           document.getElementById("relationshipAttOnglet").setAttribute("name","blue");
           document.getElementById("relationshipAttContent").setAttribute("name","blue");
           document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
           document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelDataset");
-          activeProperties("#1E88C7");
+          activeProperties("#FFA289");
 
           $('#featureButton')[0].style.display = 'none';
           $('#dsRelationButton')[0].style.display = 'block';
@@ -1814,14 +1814,14 @@ $(function () {
         } else { //Event part for the analyse
           if ($(this)[0].className == "analyse") {
             classname = "analyse"
-            $(this)[0].style.backgroundColor = 'darkseagreen';
+            $(this)[0].style.backgroundColor = '#706FAB';
             // document.getElementById("title").style.backgroundColor="darkseagreen"
             // document.getElementById("title").style.color="darkseagreen"
             document.getElementById("relationshipAttOnglet").setAttribute("name","green");
             document.getElementById("relationshipAttContent").setAttribute("name","green");
             document.getElementById("back").setAttribute("class","btn-two green rounded mini");
             document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
-            activeProperties("darkseagreen");
+            activeProperties("#706FAB");
 
             $('#featureButton')[0].style.display = 'block';
             $('#dsRelationButton')[0].style.display = 'none';
