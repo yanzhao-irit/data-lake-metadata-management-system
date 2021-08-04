@@ -270,12 +270,14 @@ module.exports.getAnalyses = (study, name, id) => {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
+  console.log("queryQQQQQQQQQQQQ")
+  console.log(query)
   return session
     .run(
       query)
     .then(result => {
       return result.records.map(record => {
-        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l'))]
+        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
       });
     })
     .catch(error => {

@@ -1387,7 +1387,12 @@ $(function () {
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
               $list.append("<div id='scrollDiv' style='height:500px; overflow-y:scroll;'></div>");
               for (var i = 0; i < p.length; i++) {
-                $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                if(p[i][2]=="Landmarker"){
+                  console.log()
+                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name +" ("+ p[i][2] + ") | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                }else{
+                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                }
                 showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name);
               }
 
