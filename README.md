@@ -52,14 +52,12 @@ In the application, users can search different elements with tags and filters.
     ```
     npm install --global yarn
     ```
-    If you have problem with yarn install(request to https://registry.npmjs.org/yarn failed, reason: getaddrinfo ENOTFOUND myproxy.example.com), you may need to set the proxy with 
+    If you have problem with yarn install(request to https://registry.npmjs.org/yarn failed, reason: getaddrinfo ENOTFOUND myproxy.example.com), you may need to 1. set the proxy and 2. build electron
     ```
     npm config set proxy http://example.com:8080
     npm config rm proxy
     npm config rm https-proxy
-    ```
-    In the end, build electron with 
-    ```
+    
     yarn add electron-builder --dev
     ```
 
