@@ -29,5 +29,6 @@ In this database, we ingseted metadata of datasets, processes and analyses.
 1. This database is a Neo4j database, make sure that Neo4j is installed in your computer.
 2. Start Neo4j application, create a new project/database with name and password.
 3. Start the database and open the folder where the database is stored.
-4. Download *all.cypher* file and run the script in *\bin\cypher-shell.bat*.
+4. Install the plugins "APOC" and "Graph Data Science Library".
+5. Download *all.cypher* file and run the script in *\bin\cypher-shell.bat*.
 
