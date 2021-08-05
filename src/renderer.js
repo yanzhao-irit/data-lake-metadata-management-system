@@ -2192,11 +2192,31 @@ $(function () {
 
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
-    /*if(document.getElementById("otherAnalysis").checked==true && document.getElementById("machineLearning").checked==false){
-      typeRecherche=[];
-    }*/
-  console.log("typeRecherche-------------")
-  console.log(typeRecherche)
+    console.log("this.nameeeeeeeeeeeeeeeeeeee")
+    console.log(this.name)
+    if(this.name =="Structured" || this.name =="Semi-Structured" || this.name =="Unstructured"){
+      if(this.checked){
+        if(typeRecherche.indexOf(this.id) == -1){
+          typeRecherche.push(this.id);
+        }
+      }else{
+        var i = typeRecherche.indexOf(this.id)
+        typeRecherche.splice(i,1);
+      }
+      console.log(typeRecherche)
+      if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
+        $("#dbNames").empty()
+        // console.log(typeRecherche)
+        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
+      }
+      if (!(typeRecherche.includes("Structured")) && !(typeRecherche.includes("Semi-Structured")) && !(typeRecherche.includes("Unstructured"))) {
+        $("#dbNames").empty()
+        // console.log(typeRecherche)
+        showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
+      }
+    }
+
+/*
     // this will contain a reference to the checkbox
     if (this.checked) {
       console.log(this)
@@ -2435,7 +2455,7 @@ $(function () {
       $("#dbNames").empty()
       // console.log(typeRecherche)
       showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
-    }
+    }*/
   });
 
   //Event for checkbox in dropdown menu (mainly for filter)
