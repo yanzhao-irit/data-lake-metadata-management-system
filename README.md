@@ -60,6 +60,10 @@ In the application, users can search different elements with tags and filters.
     
     yarn add electron-builder --dev
     ```
+    If you have problem "request to https://registry.npmjs.org/yarn failed, reason: self signed certificate in certificate chain", you may try the following command first
+    ```
+    npm config set registry http://registry.npmjs.org/
+    ```
 
 7. Install windows-build-tools, start a cmd with administrator rights at your system with 
     ```
