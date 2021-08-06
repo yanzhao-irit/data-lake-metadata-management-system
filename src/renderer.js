@@ -2192,7 +2192,6 @@ $(function () {
 
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
-    console.log("this.nameeeeeeeeeeeeeeeeeeee")
     console.log(this.name)
     if(this.name =="Structured" || this.name =="Semi-Structured" || this.name =="Unstructured"){
       if(this.checked){
@@ -2200,8 +2199,10 @@ $(function () {
           typeRecherche.push(this.id);
         }
       }else{
-        var i = typeRecherche.indexOf(this.id)
-        typeRecherche.splice(i,1);
+        var i = typeRecherche.indexOf(this.id);
+        if (i > -1) {
+          typeRecherche.splice(i,1);
+        }
       }
       console.log(typeRecherche)
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
@@ -2214,147 +2215,32 @@ $(function () {
         // console.log(typeRecherche)
         showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
       }
-    }
-
-/*
-    // this will contain a reference to the checkbox
-    if (this.checked) {
-      console.log(this)
-      typeRecherche.push(this.id);
-      // console.log(typeRecherche)
-      //Check the type of checkbox
-      if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
-        $("#dbNames").empty()
+    }else if(this.name =="machineLearning" || this.name =="otherAnalysis" || this.name =="supervised" || this.name =="descriptive" || this.name =="diagnostic" || this.name =="predictive" || this.name =="prescriptive"){
+      if (this.checked) {
+        console.log(this)
+        typeRecherche.push(this.id);
         // console.log(typeRecherche)
-        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
-      }
-      if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-        $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        document.getElementById("landmarkerDropdown").style.display = "none"
-        document.getElementById("parameterDropdown").style.display = "none"
-        document.getElementById("evaluationDropdown").style.display = "none"
-        document.getElementById("landmarkerClear").style.display = "none"
-        document.getElementById("parameterClear").style.display = "none"
-        document.getElementById("evaluationClear").style.display = "none"
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-        if (typeRecherche.includes("supervised")) {
-          $('#algoNames')[0].style.display = 'inline-block'
-          $('#algosupervised')[0].style.display = 'inline-block'
-          $('#algoUnsupervised')[0].style.display = 'inline-block'
-          $('#AlgoReinforcement')[0].style.display = 'inline-block'
-          $('#parameter')[0].style.display = 'inline-block'
-          $('#evaluation')[0].style.display = 'inline-block'
-          $('#landmarker')[0].style.display = 'inline-block'
-          $('label[for="algoNames"]')[0].style.display = 'inline-block'
-          $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
-        }
-      }
-      if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-        $('#supervised')[0].style.display = 'inline-block'
-        $('#descriptive')[0].style.display = 'inline-block'
-        $('#diagnostic')[0].style.display = 'inline-block'
-        $('#predictive')[0].style.display = 'inline-block'
-        $('#prescriptive')[0].style.display = 'inline-block'
-        $('label[for="supervised"]')[0].style.display = 'inline-block'
-        $('label[for="descriptive"]')[0].style.display = 'inline-block'
-        $('label[for="diagnostic"]')[0].style.display = 'inline-block'
-        $('label[for="predictive"]')[0].style.display = 'inline-block'
-        $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-        $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-      }
-      if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-        $('#supervised')[0].style.display = 'none'
-        $('#descriptive')[0].style.display = 'none'
-        $('#diagnostic')[0].style.display = 'none'
-        $('#predictive')[0].style.display = 'none'
-        $('#prescriptive')[0].style.display = 'none'
-        $('label[for="supervised"]')[0].style.display = 'none'
-        $('label[for="descriptive"]')[0].style.display = 'none'
-        $('label[for="diagnostic"]')[0].style.display = 'none'
-        $('label[for="predictive"]')[0].style.display = 'none'
-        $('label[for="prescriptive"]')[0].style.display = 'none'
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        document.getElementById("landmarkerDropdown").style.display = "none"
-        document.getElementById("parameterDropdown").style.display = "none"
-        document.getElementById("evaluationDropdown").style.display = "none"
-        document.getElementById("landmarkerClear").style.display = "none"
-        document.getElementById("parameterClear").style.display = "none"
-        document.getElementById("evaluationClear").style.display = "none"
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-        $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-      }
-    } else {
-      console.log("sssssssssssss")
-      console.log(typeRecherche)
-      //Remove the filtre of the unchecked box
-      const index = typeRecherche.indexOf(this.id);
-      if (index > -1) {
-        typeRecherche.splice(index, 1);
-      }
-      // the checkbox is now no longer checked
-      $(".names").empty()
-      console.log("S2")
-      console.log(typeRecherche)
-      if (typeRecherche.length == 0) {
-        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
-      }
-      else {
-        console.log("S3")
-        console.log(typeRecherche)
-        // console.log(typeRecherche)
-        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        document.getElementById("landmarkerDropdown").style.display = "none"
-        document.getElementById("parameterDropdown").style.display = "none"
-        document.getElementById("evaluationDropdown").style.display = "none"
-        document.getElementById("landmarkerClear").style.display = "none"
-        document.getElementById("parameterClear").style.display = "none"
-        document.getElementById("evaluationClear").style.display = "none"
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-        if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
-          console.log("S4")
-          console.log(typeRecherche)
-          $("#dbNames").empty()
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
-        }
+        //Check the type of checkbox
         if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
           $("#analyseNames").empty()
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
           if (typeRecherche.includes("supervised")) {
             $('#algoNames')[0].style.display = 'inline-block'
             $('#algosupervised')[0].style.display = 'inline-block'
@@ -2370,11 +2256,6 @@ $(function () {
           }
         }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-          console.log("S5")
-          console.log(typeRecherche)
-          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'inline-block'
           $('#descriptive')[0].style.display = 'inline-block'
           $('#diagnostic')[0].style.display = 'inline-block'
@@ -2385,13 +2266,139 @@ $(function () {
           $('label[for="diagnostic"]')[0].style.display = 'inline-block'
           $('label[for="predictive"]')[0].style.display = 'inline-block'
           $('label[for="prescriptive"]')[0].style.display = 'inline-block'
+          $("#analyseNames").empty()
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-          console.log("S6")
-          console.log(typeRecherche)
-          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+          $('#supervised')[0].style.display = 'none'
+          $('#descriptive')[0].style.display = 'none'
+          $('#diagnostic')[0].style.display = 'none'
+          $('#predictive')[0].style.display = 'none'
+          $('#prescriptive')[0].style.display = 'none'
+          $('label[for="supervised"]')[0].style.display = 'none'
+          $('label[for="descriptive"]')[0].style.display = 'none'
+          $('label[for="diagnostic"]')[0].style.display = 'none'
+          $('label[for="predictive"]')[0].style.display = 'none'
+          $('label[for="prescriptive"]')[0].style.display = 'none'
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          $("#analyseNames").empty()
           showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
+        }
+      }else{
+        var i = typeRecherche.indexOf(this.id);
+        if (i > -1) {
+          typeRecherche.splice(i, 1);
+        }
+        // the checkbox is now no longer checked
+        $("#analyseNames").empty()
+        console.log(typeRecherche)
+        if (typeRecherche.length == 0) {
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+        }
+        else {
+          console.log("S3")
+          console.log(typeRecherche)
+          // console.log(typeRecherche)
+          // showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
+            $("#analyseNames").empty()
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            if (typeRecherche.includes("supervised")) {
+              $('#algoNames')[0].style.display = 'inline-block'
+              $('#algosupervised')[0].style.display = 'inline-block'
+              $('#algoUnsupervised')[0].style.display = 'inline-block'
+              $('#AlgoReinforcement')[0].style.display = 'inline-block'
+              $('#parameter')[0].style.display = 'inline-block'
+              $('#evaluation')[0].style.display = 'inline-block'
+              $('#landmarker')[0].style.display = 'inline-block'
+              $('label[for="algoNames"]')[0].style.display = 'inline-block'
+              $('label[for="algosupervised"]')[0].style.display = 'inline-block'
+              $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
+              $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
+            }
+          }
+          if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
+            console.log("S5")
+            console.log(typeRecherche)
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            $('#supervised')[0].style.display = 'inline-block'
+            $('#descriptive')[0].style.display = 'inline-block'
+            $('#diagnostic')[0].style.display = 'inline-block'
+            $('#predictive')[0].style.display = 'inline-block'
+            $('#prescriptive')[0].style.display = 'inline-block'
+            $('label[for="supervised"]')[0].style.display = 'inline-block'
+            $('label[for="descriptive"]')[0].style.display = 'inline-block'
+            $('label[for="diagnostic"]')[0].style.display = 'inline-block'
+            $('label[for="predictive"]')[0].style.display = 'inline-block'
+            $('label[for="prescriptive"]')[0].style.display = 'inline-block'
+          }
+          if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
+            console.log("S6")
+            console.log(typeRecherche)
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            $('#supervised')[0].style.display = 'none'
+            $('#descriptive')[0].style.display = 'none'
+            $('#diagnostic')[0].style.display = 'none'
+            $('#predictive')[0].style.display = 'none'
+            $('#prescriptive')[0].style.display = 'none'
+            $('label[for="supervised"]')[0].style.display = 'none'
+            $('label[for="descriptive"]')[0].style.display = 'none'
+            $('label[for="diagnostic"]')[0].style.display = 'none'
+            $('label[for="predictive"]')[0].style.display = 'none'
+            $('label[for="prescriptive"]')[0].style.display = 'none'
+            $('#algoNames')[0].style.display = 'none'
+            $('#algosupervised')[0].style.display = 'none'
+            $('#algoUnsupervised')[0].style.display = 'none'
+            $('#AlgoReinforcement')[0].style.display = 'none'
+            $('#parameter')[0].style.display = 'none'
+            $('#evaluation')[0].style.display = 'none'
+            $('#landmarker')[0].style.display = 'none'
+            document.getElementById("landmarkerDropdown").style.display = "none"
+            document.getElementById("parameterDropdown").style.display = "none"
+            document.getElementById("evaluationDropdown").style.display = "none"
+            document.getElementById("landmarkerClear").style.display = "none"
+            document.getElementById("parameterClear").style.display = "none"
+            document.getElementById("evaluationClear").style.display = "none"
+            $('label[for="algoNames"]')[0].style.display = 'none'
+            $('label[for="algosupervised"]')[0].style.display = 'none'
+            $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+            $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          }
+        }
+        if (!(typeRecherche.includes("otherAnalysis")) && !(typeRecherche.includes("machineLearning"))) {
           $('#supervised')[0].style.display = 'none'
           $('#descriptive')[0].style.display = 'none'
           $('#diagnostic')[0].style.display = 'none'
@@ -2421,41 +2428,7 @@ $(function () {
           $('label[for="algoReinforcement"]')[0].style.display = 'none'
         }
       }
-      if (!(typeRecherche.includes("otherAnalysis")) && !(typeRecherche.includes("machineLearning"))) {
-        $('#supervised')[0].style.display = 'none'
-        $('#descriptive')[0].style.display = 'none'
-        $('#diagnostic')[0].style.display = 'none'
-        $('#predictive')[0].style.display = 'none'
-        $('#prescriptive')[0].style.display = 'none'
-        $('label[for="supervised"]')[0].style.display = 'none'
-        $('label[for="descriptive"]')[0].style.display = 'none'
-        $('label[for="diagnostic"]')[0].style.display = 'none'
-        $('label[for="predictive"]')[0].style.display = 'none'
-        $('label[for="prescriptive"]')[0].style.display = 'none'
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        document.getElementById("landmarkerDropdown").style.display = "none"
-        document.getElementById("parameterDropdown").style.display = "none"
-        document.getElementById("evaluationDropdown").style.display = "none"
-        document.getElementById("landmarkerClear").style.display = "none"
-        document.getElementById("parameterClear").style.display = "none"
-        document.getElementById("evaluationClear").style.display = "none"
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-      }
     }
-    if (!(typeRecherche.includes("Structured")) && !(typeRecherche.includes("Semi-Structured")) && !(typeRecherche.includes("Unstructured"))) {
-      $("#dbNames").empty()
-      // console.log(typeRecherche)
-      showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
-    }*/
   });
 
   //Event for checkbox in dropdown menu (mainly for filter)
