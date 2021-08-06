@@ -81,7 +81,7 @@ In the application, users can search different elements with tags and filters.
     npm config set python "path of your python.exe" (For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
     ```
 
-10. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio] (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)(The installation requires a restart of the computer)
+10. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0) (The installation requires a restart of the computer)
 
 
 11. Start a windows cmd at the downloaded application repository and download all necessary dependencies with 
