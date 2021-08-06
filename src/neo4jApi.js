@@ -35,8 +35,8 @@ var _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 
-let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../store-password.json')));
-var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
+let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../neo4j-setting.json')));
+var driver = neo4j.driver(pwd.url, neo4j.auth.basic(pwd.username, pwd.password));
 //Function to search processus metadata with parameters to apply filter. 
 //Attributed values are default value if no parameter is given.
 module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) => {
