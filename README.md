@@ -78,10 +78,10 @@ In the application, users can search different elements with tags and filters.
 9. Find python.exe, then start a cmd with administrator rights at your system and set up the python environment with
 
     ```
-    npm config set python "path of your python.exe"(For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
+    npm config set python "path of your python.exe" (For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
     ```
 
-10. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)(The installation requires a restart of the computer)
+10. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio] (https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0)(The installation requires a restart of the computer)
 
 
 11. Start a windows cmd at the downloaded application repository and download all necessary dependencies with 
@@ -89,7 +89,7 @@ In the application, users can search different elements with tags and filters.
     npm install
     ```
 
-12. Create a file named *neo4j-setting.json* at the root repository of the application and write your neo4j password in it.
+12. Create a file named *neo4j-setting.json* at the root repository of the application and write your neo4j setting in it. If you use a local neo4j database, the url is "bolt://localhost" as shown below.
 
     ```json
     {
