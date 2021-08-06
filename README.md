@@ -89,11 +89,13 @@ In the application, users can search different elements with tags and filters.
     npm install
     ```
 
-12. Create a file named *store-password.json* at the root repository of the application and write your neo4j password in it.
+12. Create a file named *neo4j-setting.json* at the root repository of the application and write your neo4j password in it.
 
     ```json
     {
-        "password" : "Your password"
+        "url" : "bolt://localhost",
+        "username" : "neo4j",
+        "password" : "1111"
     }
     ```
 
