@@ -160,9 +160,10 @@ async function getMetadata() {
             }
         }
         console.log('Attribut')
+        console.log(result_nbAttribute)
         console.dir(result_nbAttribute.rows)
 
-        stmts = [
+        /*stmts = [
             `select round((sum(bytes)/1024/1024/1024),2) from v$datafile`
         ];
 
@@ -175,10 +176,11 @@ async function getMetadata() {
             }
         }
         console.log('Taille de la base en Gb')
-        console.dir(result_size.rows)
+        console.dir(result_size.rows)*/
 
 
-        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
+        // nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
+        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': 0 + ' Go' })
         for (var i = 0; i < result_dataSource.rows.length; i++) {
             nodesDataSetDataLake.push({ 'name': result_dataSource.rows[i][0] })
         }
@@ -187,7 +189,11 @@ async function getMetadata() {
 
         }
         for (var i = 0; i < result_attribut.rows.length; i++) {
-            nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
+            if(result_attribut.rows[i][3]=="NUMBER"){
+                nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': 'Numeric', 'min': result_attribut.rows[i][14],'max': result_attribut.rows[i][15],'missingValue': result_attribut.rows[i][17] }])
+            }else{
+                nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
+            }
         }
 
         console.log(nodesDatasetSource)

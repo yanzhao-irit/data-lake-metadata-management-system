@@ -1731,8 +1731,8 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
                     CREATE (ec` + i + `0` +j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
         for (var k = 0; k < attribute.length; k++) {
           if (eC[j][1].name == attribute[k][0]) {
-            if (attribute[k][1].type == 'NUMBER') {
-              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
+            if (attribute[k][1].type == 'Numeric') {
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' , min: '` + attribute[k][1].min +`' , max: '` + attribute[k][1].max + `' , missingValue: '` + attribute[k][1].missingValue + `' })
                     CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
             } else {
               query += `CREATE (att` + i + `0` +j + `0` +k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})
