@@ -227,7 +227,7 @@ async function getMetadata() {
         console.log(t2)
         console.log(t2 - t1 + 'ms')
         tTotal = t2 - t1;
-        document.getElementById("resultInsert").innerText="Completed, it took "+tTotal +" s"
+        document.getElementById("resultInsert").innerText="Completed, it took "+tTotal +" ms"
         document.getElementById("reload").style.display="block"
         if (connection) {
             try {
