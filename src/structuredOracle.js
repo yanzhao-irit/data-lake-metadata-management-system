@@ -163,7 +163,7 @@ async function getMetadata() {
         console.log(result_nbAttribute)
         console.dir(result_nbAttribute.rows)
 
-        /*stmts = [
+        stmts = [
             `select round((sum(bytes)/1024/1024/1024),2) from v$datafile`
         ];
 
@@ -176,7 +176,7 @@ async function getMetadata() {
             }
         }
         console.log('Taille de la base en Gb')
-        console.dir(result_size.rows)*/
+        console.dir(result_size.rows)
 
 
         // nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
