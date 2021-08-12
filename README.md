@@ -111,9 +111,10 @@ In the application, users can search different elements with tags and filters.
     npm run start
     ```
 
-14. If you are going to ingest metadata of oracle database, please make sure your user has enough privileges, if your user don't have enough privileges, please connect oracle with sys as sysdba, and then run
+14. If you are going to ingest metadata of oracle database, please make sure your user has enough privileges. If your user don't have enough privileges, please connect oracle with sys as sysdba, and then run
     ``` 
     grant select on DBA_OBJECTS to username;
     grant select on DBA_TAB_COLUMNS to username;
+    grant select any dictionary to username;
     ```
 
