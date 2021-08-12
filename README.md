@@ -113,8 +113,11 @@ In the application, users can search different elements with tags and filters.
 
 14. If you are going to ingest metadata of oracle database, please make sure your user has enough privileges. If your user don't have enough privileges, please connect oracle with sys as sysdba, and then run
     ``` 
+    grant create session, grant any privilege to username;
+    grant unlimited tablespace to username;
+    grant create table to username;
     grant select on DBA_OBJECTS to username;
     grant select on DBA_TAB_COLUMNS to username;
-    grant select any dictionary to username;
+    grant select any DICTIONARY to username;
     ```
 
