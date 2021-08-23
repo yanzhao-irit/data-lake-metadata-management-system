@@ -152,7 +152,7 @@ div[name="DatasetPanel"] div[class="panel-footer"]{
 }
 
 div[name="DatasetPanel"] div[class="panel-body"]{
-     height: 200px;
+     height: 300px;
      overflow: auto;
 }
 
@@ -196,7 +196,7 @@ div[name="ProcessPanel"] div[class="panel-footer"]{
 }
 
 div[name="ProcessPanel"] div[class="panel-body"]{
-    height: 200px;
+    height: 300px;
     overflow: auto;
 }
 
@@ -240,7 +240,7 @@ div[name="AnalysisPanel"] div[class="panel-footer"]{
 }
 
 div[name="AnalysisPanel"] div[class="panel-body"]{
-    height: 200px;
+    height: 300px;
     overflow: auto;
 }
 
