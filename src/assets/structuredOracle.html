@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
-  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+        content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' ; img-src 'self' data: ">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'">
   <link rel='stylesheet' href='../contents/neo4jcss/main.css'>
   <link rel="stylesheet" href="../contents/bootstrap/bootstrap-3.3.7/dist/css/bootstrap.min.css">
   <script src="../contents/jquery/jquery.min.1.12.4.js"></script>
@@ -18,6 +18,26 @@
   <title>Data Lake App - Structured Dataset</title>
 </head>
 <body>
+<nav class="navbar navbar-default" role="navigation" style="background-color: #333;">
+  <ul name="NavigationBar">
+    <div class="col-md-4" style="padding-left: 0px;padding-right: 0px;">
+      <li name="NavigationBar" style="text-align: left" class="dropdown">
+        <a id='ingestChoses' type="button" class="dropdown-toggle" data-toggle="dropdown" name="NavigationBar">Ingest
+          <b class="caret"></b></a>
+        <ul class="dropdown-menu" style="overflow: visible">
+          <li><a href="dbChoix.html">Structured Dataset</a></li>
+          <li><a href="semiStructured.html">Semi-Structured Dataset</a></li>
+          <li><a href="unStructured.html">Unstructured Dataset</a></li>
+        </ul>
+      </li>
+    </div>
+    <div class="col-md-2 pull-right" style="padding-left: 0px;padding-right: 0px;text-align: right;">
+      <li name="NavigationBar" style="float: right">
+        <a type="button" href="index.html" style="text-align: center" name="NavigationBar">Back To Application</a>
+      </li>
+    </div>
+  </ul>
+</nav>
 <div class="elegant-aero">
 
   <div id="oracleOption" >
@@ -38,7 +58,11 @@
     <label for="sid">Connection SID : </label>
     <input type="text" id="sid" required>
     <br/>
-    <button id="try" class="btn btn-primary btn-lg" >Try connection</button>
+    <div style="text-align: center">
+      <button id="try" class="btn btn-primary btn-lg" >Connection</button>
+      </br>
+      <span id="resultConnection"></span>
+    </div>
     <h3>Dataset : </h3>
     </br>
     <label for="owner">Owner of database : </label>
@@ -65,7 +89,6 @@
     <div style="text-align: center" class="footer">
       <button id="submitInfo" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Send</button>
       </br>
-      <a href="index.html">Back To application</a>
     </div>
   </div>
 

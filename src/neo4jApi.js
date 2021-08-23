@@ -35,8 +35,8 @@ var _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 
-let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../store-password.json')));
-var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic("neo4j", pwd.password));
+let pwd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../neo4j-setting.json')));
+var driver = neo4j.driver(pwd.url, neo4j.auth.basic(pwd.username, pwd.password));
 //Function to search processus metadata with parameters to apply filter. 
 //Attributed values are default value if no parameter is given.
 module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe = [], exeEnv = []) => {
@@ -110,14 +110,8 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
   var session = driver.session();
   let typeRech = Object.values(type);
   console.log('Algorithm names : ' + algoNames)
-  if (typeRech.indexOf('machineLearning') != -1) {
-    typeRech.splice(typeRech.indexOf('machineLearning'), 1)
-  }
-  if (typeRech.indexOf('otherAnalysis') != -1) {
-    typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
-  }
+  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)"
   //Classic cypher query to search for study without filter.
-  var query = "MATCH (s:Study)-[:hasAnalysis]->(a:Analysis),(l:Landmarker),(al)" 
   if(parameter.length > 0){
     query+= ',(p)'
   }
@@ -133,14 +127,25 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
       query = query + "toLower(s.name) CONTAINS toLower('" + tags[i] + "') OR toLower(s.description) CONTAINS toLower('" + tags[i] + "') OR toLower(a.name) CONTAINS toLower('" + tags[i] + "') )"
     }
   }
+  if (typeRech.indexOf('machineLearning') != -1 && typeRech.indexOf('otherAnalysis') == -1) {
+    query = query + ' AND toLower(a.typeAnalysis) CONTAINS toLower("Machine Learning")'
+  }else if (typeRech.indexOf('machineLearning') == -1 && typeRech.indexOf('otherAnalysis') != -1) {
+    query = query + ' AND toLower(a.typeAnalysis) CONTAINS toLower("Other Analysis")'
+  }
+  if (typeRech.indexOf('machineLearning') != -1 ) {
+    typeRech.splice(typeRech.indexOf('machineLearning'), 1)
+  }
+  if (typeRech.indexOf('otherAnalysis') != -1) {
+    typeRech.splice(typeRech.indexOf('otherAnalysis'), 1)
+  }
   //Cypher query for analysis type filter
   if (typeRech.length > 0) {
     query += ' AND ('
     for (var i = 0; i < typeRech.length; i++) {
       if (i != typeRech.length - 1) {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
+        query += ' toLower(a.subTypeAnalysis) CONTAINS toLower("' + typeRech[i] + '") OR '
       } else {
-        query += ' toLower(a.typeAnalysis) CONTAINS toLower("' + typeRech[i] + '")  )'
+        query += ' toLower(a.subTypeAnalysis) CONTAINS toLower("' + typeRech[i] + '")  )'
       }
     }
   }
@@ -265,12 +270,14 @@ module.exports.getAnalyses = (study, name, id) => {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
+  console.log("queryQQQQQQQQQQQQ")
+  console.log(query)
   return session
     .run(
       query)
     .then(result => {
       return result.records.map(record => {
-        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l'))]
+        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
       });
     })
     .catch(error => {
@@ -1095,6 +1102,7 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
       + "-[:ingestTo]->(c:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
       + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
+      + "',uuid:'"+DSDatalake_CSV["uuid"]
       + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
       + "',administrator:'"+DSDatalake_CSV["administrator"]
       + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
@@ -1315,6 +1323,7 @@ module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,In
       + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
       + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
       + "',administrator:'"+DSDatalake_UnStructured["administrator"]
+      + "',uuid:'"+DSDatalake_UnStructured["uuid"]
       + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
       + "')),size:'"+DSDatalake_UnStructured["size"]
       + "',name:'"+DSDatalake_UnStructured["name"]
@@ -1722,8 +1731,8 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
                     CREATE (ec` + i + `0` +j + `)<-[:hasEntityClass]-(dsDl` + i + `)`
         for (var k = 0; k < attribute.length; k++) {
           if (eC[j][1].name == attribute[k][0]) {
-            if (attribute[k][1].type == 'NUMBER') {
-              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' })
+            if (attribute[k][1].type == 'Numeric') {
+              query += `CREATE (att` + i + `0` +j + `0` +k + `:NumericAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `' , min: '` + attribute[k][1].min +`' , max: '` + attribute[k][1].max + `' , missingValue: '` + attribute[k][1].missingValue + `' })
                     CREATE (att` + i + `0` +j + `0` +k + `)<-[:hasAttribute]-(ec` + i + `0` +j + `)`
             } else {
               query += `CREATE (att` + i + `0` +j + `0` +k + `:NominalAttribute {name:'` + attribute[k][1].name + `', type: '` + attribute[k][1].type + `'})

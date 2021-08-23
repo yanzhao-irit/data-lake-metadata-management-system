@@ -4,7 +4,7 @@ const _ = require('lodash')
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('add').addEventListener("click", addTag);
-  document.getElementById('ingestMode').addEventListener("change", showIngestMode);
+  // document.getElementById('ingestMode').addEventListener("change", showIngestMode);
   //document.getElementById('delete').addEventListener("click",affTagTest);
   document.getElementById("zone0").addEventListener("input", printTags);
   document.getElementById('fileInput').addEventListener('change', selectedFileChanged);
@@ -34,12 +34,12 @@ var uuids = [];
 var hasAttribute = [];
 
 //The ingest start time and end time is before today
-window.onload = setMaxDate();
+/*window.onload = setMaxDate();
 function setMaxDate() {
   getToday(today);
   document.getElementById("ingestionStartTime").setAttribute("max", today);
   document.getElementById("ingestionEndTime").setAttribute("max", today);
-}
+}*/
 
 window.onload= getUUID();
 function getUUID(){
@@ -318,14 +318,17 @@ function countInstancesWithMissingValuesEC(rows){
 
 //set the ingest start time and end time form the html page
 function setIngest(){
-  Ingest_CSV["ingestionMode"] = document.getElementById("ingestMode").value
+  /*Ingest_CSV["ingestionMode"] = document.getElementById("ingestMode").value
   if(document.getElementById("ingestMode").value === "real-time"){
     Ingest_CSV["ingestionStartTime"] = document.getElementById("ingestionStartTime").value +":00Z"
     Ingest_CSV["ingestionEndTime"] = document.getElementById("ingestionEndTime").value +":00Z"
   }else {
     Ingest_CSV["ingestionStartTime"] = ""
     Ingest_CSV["ingestionEndTime"] = ""
-  }
+  }*/
+  Ingest_CSV["ingestionMode"] = "batch"
+  Ingest_CSV["ingestionStartTime"] = ""
+  Ingest_CSV["ingestionEndTime"] = ""
 }
 
 //set tags from the page html
@@ -339,16 +342,17 @@ function setTags(){
 }
 
 //set the content of datalakedataset
-function setDSDatalake(){
+function setDSDatalake() {
   DSDatalake_CSV["owner"] = DatasetSource_CSV["owner"]
   DSDatalake_CSV["location"] = DatasetSource_CSV["location"]
   DSDatalake_CSV["name"] = DatasetSource_CSV["name"]
   DSDatalake_CSV["type"] = DatasetSource_CSV["type"]
   DSDatalake_CSV["filenameExtension"] = fileExtName
-  DSDatalake_CSV["creationDate"] = getToday(new Date()) +":00Z"
+  DSDatalake_CSV["creationDate"] = getToday(new Date()) + ":00Z"
   DSDatalake_CSV["description"] = document.getElementById("description").value
   DSDatalake_CSV["connectionURL"] = document.getElementById("urlDS").value
   DSDatalake_CSV["administrator"] = document.getElementById("admin").value
+  DSDatalake_CSV["uuid"] = uuid();
 }
 
 //get th date of today

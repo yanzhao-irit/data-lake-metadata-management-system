@@ -26,7 +26,7 @@ var dsDate = "0001-01-01T00:00:00Z";
 var pDate = "0001-01-01";
 var aDate = "0001-01-01";
 var inputECAnames = "";
-var algoNames = document.getElementById("algoNames");
+var algoNames = document.getElementById("algoNames").value;
 var lastSelected;
 var cypherHistoryList = [];
 var graphListResult = [];
@@ -36,6 +36,7 @@ var tagsinput = []
 var trans = "";
 var datasetChosed = []
 var timer;
+var classname="";
 
 var options = {
   autoResize: true,
@@ -228,7 +229,7 @@ $(function () {
     //refresh graphic interface
     //Call for search functions with inputs
     showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     //Init filters that need database request
     languageProcessInit(tagsinput)
@@ -251,7 +252,7 @@ $(function () {
     if (!tagsinput.length == 0) {
       $(".names").empty()
       showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
       showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       languageProcessInit(tagsinput, langList, pDate, typeOpe)
       excutionEnvironmentInit(tagsinput)
@@ -291,6 +292,9 @@ $(function () {
   //Function onclick to go back to the search table from the graphic interface.
   $('#back').on('click', function () {
     document.getElementById("EntityClassButtonAnalyse").style.display = 'none';
+    if(document.getElementById("scrollDiv")){
+      document.getElementById("scrollDiv").remove();
+    }
     // document.getElementById("EntityClassButtonDataset").style.display = 'none';
     $("#processNames").closest(".collapse").collapse('show');
     $("#dbNames").closest(".collapse").collapse('show');
@@ -729,8 +733,9 @@ $(function () {
       //or by dataset
       api.getEntityClassByDataset($(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2]).then(ec => {
         json = JSON.parse(JSON.stringify(ec[0]))
+        console.log("ec[0]")
+        console.log(ec[0])
         $list = $('#EntityClassProperties')
-
 
         let arr = [];
         for (propriete in ec[0]) {
@@ -754,6 +759,7 @@ $(function () {
   $('.names').on('click', "td", function () {
     //To change the color of the element clicked to know which one is clicked
     $(this)[0].style.backgroundColor = '#93e2df'
+
     if (lastSelected) {
       lastSelected[0].style.backgroundColor = ''
     }
@@ -769,7 +775,12 @@ $(function () {
     //check which element is clicked
     console.log($(this)[0].className)
     if ($(this)[0].className == "Process") {
-      activeProperties();
+      $(this)[0].style.backgroundColor = 'rgba(102,152,203,1)';
+      // document.getElementById("title").style.backgroundColor="orangered"
+      // document.getElementById("title").style.color="orangered"
+      document.getElementById("back").setAttribute("class","btn-two orange rounded mini");
+      document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelProcess");
+      activeProperties("#6A92CC");
       //Hide unused tabs
       $('#featureButton')[0].style.display = 'none';
       $('#dsRelationButton')[0].style.display = 'none';
@@ -785,10 +796,11 @@ $(function () {
             json = JSON.parse(JSON.stringify(p[0]))
             var $p = $("#properties")
             for (propriete in p[0]) {
-              if (propriete == "executionDate" || propriete == 'id') {
-                $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+              //propriete == "executionDate" ||
+              if (propriete == 'id') {
+                $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete].low + "</p>");
               } else {
-                $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
               }
             }
           }
@@ -963,7 +975,6 @@ $(function () {
         network.fit()
         }else{
           document.getElementById("viz").innerText = "";
-
         }
       })
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
@@ -1157,7 +1168,15 @@ $(function () {
 
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
-        activeProperties();
+        classname = "Study"
+        $(this)[0].style.backgroundColor = '#706FAB';
+        // document.getElementById("title").style.backgroundColor="darkseagreen"
+        // document.getElementById("title").style.color="darkseagreen"
+        document.getElementById("relationshipAttOnglet").setAttribute("name","green");
+        document.getElementById("relationshipAttContent").setAttribute("name","green");
+        document.getElementById("back").setAttribute("class","btn-two green rounded mini");
+        document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
+        activeProperties("#68228B");
 
         $('#featureButton')[0].style.display = 'block';
         $('#dsRelationButton')[0].style.display = 'none';
@@ -1165,17 +1184,20 @@ $(function () {
         $('#operationButton')[0].style.display = 'none';
         $('#similarityButton')[0].style.display = 'none';
         document.getElementById("EntityClassButtonAnalyse").style.display = 'block';
+        /*console.log("test!!!!!!!!!!!!!")
+        console.log(algoNames)*/
         api
-          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList)
+          .getStudies([$(this).text()], typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList)
           .then(p => {
             if (p) {
               json = JSON.parse(JSON.stringify(p[0]))
               var $p = $("#properties")
               for (propriete in p[0]) {
-                if (propriete == "executionDate" || propriete == 'id') {
-                  $p.append("<p>" + propriete + " : " + json[propriete].low + "</p>");
+                //propriete == "executionDate" ||
+                if ( propriete == 'id') {
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete].low + "</p>");
                 } else {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
               }
             }
@@ -1349,7 +1371,7 @@ $(function () {
         api
           .getAnalyses($(this).text(), '')
           .then(p => {
-            console.log(p)
+            // console.log(p)
             console.log($(this).siblings('tr'))
             $(this).siblings('tr').empty()
             p.sort(function (a, b) {
@@ -1363,11 +1385,17 @@ $(function () {
             if (p) {
               $("#EntityClassNames").empty()
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
-              $list.append("<div style='height:500px; overflow-y:scroll;'></div>");
+              $list.append("<div id='scrollDiv' style='height:500px; overflow-y:scroll;'></div>");
               for (var i = 0; i < p.length; i++) {
-                $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
-                showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name)
+                if(p[i][2]=="Landmarker"){
+                  console.log()
+                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name +" ("+ p[i][2] + ") | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                }else{
+                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                }
+                showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name);
               }
+
             }
           }, "json");
 
@@ -1377,7 +1405,15 @@ $(function () {
 
       } else { //Event part for the Dataset
         if ($(this)[0].className == "Database") {
-          activeProperties();
+          classname = "Database";
+          $(this)[0].style.backgroundColor = 'lightsalmon';
+          // document.getElementById("title").style.backgroundColor = '#1E88C7';
+          // document.getElementById("title").style.color = '#1E88C7';
+          document.getElementById("relationshipAttOnglet").setAttribute("name","blue");
+          document.getElementById("relationshipAttContent").setAttribute("name","blue");
+          document.getElementById("back").setAttribute("class","btn-two blue rounded mini");
+          document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelDataset");
+          activeProperties("#FFA289");
 
           $('#featureButton')[0].style.display = 'none';
           $('#dsRelationButton')[0].style.display = 'block';
@@ -1411,7 +1447,7 @@ $(function () {
                 json = JSON.parse(JSON.stringify(p[0]))
                 var $p = $("#properties")
                 for (propriete in p[0]) {
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
                 // $('#EntityClassProperties').empty()
                 //get entity class by dataset to create a list
@@ -1433,7 +1469,6 @@ $(function () {
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
                 if(!(p[i].name==="Contains")){
                   console.log(p[i].name)
-                  console.log('whyyyyyyyyyyyyyyyy')
                   $listContent.append(`
                     <div id='`+ p[i].name + `' class="tab-pane fade">
                         <table class='relationshiptable'>
@@ -1783,7 +1818,15 @@ $(function () {
 
         } else { //Event part for the analyse
           if ($(this)[0].className == "analyse") {
-            activeProperties();
+            classname = "analyse"
+            $(this)[0].style.backgroundColor = '#706FAB';
+            // document.getElementById("title").style.backgroundColor="darkseagreen"
+            // document.getElementById("title").style.color="darkseagreen"
+            document.getElementById("relationshipAttOnglet").setAttribute("name","green");
+            document.getElementById("relationshipAttContent").setAttribute("name","green");
+            document.getElementById("back").setAttribute("class","btn-two green rounded mini");
+            document.getElementsByName("tabPanel")[0].setAttribute("id","tabPanelStudy");
+            activeProperties("#706FAB");
 
             $('#featureButton')[0].style.display = 'block';
             $('#dsRelationButton')[0].style.display = 'none';
@@ -1802,7 +1845,7 @@ $(function () {
                 var $p = $("#properties")
                 for (propriete in p[0][0]) {
 
-                  $p.append("<p>" + propriete + " : " + json[propriete] + "</p>");
+                  $p.append("<p style='text-transform: capitalize;'>" + propriete + " : " + json[propriete] + "</p>");
                 }
               }, "json");
 
@@ -1856,8 +1899,6 @@ $(function () {
             api
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
-                console.log("llllllllllllllllll")
-                console.log(p.length)
                 var relationlistAtt = []
                 // console.log(p)
                 $listTab = $('#relationshipAttOnglet')
@@ -1926,10 +1967,8 @@ $(function () {
             WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship OR n:Study)
             AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:DLUnstructuredDataset)
             RETURN path` //Analyse
-            console.log(query)
             api.getGraph(query).then(result => {
               if(!(result.length===0)) {
-                console.log(result)
                 var nodes = new vis.DataSet(result[0][0])
                 var edges = new vis.DataSet(result[0][1])
                 var container = document.getElementById('viz')
@@ -2153,111 +2192,55 @@ $(function () {
 
   //Checkbox event for the primary filter (those who are not within the more)
   $('#filter :checkbox').change(function () {
-    // this will contain a reference to the checkbox
-    if (this.checked) {
-      typeRecherche.push(this.id);
+    console.log(this.name)
+    if(this.name =="Structured" || this.name =="Semi-Structured" || this.name =="Unstructured"){
+      if(this.checked){
+        if(typeRecherche.indexOf(this.id) == -1){
+          typeRecherche.push(this.id);
+        }
+      }else{
+        var i = typeRecherche.indexOf(this.id);
+        if (i > -1) {
+          typeRecherche.splice(i,1);
+        }
+      }
       console.log(typeRecherche)
-      //Check the type of checkbox
       if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
         $("#dbNames").empty()
+        // console.log(typeRecherche)
         showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
       }
-      if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
-        $("#analyseNames").empty()
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-        if (typeRecherche.includes("supervised")) {
-          $('#algoNames')[0].style.display = 'inline-block'
-          $('#algosupervised')[0].style.display = 'inline-block'
-          $('#algoUnsupervised')[0].style.display = 'inline-block'
-          $('#AlgoReinforcement')[0].style.display = 'inline-block'
-          $('#parameter')[0].style.display = 'inline-block'
-          $('#evaluation')[0].style.display = 'inline-block'
-          $('#landmarker')[0].style.display = 'inline-block'
-          $('label[for="algoNames"]')[0].style.display = 'inline-block'
-          $('label[for="algosupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
-          $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
-        }
+      if (!(typeRecherche.includes("Structured")) && !(typeRecherche.includes("Semi-Structured")) && !(typeRecherche.includes("Unstructured"))) {
+        $("#dbNames").empty()
+        // console.log(typeRecherche)
+        showDatabases(tagsinput, [], dsDate, "", "", inputECAnames);
       }
-      if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-        $('#supervised')[0].style.display = 'inline-block'
-        $('#descriptive')[0].style.display = 'inline-block'
-        $('#diagnostic')[0].style.display = 'inline-block'
-        $('#predictive')[0].style.display = 'inline-block'
-        $('#prescriptive')[0].style.display = 'inline-block'
-        $('label[for="supervised"]')[0].style.display = 'inline-block'
-        $('label[for="descriptive"]')[0].style.display = 'inline-block'
-        $('label[for="diagnostic"]')[0].style.display = 'inline-block'
-        $('label[for="predictive"]')[0].style.display = 'inline-block'
-        $('label[for="prescriptive"]')[0].style.display = 'inline-block'
-      }
-      if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-        $('#supervised')[0].style.display = 'none'
-        $('#descriptive')[0].style.display = 'none'
-        $('#diagnostic')[0].style.display = 'none'
-        $('#predictive')[0].style.display = 'none'
-        $('#prescriptive')[0].style.display = 'none'
-        $('label[for="supervised"]')[0].style.display = 'none'
-        $('label[for="descriptive"]')[0].style.display = 'none'
-        $('label[for="diagnostic"]')[0].style.display = 'none'
-        $('label[for="predictive"]')[0].style.display = 'none'
-        $('label[for="prescriptive"]')[0].style.display = 'none'
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-      }
-    } else {
-      //Remove the filtre of the unchecked box
-      const index = typeRecherche.indexOf(this.id);
-      if (index > -1) {
-        typeRecherche.splice(index, 1);
-      }
-      // the checkbox is now no longer checked
-      $(".names").empty()
-      if (typeRecherche.length == 0) {
-        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-        showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-        showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
-      }
-      else {
-        showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-        if (typeRecherche.includes("Structured") || typeRecherche.includes("Semi-Structured") || typeRecherche.includes("Unstructured")) {
-          $("#dbNames").empty()
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
-        }
+    }else if(this.name =="machineLearning" || this.name =="otherAnalysis" || this.name =="supervised" || this.name =="descriptive" || this.name =="diagnostic" || this.name =="predictive" || this.name =="prescriptive"){
+      if (this.checked) {
+        console.log(this)
+        typeRecherche.push(this.id);
+        // console.log(typeRecherche)
+        //Check the type of checkbox
         if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
           $("#analyseNames").empty()
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
           if (typeRecherche.includes("supervised")) {
             $('#algoNames')[0].style.display = 'inline-block'
             $('#algosupervised')[0].style.display = 'inline-block'
@@ -2273,9 +2256,6 @@ $(function () {
           }
         }
         if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
-          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'inline-block'
           $('#descriptive')[0].style.display = 'inline-block'
           $('#diagnostic')[0].style.display = 'inline-block'
@@ -2286,11 +2266,10 @@ $(function () {
           $('label[for="diagnostic"]')[0].style.display = 'inline-block'
           $('label[for="predictive"]')[0].style.display = 'inline-block'
           $('label[for="prescriptive"]')[0].style.display = 'inline-block'
+          $("#analyseNames").empty()
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
         }
         if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
-          showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
-          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
-          showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
           $('#supervised')[0].style.display = 'none'
           $('#descriptive')[0].style.display = 'none'
           $('#diagnostic')[0].style.display = 'none'
@@ -2308,36 +2287,147 @@ $(function () {
           $('#parameter')[0].style.display = 'none'
           $('#evaluation')[0].style.display = 'none'
           $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          $("#analyseNames").empty()
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+        }
+      }else{
+        var i = typeRecherche.indexOf(this.id);
+        if (i > -1) {
+          typeRecherche.splice(i, 1);
+        }
+        // the checkbox is now no longer checked
+        $("#analyseNames").empty()
+        console.log(typeRecherche)
+        if (typeRecherche.length == 0) {
+          showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+        }
+        else {
+          console.log("S3")
+          console.log(typeRecherche)
+          // console.log(typeRecherche)
+          // showProcesses(tagsinput, langList, pDate, typeOpe, exeEnvList);
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
+          $('label[for="algoNames"]')[0].style.display = 'none'
+          $('label[for="algosupervised"]')[0].style.display = 'none'
+          $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+          $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          if (typeRecherche.includes("supervised") || typeRecherche.includes("descriptive") || typeRecherche.includes("diagnostic") || typeRecherche.includes("predictive") || typeRecherche.includes("prescriptive") || typeRecherche.includes("algosupervised") || typeRecherche.includes("algoUnsupervised") || typeRecherche.includes("algoReinforcement")) {
+            $("#analyseNames").empty()
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            if (typeRecherche.includes("supervised")) {
+              $('#algoNames')[0].style.display = 'inline-block'
+              $('#algosupervised')[0].style.display = 'inline-block'
+              $('#algoUnsupervised')[0].style.display = 'inline-block'
+              $('#AlgoReinforcement')[0].style.display = 'inline-block'
+              $('#parameter')[0].style.display = 'inline-block'
+              $('#evaluation')[0].style.display = 'inline-block'
+              $('#landmarker')[0].style.display = 'inline-block'
+              $('label[for="algoNames"]')[0].style.display = 'inline-block'
+              $('label[for="algosupervised"]')[0].style.display = 'inline-block'
+              $('label[for="algoUnsupervised"]')[0].style.display = 'inline-block'
+              $('label[for="algoReinforcement"]')[0].style.display = 'inline-block'
+            }
+          }
+          if (typeRecherche.includes("machineLearning") || (typeRecherche.includes("machineLearning") && typeRecherche.includes("otherAnalysis"))) {
+            console.log("S5")
+            console.log(typeRecherche)
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            $('#supervised')[0].style.display = 'inline-block'
+            $('#descriptive')[0].style.display = 'inline-block'
+            $('#diagnostic')[0].style.display = 'inline-block'
+            $('#predictive')[0].style.display = 'inline-block'
+            $('#prescriptive')[0].style.display = 'inline-block'
+            $('label[for="supervised"]')[0].style.display = 'inline-block'
+            $('label[for="descriptive"]')[0].style.display = 'inline-block'
+            $('label[for="diagnostic"]')[0].style.display = 'inline-block'
+            $('label[for="predictive"]')[0].style.display = 'inline-block'
+            $('label[for="prescriptive"]')[0].style.display = 'inline-block'
+          }
+          if (typeRecherche.includes("otherAnalysis") && !(typeRecherche.includes("machineLearning"))) {
+            console.log("S6")
+            console.log(typeRecherche)
+            showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
+            $('#supervised')[0].style.display = 'none'
+            $('#descriptive')[0].style.display = 'none'
+            $('#diagnostic')[0].style.display = 'none'
+            $('#predictive')[0].style.display = 'none'
+            $('#prescriptive')[0].style.display = 'none'
+            $('label[for="supervised"]')[0].style.display = 'none'
+            $('label[for="descriptive"]')[0].style.display = 'none'
+            $('label[for="diagnostic"]')[0].style.display = 'none'
+            $('label[for="predictive"]')[0].style.display = 'none'
+            $('label[for="prescriptive"]')[0].style.display = 'none'
+            $('#algoNames')[0].style.display = 'none'
+            $('#algosupervised')[0].style.display = 'none'
+            $('#algoUnsupervised')[0].style.display = 'none'
+            $('#AlgoReinforcement')[0].style.display = 'none'
+            $('#parameter')[0].style.display = 'none'
+            $('#evaluation')[0].style.display = 'none'
+            $('#landmarker')[0].style.display = 'none'
+            document.getElementById("landmarkerDropdown").style.display = "none"
+            document.getElementById("parameterDropdown").style.display = "none"
+            document.getElementById("evaluationDropdown").style.display = "none"
+            document.getElementById("landmarkerClear").style.display = "none"
+            document.getElementById("parameterClear").style.display = "none"
+            document.getElementById("evaluationClear").style.display = "none"
+            $('label[for="algoNames"]')[0].style.display = 'none'
+            $('label[for="algosupervised"]')[0].style.display = 'none'
+            $('label[for="algoUnsupervised"]')[0].style.display = 'none'
+            $('label[for="algoReinforcement"]')[0].style.display = 'none'
+          }
+        }
+        if (!(typeRecherche.includes("otherAnalysis")) && !(typeRecherche.includes("machineLearning"))) {
+          $('#supervised')[0].style.display = 'none'
+          $('#descriptive')[0].style.display = 'none'
+          $('#diagnostic')[0].style.display = 'none'
+          $('#predictive')[0].style.display = 'none'
+          $('#prescriptive')[0].style.display = 'none'
+          $('label[for="supervised"]')[0].style.display = 'none'
+          $('label[for="descriptive"]')[0].style.display = 'none'
+          $('label[for="diagnostic"]')[0].style.display = 'none'
+          $('label[for="predictive"]')[0].style.display = 'none'
+          $('label[for="prescriptive"]')[0].style.display = 'none'
+          $('#algoNames')[0].style.display = 'none'
+          $('#algosupervised')[0].style.display = 'none'
+          $('#algoUnsupervised')[0].style.display = 'none'
+          $('#AlgoReinforcement')[0].style.display = 'none'
+          $('#parameter')[0].style.display = 'none'
+          $('#evaluation')[0].style.display = 'none'
+          $('#landmarker')[0].style.display = 'none'
+          document.getElementById("landmarkerDropdown").style.display = "none"
+          document.getElementById("parameterDropdown").style.display = "none"
+          document.getElementById("evaluationDropdown").style.display = "none"
+          document.getElementById("landmarkerClear").style.display = "none"
+          document.getElementById("parameterClear").style.display = "none"
+          document.getElementById("evaluationClear").style.display = "none"
           $('label[for="algoNames"]')[0].style.display = 'none'
           $('label[for="algosupervised"]')[0].style.display = 'none'
           $('label[for="algoUnsupervised"]')[0].style.display = 'none'
           $('label[for="algoReinforcement"]')[0].style.display = 'none'
         }
       }
-      if (!(typeRecherche.includes("otherAnalysis")) && !(typeRecherche.includes("machineLearning"))) {
-        $('#supervised')[0].style.display = 'none'
-        $('#descriptive')[0].style.display = 'none'
-        $('#diagnostic')[0].style.display = 'none'
-        $('#predictive')[0].style.display = 'none'
-        $('#prescriptive')[0].style.display = 'none'
-        $('label[for="supervised"]')[0].style.display = 'none'
-        $('label[for="descriptive"]')[0].style.display = 'none'
-        $('label[for="diagnostic"]')[0].style.display = 'none'
-        $('label[for="predictive"]')[0].style.display = 'none'
-        $('label[for="prescriptive"]')[0].style.display = 'none'
-        $('#algoNames')[0].style.display = 'none'
-        $('#algosupervised')[0].style.display = 'none'
-        $('#algoUnsupervised')[0].style.display = 'none'
-        $('#AlgoReinforcement')[0].style.display = 'none'
-        $('#parameter')[0].style.display = 'none'
-        $('#evaluation')[0].style.display = 'none'
-        $('#landmarker')[0].style.display = 'none'
-        $('label[for="algoNames"]')[0].style.display = 'none'
-        $('label[for="algosupervised"]')[0].style.display = 'none'
-        $('label[for="algoUnsupervised"]')[0].style.display = 'none'
-        $('label[for="algoReinforcement"]')[0].style.display = 'none'
-      }
-
     }
   });
 
@@ -2392,14 +2482,14 @@ $(function () {
     if (this.checked) {
       landmarkerList.push(this.id)
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     } else {
       const index = landmarkerList.indexOf(this.id);
       if (index > -1) {
         landmarkerList.splice(index, 1);
       }
       $("#analyseNames").empty()
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }
   });
 
@@ -2460,7 +2550,7 @@ $(function () {
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       aDate = document.getElementById('aDate').value;
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }, 750);
   });
 
@@ -2580,6 +2670,7 @@ $(function () {
     landmarkerList = [];
     aDate = "0001-01-01";
     algoNames = "";
+    typeRecherche = [];
     $("#analyseNames").empty()
     showStudies(tagsinput);
   });
@@ -2682,7 +2773,7 @@ $(function () {
     document.getElementById('landmarkerInput').value = "";
     landmarkerList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     console.log(landmarkerList)
   });
 
@@ -2707,7 +2798,7 @@ $(function () {
     document.getElementById('parameterInput').value = "";
     parameterList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
   });
 
   $('#evaluation').on("click", function () {
@@ -2731,7 +2822,7 @@ $(function () {
     document.getElementById('evaluationInput').value = "";
     evaluationList = [];
     $("#analyseNames").empty()
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     console.log(evaluationList)
   });
 
@@ -2886,27 +2977,27 @@ $(function () {
     $("#dbNames").empty();
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
-      inputECAnames = document.getElementById("inputECANames");
+      inputECAnames = document.getElementById("inputECANames").value;
       showDatabases(tagsinput, typeRecherche, dsDate, "", "", inputECAnames);
     }, 1000);
   });
 
   $("#algoNames").keyup(function () {
-    console.log(algoNames.value)
+    console.log(algoNames)
     $("#analyseNames").empty();
     clearTimeout(timer);  //clear any running timeout on key up
     timer = setTimeout(function () {
       algoNames = document.getElementById("algoNames");
       console.log('hello')
 
-      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList);
+      showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList);
     }, 1000);
   });
 
   $("#omNames").keyup(function () {
     $("#analyseNames").empty();
     omNames = document.getElementById("omNames");
-    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList, omNames.value)
+    showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList, omNames.value)
   });
 
 });
@@ -3021,7 +3112,7 @@ async function getDatasetOfRelationship(dsName, dsId, relationlist) {
         $rangeBody = $('#' + typerelationshipDS)
         var valueMaxRounding = valueMax.toFixed(5)
         var valueMinRounding = valueMin.toFixed(5)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typerelationshipDS + "'></span><input type='button' id='b_" + typerelationshipDS + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typerelationshipDS + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6'><div class='text-right'>" + valueMaxRounding + "</div></div></div>")
+        $rangeBody.append("</br><p><b>Threshold</b>:<span style='padding-left:5px;padding-right:5px' id='seuil_" + typerelationshipDS + "'></span><input class='btn-gradient blue mini' type='button' id='b_" + typerelationshipDS + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typerelationshipDS + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6'><div class='text-right'>" + valueMaxRounding + "</div></div></div>")
         document.getElementById('r_' + typerelationshipDS).addEventListener("change", getGrapheViz4Seuil)
         document.getElementById('b_' + typerelationshipDS).addEventListener("click", changRange)
         document.getElementById('b_' + typerelationshipDS).addEventListener("click", getGrapheViz4Seuil)
@@ -3134,7 +3225,11 @@ async function getAnalyseOfRelationship(id, relationlist) {
         $rangeBody = $('#' + typeRelation)
         var valueMaxRounding = valueMax.toFixed(5)
         var valueMinRounding = valueMin.toFixed(5)
-        $rangeBody.append("</br><p><b>Threshold</b>:<span id='seuil_" + typeRelation + "'></span><input type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        if(classname==="Database"){
+          $rangeBody.append("</br><p><b>Threshold</b>:<span style='padding-left:5px;padding-right:5px' id='seuil_" + typeRelation + "'></span><input class='btn-gradient blue mini' type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        }else{
+          $rangeBody.append("</br><p><b>Threshold</b>:<span style='padding-left:5px;padding-right:5px' id='seuil_" + typeRelation + "'></span><input class='btn-gradient green mini' type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
+        }
         document.getElementById('r_' + typeRelation).addEventListener("change", getGrapheViz5Seuil)
         document.getElementById('b_' + typeRelation).addEventListener("click", changRange)
         document.getElementById('b_' + typeRelation).addEventListener("click", getGrapheViz5Seuil)
@@ -3377,6 +3472,7 @@ function showStudies(tags, type = [], aDate, landmarker = '', algoNames = '', pa
 
 //function to get dataset
 function showDatabases(tags, type = 'defaultValue', date = '0001-01-01T00:00:00Z', quality = "", sensitivity = "", ECANames = "") {
+
   api
     .getDatabases(tags, type, date, quality, sensitivity, ECANames)
     .then(p => {
@@ -3497,7 +3593,7 @@ function getParameterClick() {
     }
   }
   $("#analyseNames").empty();
-  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames.value, parameterList, evaluationList)
+  showStudies(tagsinput, typeRecherche, aDate, landmarkerList, algoNames, parameterList, evaluationList)
 }
 
 //Function to draw relationDataset without condition
@@ -3591,7 +3687,7 @@ function clearList(divname) {
   }
 }
 
-function activeProperties(){
+function activeProperties(color){
   document.getElementById("viz5").innerText ="";
   document.getElementById("viz4").innerText ="";
   document.getElementById("viz3").innerText ="";
@@ -3606,6 +3702,17 @@ function activeProperties(){
   document.getElementById("attRelationButton").setAttribute("class", "");
   document.getElementById("similarityButton").setAttribute("class", "");
   document.getElementById("propertiesButton").setAttribute("class", "active");
+
+
+
+/*  document.getElementById("lineageButton").firstChild.style.color=color;
+  document.getElementById("hyperGrapheButton").firstChild.style.color=color;
+  document.getElementById("operationButton").firstChild.style.color=color;
+  document.getElementById("featureButton").firstChild.style.color=color;
+  document.getElementById("dsRelationButton").firstChild.style.color=color;
+  document.getElementById("attRelationButton").firstChild.style.color=color;
+  document.getElementById("similarityButton").firstChild.style.color=color;
+  document.getElementById("propertiesButton").firstChild.style.color=color;*/
 
   document.getElementById("viz").setAttribute("class", "tab-pane fade");
   document.getElementById("viz2").setAttribute("class", "tab-pane fade");

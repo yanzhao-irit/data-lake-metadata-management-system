@@ -269,8 +269,9 @@ body {
   font-size: 14px;
   line-height: 1.428571429;
   color: #333333;
-  background-color: #ffffff;
-  /*background: url("../image/neo4j-background.png") repeat;*/
+  /*background-color: #ffffff;*/
+/*url("../image/Background.png") no-repeat center 0,*/
+  background: url("../image/Background.jpg") repeat;
 }
 input,
 button,
@@ -1435,6 +1436,27 @@ th {
 .table-hover > tbody > tr:hover > th {
   background-color: #f5f5f5;
 }
+.table-hover[id="resultsDataset"] > tbody > tr:hover > td,
+.table-hover[id="resultsDataset"] > tbody > tr:hover > th {
+  background-color: #FFA289;
+  opacity:0.8;
+}
+.table-hover[id="resultsProcess"] > tbody > tr:hover > td,
+.table-hover[id="resultsProcess"] > tbody > tr:hover > th {
+  background-color: #6A92CC;
+  opacity:0.8;
+}
+.table-hover[id="resultsAnalysis"] > tbody > tr:hover > td,
+.table-hover[id="resultsAnalysis"] > tbody > tr:hover > th {
+  background-color: #706FAB;
+  opacity:0.8;
+}
+div[id="scrollDiv"] > tr:hover > td,
+div[id="scrollDiv"] > tr:hover > th {
+  background-color: #706FAB;
+  opacity:0.8;
+}
+
 table col[class*="col-"] {
   position: static;
   float: none;

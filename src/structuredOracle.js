@@ -1,6 +1,5 @@
 const api = require("../neo4jApi");
 const _ = require('lodash');
-/*
 process.env.ORA_SDTZ = 'UTC';
 
 const oracledb = require('oracledb');
@@ -14,20 +13,20 @@ if (process.platform === 'win32') { // Windows
 } else if (process.platform === 'darwin') { // macOS
     console.log('ios')
     oracledb.initOracleClient({ libDir: process.env.HOME + '/Downloads/instantclient_19_8' });
-}*/
+}
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('add').addEventListener("click", addTag);
     document.getElementById("zone0").addEventListener("input", printTags);
-
+    document.getElementById('reloadUpload').addEventListener('click', reload);
     // document.getElementById('user').addEventListener("keyup", getUser);
     // document.getElementById("pwd").addEventListener("input", getPwd);
     // document.getElementById('host').addEventListener('change', getHost);
     document.getElementById('try').addEventListener('click',tryConnection);
     document.getElementById('add').addEventListener("click", addTag);
-    document.getElementById('submitInfo').addEventListener('click', ingestNeo4j);
+    document.getElementById('confirmBtn').addEventListener('click', ingestNeo4j);
 });
 
 //some variable used in all function
@@ -39,10 +38,13 @@ var nodesEntityCLass = []
 var nodesAttributes = []
 var t1;
 var t2;
+var tTotal;
 
 async function ingestNeo4j() {
-    getMetadata()
+    document.getElementById("waitingBox").style.display = "block";
+    document.getElementById("confirmSendBox").style.display = "none";
     setTags()
+    getMetadata()
 }
 
 async function tryConnection() {
@@ -58,9 +60,11 @@ async function tryConnection() {
         });
         connection = await pool.getConnection()
         console.log('after connection')
+        document.getElementById("resultConnection").innerText = 'connection succeeded';
         console.log(connection)
     }catch (err) {
         console.error(err);
+        document.getElementById("resultConnection").innerText = 'Please check if the information you entered is correct'
     } finally {
         if (connection) {
             try {
@@ -70,6 +74,11 @@ async function tryConnection() {
             }
         }
     }
+}
+
+//When the insert into Neo4j is finished, reload this page
+function reload() {
+    location.reload();
 }
 
 async function getMetadata() {
@@ -161,6 +170,7 @@ async function getMetadata() {
             }
         }
         console.log('Attribut')
+        console.log(result_nbAttribute)
         console.dir(result_nbAttribute.rows)
 
         stmts = [
@@ -179,7 +189,7 @@ async function getMetadata() {
         console.dir(result_size.rows)
 
 
-        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'Relationnal Database Oracle', 'size': result_size.rows[0][0] + ' Go' })
+        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'structured dataset', 'size': result_size.rows[0][0] + ' Go' })
         for (var i = 0; i < result_dataSource.rows.length; i++) {
             nodesDataSetDataLake.push({ 'name': result_dataSource.rows[i][0] })
         }
@@ -188,7 +198,11 @@ async function getMetadata() {
 
         }
         for (var i = 0; i < result_attribut.rows.length; i++) {
-            nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
+            if(result_attribut.rows[i][3]=="NUMBER"){
+                nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': 'Numeric', 'min': result_attribut.rows[i][14],'max': result_attribut.rows[i][15],'missingValue': result_attribut.rows[i][17] }])
+            }else{
+                nodesAttributes.push([result_attribut.rows[i][1], { 'name': result_attribut.rows[i][2], 'type': result_attribut.rows[i][3] }])
+            }
         }
 
         console.log(nodesDatasetSource)
@@ -212,6 +226,9 @@ async function getMetadata() {
         console.log(t1)
         console.log(t2)
         console.log(t2 - t1 + 'ms')
+        tTotal = t2 - t1;
+        document.getElementById("resultInsert").innerText="Completed, it took "+tTotal +" ms"
+        document.getElementById("reload").style.display="block"
         if (connection) {
             try {
                 await connection.close();
