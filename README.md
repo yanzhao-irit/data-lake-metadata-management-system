@@ -39,7 +39,7 @@ In the application, users can search different elements with tags and filters.
 
 1. Make sure you have a metadata database (Neo4j) that respects the model proposed by Yan ZHAO. We provide an [example database](https://github.com/yanzhao-irit/data-lake-metadata-management-system/tree/main/example-metadata) that you can download and test the application.
 
-2. Make sure that you have installed [Node.js](https://nodejs.org/en/download/) in your computer and [Git](https://git-scm.com/downloads). 
+2. Make sure that you have installed [Node.js](https://nodejs.org/en/download/) in your computer. 
 
 3. Make sure that you have installed [Postgresql](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) and [Oracle base](https://www.oracle.com/fr/database/technologies/oracle-database-software-downloads.html).
 
@@ -65,21 +65,20 @@ In the application, users can search different elements with tags and filters.
     npm config set registry http://registry.npmjs.org/
     ```
 
-7. If you don't have python on your computer, you can install windows-build-tools, start a cmd with administrator rights at your system with 
+7. Install windows-build-tools, start a cmd with administrator rights at your system with 
     ```
     npm install --global --production windows-build-tools
     ```
-   If you have python, please prepare the path of python for the next step.
-    
-8. Find python.exe, then start a cmd with administrator rights at your system and set up the python environment with
+
+8. Install node-gyp, start a cmd with administrator rights at your system with 
+    ```
+    npm install --global node-gyp
+    ```
+
+9. Find python.exe, then start a cmd with administrator rights at your system and set up the python environment with
 
     ```
     npm config set python "path of your python.exe" (For example: "C:\Users\zhous\.windows-build-tools\python27\python.exe")
-    ```
-
-9. Install node-gyp, start a cmd with administrator rights at your system with 
-    ```
-    npm install --global node-gyp
     ```
 
 10. If you are a windows user, you need to install [Microsoft Visual C++ Redistributable for Visual Studio](https://support.microsoft.com/en-us/topic/the-latest-supported-visual-c-downloads-2647da03-1eea-4433-9aff-95f26a218cc0) (The installation requires a restart of the computer)
