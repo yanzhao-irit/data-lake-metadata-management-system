@@ -1563,190 +1563,395 @@ $(function () {
           RETURN d,p,p1,r,s`
           query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
           WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
-          RETURN path
+          RETURN count(path)
           UNION ALL
           MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
           WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
-          RETURN path`
-          console.log("queryqueryqueryquery")
-          console.log(query)
-          api.getGraph(query).then(result => {
-            if(!(result.length===0)){
-              var nodes = new vis.DataSet(result[0][0])
-              var edges = new vis.DataSet(result[0][1])
-              var container = document.getElementById('viz')
-              var data = { nodes: nodes, edges: edges };
-              var options = {
-                autoResize: true,
-                height: '100%',
-                width: '100%',
-                nodes: {
-                  shape: "dot",
-                  size: 30,
-                  font: {
-                    size: 10,
-                  },
+          RETURN count(path)`
+          // console.log("queryqueryqueryquery")
+          // console.log(query)
+          api.nombrePath(query).then(result=>{
+            // console.log("resultresultresultresult")
+            // console.log(result.records[0]._fields[0].low)
+            // console.log(result.records[1]._fields[0].low)
+            var nb= result.records[0]._fields[0].low + result.records[1]._fields[0].low
+            // console.log("nbnb")
+            // console.log(nb)
+            if(nb<=1){
+              // console.log(nb)
+              query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
+              WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+              RETURN path
+              UNION ALL
+              MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
+              WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+              RETURN path`
+              api.getGraph(query).then(result => {
+                if(!(result.length===0)){
+                  var nodes = new vis.DataSet(result[0][0])
+                  var edges = new vis.DataSet(result[0][1])
+                  var container = document.getElementById('viz')
+                  var data = { nodes: nodes, edges: edges };
+                  var options = {
+                    autoResize: true,
+                    height: '100%',
+                    width: '100%',
+                    nodes: {
+                      shape: "dot",
+                      size: 30,
+                      font: {
+                        size: 10,
+                      },
 
-                },
-                edges: {
-                  color: 'gray',
-                  smooth: false,
-                  font: {
-                    size: 10,
-                  },
-                  arrows: 'to'
-                },
-                layout: {
-                  hierarchical: {
-                    direction: "RL",
-                  },
-                },
-                groups: {
-                  Process: {
-                    color: { background: "#00F5FF", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Analysis: {
-                    color: { background: "#FFFACD", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AlgoSupervised: {
-                    color: { background: "#FFE4B5", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisAttribute: {
-                    color: { background: "#696969", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisDSRelationship: {
-                    color: { background: "#708090", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisFeatures: {
-                    color: { background: "#000080", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisNominalFeatures: {
-                    color: { background: "#008B00", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisNumericFeatures: {
-                    color: { background: "#EEDC82", border: "black" },
-                    // shape: "diamond",
-                  },
-                  AnalysisTarget: {
-                    color: { background: "#EEEE00", border: "black" },
-                    // shape: "diamond",
-                  },
-                  DLSemistructuredDataset: {
-                    color: { background: "#FFC1C1", border: "black" },
-                    // shape: "diamond",
-                  },
-                  DLStructuredDataset: {
-                    color: { background: "#8B658B", border: "black" },
-                    // shape: "diamond",
-                  },
-                  DLUnstructuredDataset: {
-                    color: { background: "#EE6363", border: "black" },
-                    // shape: "diamond",
-                  },
-                  DatasetSource: {
-                    color: { background: "#FFA500", border: "black" },
-                    // shape: "diamond",
-                  },
-                  EntityClass: {
-                    color: { background: "#DDA0DD", border: "black" },
-                    // shape: "diamond",
-                  },
-                  EvaluationMeasure: {
-                    color: { background: "#D8BFD8", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Implementation: {
-                    color: { background: "#EE7600", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Landmarker: {
-                    color: { background: "#EEDFCC", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Ingest: {
-                    color: { background: "#8B8378", border: "black" },
-                    // shape: "diamond",
-                  },
-                  JobTitle: {
-                    color: { background: "#EE5C42", border: "black" },
-                    // shape: "diamond",
-                  },
-                  ModelEvaluation: {
-                    color: { background: "#8B3626", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Tag: {
-                    color: { background: "#FF1493", border: "black" },
-                    // shape: "diamond",
-                  },
-                  RelationshipDS: {
-                    color: { background: "#00BFFF", border: "black" },
-                    // shape: "diamond",
-                  },
-                  RelationshipAtt: {
-                    color: { background: "#00688B", border: "black" },
-                    // shape: "diamond",
-                  },
-                  ParameterSetting: {
-                    color: { background: "#551A8B", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Operation: {
-                    color: { background: "#1C1C1C", border: "black" },
-                    // shape: "diamond",
-                  },
-                  OperationOfProcess: {
-                    color: { background: "#BCD2EE", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Parameter: {
-                    color: { background: "#008B8B", border: "black" },
-                    // shape: "diamond",
-                  },
-                  NominalAttribute: {
-                    color: { background: "#E0FFFF", border: "black" },
-                    // shape: "diamond",
-                  },
-                  NumericAttribute: {
-                    color: { background: "#D1EEEE", border: "black" },
-                    // shape: "diamond",
-                  },
-                  Study: {
-                    color: { background: "#7EC0EE", border: "black" },
-                    // shape: "diamond",
-                  },
+                    },
+                    edges: {
+                      color: 'gray',
+                      smooth: false,
+                      font: {
+                        size: 10,
+                      },
+                      arrows: 'to'
+                    },
+                    layout: {
+                      hierarchical: {
+                        direction: "RL",
+                      },
+                    },
+                    groups: {
+                      Process: {
+                        color: { background: "#00F5FF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Analysis: {
+                        color: { background: "#FFFACD", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AlgoSupervised: {
+                        color: { background: "#FFE4B5", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisAttribute: {
+                        color: { background: "#696969", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisDSRelationship: {
+                        color: { background: "#708090", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisFeatures: {
+                        color: { background: "#000080", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisNominalFeatures: {
+                        color: { background: "#008B00", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisNumericFeatures: {
+                        color: { background: "#EEDC82", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisTarget: {
+                        color: { background: "#EEEE00", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLSemistructuredDataset: {
+                        color: { background: "#FFC1C1", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLStructuredDataset: {
+                        color: { background: "#8B658B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLUnstructuredDataset: {
+                        color: { background: "#EE6363", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DatasetSource: {
+                        color: { background: "#FFA500", border: "black" },
+                        // shape: "diamond",
+                      },
+                      EntityClass: {
+                        color: { background: "#DDA0DD", border: "black" },
+                        // shape: "diamond",
+                      },
+                      EvaluationMeasure: {
+                        color: { background: "#D8BFD8", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Implementation: {
+                        color: { background: "#EE7600", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Landmarker: {
+                        color: { background: "#EEDFCC", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Ingest: {
+                        color: { background: "#8B8378", border: "black" },
+                        // shape: "diamond",
+                      },
+                      JobTitle: {
+                        color: { background: "#EE5C42", border: "black" },
+                        // shape: "diamond",
+                      },
+                      ModelEvaluation: {
+                        color: { background: "#8B3626", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Tag: {
+                        color: { background: "#FF1493", border: "black" },
+                        // shape: "diamond",
+                      },
+                      RelationshipDS: {
+                        color: { background: "#00BFFF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      RelationshipAtt: {
+                        color: { background: "#00688B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      ParameterSetting: {
+                        color: { background: "#551A8B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Operation: {
+                        color: { background: "#1C1C1C", border: "black" },
+                        // shape: "diamond",
+                      },
+                      OperationOfProcess: {
+                        color: { background: "#BCD2EE", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Parameter: {
+                        color: { background: "#008B8B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      NominalAttribute: {
+                        color: { background: "#E0FFFF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      NumericAttribute: {
+                        color: { background: "#D1EEEE", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Study: {
+                        color: { background: "#7EC0EE", border: "black" },
+                        // shape: "diamond",
+                      },
+                    }
+                  };
+                  var promisegraph = new Promise((resolve, reject) => {
+                    var network = new vis.Network(container, data, options);
+                    if (network) {
+                      resolve();
+                    }
+                  })
+                  promisegraph.then(() => {
+                    network.body.emitter.emit('_dataChanged')
+                    network.fit()
+                  })
+                  promisegraph.finally(() => {
+                    network.redraw()
+                  })
+                  var network = new vis.Network(container, data, options);
+                  network.fit()
+                  network.body.emitter.emit('_dataChanged')
+                  network.fit();
+                  network.redraw();
+                  network.fit();
+                }else{
+                  document.getElementById("viz").innerText = "";
                 }
-              };
-              var promisegraph = new Promise((resolve, reject) => {
-                var network = new vis.Network(container, data, options);
-                if (network) {
-                  resolve();
-                }
               })
-              promisegraph.then(() => {
-                network.body.emitter.emit('_dataChanged')
-                network.fit()
-              })
-              promisegraph.finally(() => {
-                network.redraw()
-              })
-              var network = new vis.Network(container, data, options);
-              network.fit()
-              network.body.emitter.emit('_dataChanged')
-              network.fit();
-              network.redraw();
-              network.fit();
             }else{
-              document.getElementById("viz").innerText = "";
+              // console.log("==")
+              query = `MATCH path = allshortestpaths ((ds:DatasetSource)-[*]-(d))
+              WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND NONE(x IN nodes(path) where exists(()-[:hasSubprocess]->(x:Process))) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+              RETURN path
+              UNION ALL
+              MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
+              WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND NONE(x IN nodes(path) where exists(()-[:hasSubprocess]->(x:Process))) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
+              RETURN path`
+              api.getGraph(query).then(result => {
+                if(!(result.length===0)){
+                  var nodes = new vis.DataSet(result[0][0])
+                  var edges = new vis.DataSet(result[0][1])
+                  var container = document.getElementById('viz')
+                  var data = { nodes: nodes, edges: edges };
+                  var options = {
+                    autoResize: true,
+                    height: '100%',
+                    width: '100%',
+                    nodes: {
+                      shape: "dot",
+                      size: 30,
+                      font: {
+                        size: 10,
+                      },
+
+                    },
+                    edges: {
+                      color: 'gray',
+                      smooth: false,
+                      font: {
+                        size: 10,
+                      },
+                      arrows: 'to'
+                    },
+                    layout: {
+                      hierarchical: {
+                        direction: "RL",
+                      },
+                    },
+                    groups: {
+                      Process: {
+                        color: { background: "#00F5FF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Analysis: {
+                        color: { background: "#FFFACD", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AlgoSupervised: {
+                        color: { background: "#FFE4B5", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisAttribute: {
+                        color: { background: "#696969", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisDSRelationship: {
+                        color: { background: "#708090", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisFeatures: {
+                        color: { background: "#000080", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisNominalFeatures: {
+                        color: { background: "#008B00", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisNumericFeatures: {
+                        color: { background: "#EEDC82", border: "black" },
+                        // shape: "diamond",
+                      },
+                      AnalysisTarget: {
+                        color: { background: "#EEEE00", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLSemistructuredDataset: {
+                        color: { background: "#FFC1C1", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLStructuredDataset: {
+                        color: { background: "#8B658B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DLUnstructuredDataset: {
+                        color: { background: "#EE6363", border: "black" },
+                        // shape: "diamond",
+                      },
+                      DatasetSource: {
+                        color: { background: "#FFA500", border: "black" },
+                        // shape: "diamond",
+                      },
+                      EntityClass: {
+                        color: { background: "#DDA0DD", border: "black" },
+                        // shape: "diamond",
+                      },
+                      EvaluationMeasure: {
+                        color: { background: "#D8BFD8", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Implementation: {
+                        color: { background: "#EE7600", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Landmarker: {
+                        color: { background: "#EEDFCC", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Ingest: {
+                        color: { background: "#8B8378", border: "black" },
+                        // shape: "diamond",
+                      },
+                      JobTitle: {
+                        color: { background: "#EE5C42", border: "black" },
+                        // shape: "diamond",
+                      },
+                      ModelEvaluation: {
+                        color: { background: "#8B3626", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Tag: {
+                        color: { background: "#FF1493", border: "black" },
+                        // shape: "diamond",
+                      },
+                      RelationshipDS: {
+                        color: { background: "#00BFFF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      RelationshipAtt: {
+                        color: { background: "#00688B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      ParameterSetting: {
+                        color: { background: "#551A8B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Operation: {
+                        color: { background: "#1C1C1C", border: "black" },
+                        // shape: "diamond",
+                      },
+                      OperationOfProcess: {
+                        color: { background: "#BCD2EE", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Parameter: {
+                        color: { background: "#008B8B", border: "black" },
+                        // shape: "diamond",
+                      },
+                      NominalAttribute: {
+                        color: { background: "#E0FFFF", border: "black" },
+                        // shape: "diamond",
+                      },
+                      NumericAttribute: {
+                        color: { background: "#D1EEEE", border: "black" },
+                        // shape: "diamond",
+                      },
+                      Study: {
+                        color: { background: "#7EC0EE", border: "black" },
+                        // shape: "diamond",
+                      },
+                    }
+                  };
+                  var promisegraph = new Promise((resolve, reject) => {
+                    var network = new vis.Network(container, data, options);
+                    if (network) {
+                      resolve();
+                    }
+                  })
+                  promisegraph.then(() => {
+                    network.body.emitter.emit('_dataChanged')
+                    network.fit()
+                  })
+                  promisegraph.finally(() => {
+                    network.redraw()
+                  })
+                  var network = new vis.Network(container, data, options);
+                  network.fit()
+                  network.body.emitter.emit('_dataChanged')
+                  network.fit();
+                  network.redraw();
+                  network.fit();
+                }else{
+                  document.getElementById("viz").innerText = "";
+                }
+              })
             }
           })
+
           /*//query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl)
           WHERE dl.name CONTAINS '`+ $(this).attr('id').split('$')[1] + `' and dl.uuid = '` + $(this).attr('id').split('$')[2] + `'

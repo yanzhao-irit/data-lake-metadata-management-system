@@ -1756,3 +1756,21 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
         return session.close();
       });
 }
+
+//Function to get a specific numeric attribute by analysis
+module.exports.nombrePath = (query) => {
+  var session = driver.session();
+  return session
+      .run(
+          query)
+      .then(result => {
+        console.log(result)
+        return result;
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
+}
