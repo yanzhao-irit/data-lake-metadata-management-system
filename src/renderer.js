@@ -821,7 +821,6 @@ $(function () {
       MATCH path2=((dl)-[]-(i:Ingest)-[]-(p:Process {uuid:'`+ $(this).attr('id').split('$')[1] + `'})-[]-(d:DatasetSource)-[]-(sos:SourceOfSteam))
       WHERE (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
       RETURN path2 AS path, null as w, null as q`; //Process
-      console.log("queryqueryqueryquery")
       console.log(query)
       api.getGraph(query).then(result => {
         if(!(result.length===0)) {
@@ -1569,6 +1568,8 @@ $(function () {
           MATCH path = allshortestpaths ((sos:SourceOfSteam)-[*]-(d))
           WHERE NONE(n IN nodes(path) WHERE n:Tag OR n:Operation OR n:AnalysisDSRelationship) AND (d:DLStructuredDataset OR d:DLSemistructuredDataset OR d:UnstructuredDataset) AND d.uuid = '` + $(this).attr('id').split('$')[2] + `'
           RETURN path`
+          console.log("queryqueryqueryquery")
+          console.log(query)
           api.getGraph(query).then(result => {
             if(!(result.length===0)){
               var nodes = new vis.DataSet(result[0][0])
