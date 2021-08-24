@@ -810,13 +810,19 @@ $(function () {
       //query is for lineage
       //query2 is for hyper-graph
       //query3 is for Operation
-      query = `MATCH path =(m)<-[:targetData]-(c:Process {uuid:'` + $(this).attr('id').split('$')[1] + `'})<-[:sourceData]-(d) 
+      query = `MATCH path =(m)<-[:targetData]-(c:Process {uuid:'` + $(this).attr('id').split('$')[1] + `'}) 
       OPTIONAL MATCH (c)<-[q:hasSubprocess]-(w: Process) 
       RETURN path,w,q
+      UNION ALL
+      MATCH path3 =(c:Process {uuid:'` + $(this).attr('id').split('$')[1] + `'})<-[:sourceData]-(d) 
+      OPTIONAL MATCH (c)<-[q:hasSubprocess]-(w: Process) 
+      RETURN path3 AS path,w,q
       UNION ALL
       MATCH path2=((dl)-[]-(i:Ingest)-[]-(p:Process {uuid:'`+ $(this).attr('id').split('$')[1] + `'})-[]-(d:DatasetSource)-[]-(sos:SourceOfSteam))
       WHERE (dl:DLStructuredDataset OR dl:DLSemistructuredDataset OR dl:DLUnstructuredDataset)
       RETURN path2 AS path, null as w, null as q`; //Process
+      console.log("queryqueryqueryquery")
+      console.log(query)
       api.getGraph(query).then(result => {
         if(!(result.length===0)) {
         var nodes = new vis.DataSet(result[result.length - 1][0])
