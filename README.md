@@ -32,7 +32,7 @@ We developped a matadata management application which allows users to find, acce
 
 In the application, users can search different elements with tags and filters.
 
-<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.png" width="700">
+<img src="https://github.com/yanzhao-irit/data-lake-metadata-management-system/blob/main/images/appli-menu.jpg" width="700">
 
 
 ## Getting started
