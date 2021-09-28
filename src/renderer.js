@@ -1173,6 +1173,7 @@ $(function () {
 
     } else { //Event part for the study
       if ($(this)[0].className == "Study") {
+        $("#analyseNames").find('tr').find('td').siblings().remove();
         classname = "Study"
         $(this)[0].style.backgroundColor = '#706FAB';
         // document.getElementById("title").style.backgroundColor="darkseagreen"
@@ -1371,8 +1372,8 @@ $(function () {
         }
         })
         //Get the analysis of the study clicked to create a list
-        var $list = $(this).parent()
-
+        var $list = $(this).parent();
+        $(this).eq(0).siblings().remove();
         api
           .getAnalyses($(this).text(), '')
           .then(p => {
@@ -1390,17 +1391,31 @@ $(function () {
             if (p) {
               $("#EntityClassNames").empty()
               $list.append($("<tr class ='analyse'><td class ='analyse'>  Analyses : </td></tr>"));
-              $list.append("<div id='scrollDiv' style='height:500px; overflow-y:scroll;'></div>");
+              if(p.length == 1){
+                $list.append("<div id='scrollDiv' style='height:50px'></div>");
+              }else if(p.length == 2){
+                $list.append("<div id='scrollDiv' style='height:100px'></div>");
+              }else if(p.length == 3){
+                $list.append("<div id='scrollDiv' style='height:150px'></div>");
+              }else if(p.length == 4){
+                $list.append("<div id='scrollDiv' style='height:200px'></div>");
+              }else if(p.length == 5){
+                $list.append("<div id='scrollDiv' style='height:250px'></div>");
+              }else{
+                $list.append("<div id='scrollDiv' style='height:350px; overflow-y:scroll;'></div>");
+              }
               for (var i = 0; i < p.length; i++) {
-                if(p[i][2]=="Landmarker"){
-                  console.log()
-                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name +" ("+ p[i][2] + ") | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                if(p[i].length == 1){
+                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
                 }else{
-                  $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                  if(p[i][2]=="Landmarker"){
+                    $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name +" ("+ p[i][2] + ") | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                  }else{
+                    $list.find("div").append($("<tr class ='analyse'><td class ='analyse' id='" + p[i][0].name + "$" + p[i][0].uuid + "'>" + p[i][0].name + "</br><span style='font-size: 11px; color: #828282; font-style: italic;'>" + p[i][1].name + " | " + p[i][0].creationDate.substr(0, 10) + "</span></td></tr>"));
+                  }
                 }
                 showEntityClassByAnalyse(p[i][0].uuid, p[i][0].name);
               }
-
             }
           }, "json");
 
@@ -2053,6 +2068,8 @@ $(function () {
             api
               .getAnalyses('', $(this).attr('id').split('$')[0], $(this).attr('id').split('$')[1])
               .then(p => {
+                console.log("p00000"+p);
+
                 json = JSON.parse(JSON.stringify(p[0][0]))
                 var $p = $("#properties")
                 for (propriete in p[0][0]) {
@@ -2077,6 +2094,7 @@ $(function () {
 
             api.getNominalFeaturesbyAnalysis($(this).attr('id').split('$')[1]).then(pNo => {
               $('#NominalFeaturesNames').empty()
+              console.log("pNo[0]"+pNo[0])
               json = JSON.parse(JSON.stringify(pNo[0]))
               var $list = $('#NominalFeaturesNames')
               for (propriete in pNo[0]) {

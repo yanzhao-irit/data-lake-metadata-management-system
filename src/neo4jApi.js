@@ -277,8 +277,15 @@ module.exports.getAnalyses = (study, name, id) => {
       query)
     .then(result => {
       return result.records.map(record => {
-        return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
-      });
+
+        if(record.get('i')==null && record.get('l')==null){
+          console.log("shshshshhsh")
+          return [new Analysis(record.get('a'))]
+
+        }else{
+          return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
+        }
+        });
     })
     .catch(error => {
       throw error;
@@ -286,6 +293,44 @@ module.exports.getAnalyses = (study, name, id) => {
     .finally(() => {
       return session.close();
     });
+}
+
+//Function to search for analysis metadata by study id or analysis-----------------ancien
+module.exports.getAnalysess = (study, name, id) => {
+  var session = driver.session();
+  //partie cypher de base pour récupérer les analyses
+  //Classic cypher request to get analysis
+  var query = `MATCH (s:Study)-[r:hasAnalysis]->(a:Analysis)
+  OPTIONAL MATCH (a)-[]-(l:Landmarker)
+  OPTIONAL MATCH (a)-[]-(i:Implementation)
+  with s,a,i,l
+  WHERE`
+  //Cypher query if the input is Study
+  if (study.length > 0) {
+    query = query + " toLower(s.name) CONTAINS toLower('" + study + "') "
+  } else { // Cypher query if the input is an analysis
+    if (name.length > 0) {
+      query = query + " toLower(a.name) CONTAINS toLower('" + name + "') AND a.uuid = '" + id + "'"
+
+    }
+  }
+  query = query + " RETURN DISTINCT a,i,l"
+  console.log("queryQQQQQQQQQQQQ")
+  console.log(query)
+  return session
+      .run(
+          query)
+      .then(result => {
+        return result.records.map(record => {
+            return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
+        });
+      })
+      .catch(error => {
+        throw error;
+      })
+      .finally(() => {
+        return session.close();
+      });
 }
 
 //Function to get nominal features by analysis
@@ -857,7 +902,7 @@ module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001
     }
   }
   //Cypher query for dates filter
-  query = query + ' ) AND (datetime(ds.creationDate) >= datetime("' + creationdate + '"))'
+  query = query + ' ) AND (datetime(ds.creationDate) >= datetime("' + creationdate + '")) RETURN distinct ds '
 
   //Cypher query for the quality filter
   // if(quality.lenght>0){
@@ -882,7 +927,7 @@ module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001
   }
 
   //Cypher query that allow a dataset to not have a Tag, else it is not taken in account
-  query = query + ' OPTIONAL MATCH (ds)-[:hasTag]->(t:Tag) WHERE ( '
+  query = query + ' union MATCH (ds)-[:hasTag]->(t:Tag) WHERE ( '
   for (var i = 0; i < tags.length; i++) {
     if (i != tags.length - 1) {
       query = query + "toLower(t.name) CONTAINS toLower('" + tags[i] + "') OR "
