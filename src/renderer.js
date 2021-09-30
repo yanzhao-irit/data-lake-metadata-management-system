@@ -982,6 +982,7 @@ $(function () {
           document.getElementById("viz").innerText = "";
         }
       })
+      console.log("Lineage_______________"+query)
       query2 = "MATCH path= (p:Process {name:'" + $(this).text() + "'})-[:hasSubprocess]-(t:Process) RETURN path"
       query3 = `MATCH (p:Process {name:"` + $(this).text() + `"}) 
       OPTIONAL MATCH (p)-[r3:containsOp]->(c:OperationOfProcess)
@@ -1146,6 +1147,7 @@ $(function () {
           document.getElementById("viz3").innerText = "";
         }
       })
+      console.log("Operation_______________"+query3)
       api.getGraph(query2).then(p => {
         if(!(p.length===0)) {
           // create an array with nodes
@@ -1167,7 +1169,7 @@ $(function () {
           document.getElementById("viz2").innerText = "";
         }
       })
-
+      console.log("Hyper graph_______________"+query2)
       //Show the table of process
       setTimeout(() => { $("#processNames").closest(".collapse").collapse('show') }, 500);
 
@@ -1371,6 +1373,7 @@ $(function () {
           document.getElementById("viz").innerText = "";
         }
         })
+        console.log("Analysis Lineage_______________" + query)
         //Get the analysis of the study clicked to create a list
         var $list = $(this).parent();
         $(this).eq(0).siblings().remove();
@@ -1966,6 +1969,7 @@ $(function () {
               })
             }
           })
+          console.log("Lineage_____________" + query)
 
           /*//query4 for dataset relationship
           query4 = `MATCH (dl)<-[r1:withDataset]-()-[r2:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r3:withDataset]-()-[r4:hasRelationshipDataset]->(rDS:RelationshipDS),(autreDS)<-[r5:withDataset]-(adrR)-[r6:withDataset]->(dl)
@@ -2020,6 +2024,7 @@ $(function () {
               document.getElementById("viz2").innerText = "";
             }
           })
+          console.log("Hypher graph_____________"+ query2)
           /*console.log("QQQQQQQQQQQ4")
           console.log(query4)*/
           /*api.getGraph(query4).then(p => {
@@ -2357,6 +2362,7 @@ $(function () {
                 document.getElementById("viz").innerText = "";
               }
             })
+            console.log("sous Analysis Lineage______________"+query)
             query2 = `MATCH (a:Analysis)
             MATCH (a)<-[r1:hasAnalysis]-(s:Study)
             MATCH (a)<-[r2:evaluateAnalysis]-(me:ModelEvaluation)-[r3:useEvaluationMeasure]->(em:EvaluationMeasure)
@@ -2390,7 +2396,7 @@ $(function () {
               network.redraw()
               network.fit()
             })*/
-            console.log(query2)
+            console.log("Hyper graph__________"+query2)
             api.getGraph(query2).then(p => {
               if(!(p.length===0)) {
                 // create an array with nodes
@@ -3846,8 +3852,7 @@ function getGrapheViz4Init() {
             (dl2:DLStructuredDataset OR dl2:DLSemistructuredDataset OR dl2:DLUnstructuredDataset)
             and rDS.name='`+ relationDS + `'
             RETURN DISTINCT dl,dl2,rDS,a,r1,r2,r3`
-  console.log("query4")
-  console.log(query4)
+  console.log("relationship of dataset "+query4)
   api.getGraph(query4).then(p => {
     if(!(p.length===0)){
     // create an array with nodes
@@ -3884,8 +3889,7 @@ function getGrapheViz5Init() {
                   AND
                   (a:NominalAttribute OR a:NumericAttribute OR a:Attribute) and RA.name='` + relationAtt + `'
                   RETURN DISTINCT a,r1,AA,r2,RA,a2,r3`
-  console.log("query5");
-  console.log(query5);
+  console.log("relationship of arribute "+query5)
   api.getGraph(query5).then(p => {
     if(!(p.length===0)) {
       // create an array with nodes

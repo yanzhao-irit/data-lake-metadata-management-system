@@ -87,7 +87,7 @@ module.exports.getProcesses = (tags, language = "", date = "0001-01-01", typeOpe
     }
   }
   query = query + " RETURN distinct p"
-  console.log('process ' + query)
+  console.log('process + Properties_______________' + query)
   // Query return is kept and stocked within a model with the same name to avoid confusion. Note that only one parameter of return can be stocked.
   return session
     .run(
@@ -232,7 +232,7 @@ module.exports.getStudies = (tags, type, creationdate = '0001-01-01', landmarker
   // }
   query = query + ' AND (datetime(s.creationDate) >= datetime("' + creationdate + '"))'
   query = query + " RETURN DISTINCT s"
-  console.log('Studies ' + query)
+  console.log('Studies + Properties_______________' + query)
   //We get only study here, which are used later to get analysis
   return session
     .run(
@@ -270,8 +270,7 @@ module.exports.getAnalyses = (study, name, id) => {
     }
   }
   query = query + " RETURN DISTINCT a,i,l"
-  console.log("queryQQQQQQQQQQQQ")
-  console.log(query)
+  console.log("sous Analysis + Properties_____________"+query)
   return session
     .run(
       query)
@@ -397,6 +396,7 @@ module.exports.getNumericAttributebyAnalysis = (analyseId) => {
 module.exports.getNominalAttributebyAnalysis = (analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  console.log("Features NominalAttribute__________"+query)
   return session
     .run(
       query)
@@ -417,6 +417,7 @@ module.exports.getNominalAttributebyAnalysis = (analyseId) => {
 module.exports.getNominalAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NominalAttribute),(nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '"  AND na.name= "' + name + '" AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  console.log("Features Attribute bouton NominalAttribute_____________"+query)
   return session
     .run(
       query)
@@ -437,6 +438,7 @@ module.exports.getNominalAttribute = (name, analyseId) => {
 module.exports.getNumericAttribute = (name, analyseId) => {
   var session = driver.session();
   query = 'Match (na:NumericAttribute),(nf:AnalysisNumericFeatures),(f:AnalysisFeatures),(a:Analysis),(ta:AnalysisTarget) WHERE a.uuid = "' + analyseId + '" AND na.name= "' + name + '"  AND ((a)-[:hasFeaturesAnalysis]->(f)-[:hasNumericFeaturesAnalysis]->(nf)-[:hasFeatures]->(na) OR (a)-[:hasTargetAnalysis]->(ta)-[:hasTarget]->(na)) RETURN DISTINCT na'
+  console.log("Features Attribute bouton NumericAttribute_____________"+query)
   return session
     .run(
       query)
@@ -727,6 +729,7 @@ module.exports.getRelationshipDSbyDataset = (dsName, dsId, type, relationName = 
     //Case to get datasets with a specific relation
     case 'Dataset':
       query += ' autreDS'
+
       return session
         .run(
           query)
@@ -836,6 +839,8 @@ module.exports.getRelationshipAttribute = (sourceId, name = '', type, relationNa
         query += ' AND RA.name ="' + relationName + '"'
       }
       query += ` AND toLower(a2.name) CONTAINS toLower('` + name2 + `') AND toLower(a.name) CONTAINS toLower('` + name + `') RETURN DISTINCT AA`
+
+
       return session
         .run(
           query)
@@ -852,7 +857,7 @@ module.exports.getRelationshipAttribute = (sourceId, name = '', type, relationNa
         });
 
   }
-
+  console.log("relationship attribute_________"+query)
 }
 
 //fonction de recherches des datasets avec les différents paramètres pour chaque filtre.
@@ -938,7 +943,7 @@ module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001
   }
 
   query = query + ") RETURN distinct ds"
-  console.log('dataset ' + query)
+  console.log('dataset + properties_____________' + query)
   return session
     .run(
       query)
@@ -1018,6 +1023,8 @@ module.exports.algoSimilairty = () => {
   YIELD node1, node2, similarity
   RETURN gds.util.asNode(node1).name AS Person1, gds.util.asNode(node2).name AS Person2, similarity
   ORDER BY similarity DESCENDING, Person1, Person2`
+
+  console.log("Similairty_____________"+query)
   return session
     .run(
       query)
