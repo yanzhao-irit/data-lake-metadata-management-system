@@ -119,7 +119,7 @@ function addTag() {
 //set the owner and location of dataset form the html page
 function setDatasetSource(){
   DatasetSource_UnStructured["owner"] = document.getElementById("owner").value
-  DatasetSource_UnStructured["location"] = document.getElementById("urlDS").value
+  /*DatasetSource_UnStructured["location"] = document.getElementById("urlDS").value*/
 }
 
 //set file upload and name,type of datasource
@@ -177,13 +177,13 @@ function setTags(){
 //set the content of datalakedataset
 function setDSDatalake(){
   DSDatalake_UnStructured["owner"] = DatasetSource_UnStructured["owner"]
-  DSDatalake_UnStructured["location"] = DatasetSource_UnStructured["location"]
+/*  DSDatalake_UnStructured["location"] = DatasetSource_UnStructured["location"]*/
   DSDatalake_UnStructured["name"] = DatasetSource_UnStructured["name"]
   DSDatalake_UnStructured["type"] = DatasetSource_UnStructured["type"]
   DSDatalake_UnStructured["filenameExtension"] = fileExtName
   DSDatalake_UnStructured["creationDate"] = getToday() +":00Z"
   DSDatalake_UnStructured["description"] = document.getElementById("description").value
-  DSDatalake_UnStructured["connectionURL"] = document.getElementById("urlDS").value
+/*  DSDatalake_UnStructured["connectionURL"] = document.getElementById("urlDS").value*/
   DSDatalake_UnStructured["administrator"] = document.getElementById("admin").value
   DSDatalake_UnStructured["uuid"] = uuid();
 }

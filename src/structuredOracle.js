@@ -189,7 +189,7 @@ async function getMetadata() {
         console.dir(result_size.rows)
 
 
-        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'structured dataset', 'size': result_size.rows[0][0] + ' Go' })
+        nodesDatasetSource.push({ 'name': document.getElementById('DBName').value, 'owner': document.getElementById('owner').value, 'type': 'structured dataset', 'size': result_size.rows[0][0] + ' Go' , 'description': document.getElementById('descripetionO').value })
         for (var i = 0; i < result_dataSource.rows.length; i++) {
             nodesDataSetDataLake.push({ 'name': result_dataSource.rows[i][0] })
         }
