@@ -1146,14 +1146,14 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
   //cypher for insert un noeud datasetsource
   var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_CSV["name"]
       + "',type:'"+DatasetSource_CSV["type"]
-     /* + "',location:'"+DatasetSource_CSV["location"]*/
+      + "',location:'"+DatasetSource_CSV["location"]
       + "',owner:'"+DatasetSource_CSV["owner"]
       + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_CSV["ingestionMode"]
       + "',ingestionStartTime:'"+Ingest_CSV["ingestionStartTime"]
       + "',ingestionEndTime:'"+Ingest_CSV["ingestionEndTime"]
       + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
       + "-[:ingestTo]->(c:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
-/*      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]*/
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
       + "',uuid:'"+DSDatalake_CSV["uuid"]
       + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
       + "',administrator:'"+DSDatalake_CSV["administrator"]
@@ -1161,7 +1161,7 @@ module.exports.createDSIngestDSDLEC = (DatasetSource_CSV,Ingest_CSV,DSDatalake_C
       + "')),size:'"+DSDatalake_CSV["size"]
       + "',name:'"+DSDatalake_CSV["name"]
       + "',type:'"+DSDatalake_CSV["type"]
-     /* + "',location:'"+DSDatalake_CSV["location"]*/
+      + "',location:'"+DSDatalake_CSV["location"]
       + "'})-[:hasEntityClass]->(d:EntityClass {name:'"+entityClass_CSV["name"]
       + "',numberOfAttributes:"+entityClass_CSV["numberOfAttributes"]
       + ",numberOfInstances:"+entityClass_CSV["numberOfInstances"]
@@ -1265,14 +1265,14 @@ module.exports.createHasTag = (DSDatalake_CSV,tags_CSV) => {
 
   var query = "UNWIND ("+ $propertiestTags +") as row\n" +
       "MATCH (dl:DLSemistructuredDataset {description:'"+DSDatalake_CSV["description"]
-/*      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]*/
+      + "',connectionURL:'"+DSDatalake_CSV["connectionURL"]
       + "',filenameExtension:'"+DSDatalake_CSV["filenameExtension"]
       + "',administrator:'"+DSDatalake_CSV["administrator"]
       + "',creationDate:toString(datetime('"+DSDatalake_CSV["creationDate"]
       + "')),size:'"+DSDatalake_CSV["size"]
       + "',name:'"+DSDatalake_CSV["name"]
       + "',type:'"+DSDatalake_CSV["type"]
-      /*+ "',location:'"+DSDatalake_CSV["location"]*/
+      + "',location:'"+DSDatalake_CSV["location"]
       + "'})\n" +
       "MATCH (t:Tag {name:row.name})\n" +
       "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
@@ -1365,14 +1365,14 @@ module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,In
   //cypher for insert un noeud datasetsource
   var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_UnStructured["name"]
       + "',type:'"+DatasetSource_UnStructured["type"]
-      /*+ "',location:'"+DatasetSource_UnStructured["location"]*/
+      + "',location:'"+DatasetSource_UnStructured["location"]
       + "',owner:'"+DatasetSource_UnStructured["owner"]
       + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_UnStructured["ingestionMode"]
       + "',ingestionStartTime:'"+Ingest_UnStructured["ingestionStartTime"]
       + "',ingestionEndTime:'"+Ingest_UnStructured["ingestionEndTime"]
       + "',definedDuration:'',ingestionBinaryMachineCodeUrl:'',ingestionComment:'',ingestionErrorLog:'',ingestionEnvironment:'',ingestionMethodName:'',ingestionOutputLog:'',ingestionSourceCodeUrl:''})"
       + "-[:ingestTo]->(c:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
-/*      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]*/
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
       + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
       + "',administrator:'"+DSDatalake_UnStructured["administrator"]
       + "',uuid:'"+DSDatalake_UnStructured["uuid"]
@@ -1380,7 +1380,7 @@ module.exports.createDSIngestDSDLECUnStructured = (DatasetSource_UnStructured,In
       + "')),size:'"+DSDatalake_UnStructured["size"]
       + "',name:'"+DSDatalake_UnStructured["name"]
       + "',type:'"+DSDatalake_UnStructured["type"]
-     /* + "',location:'"+DSDatalake_UnStructured["location"]*/
+      + "',location:'"+DSDatalake_UnStructured["location"]
       + "',format:'"+DSDatalake_UnStructured["format"]
       + "'});"
 
@@ -1407,14 +1407,14 @@ module.exports.createHasTagUnStructured = (DSDatalake_UnStructured,tags_UnStruct
 
   var query = "UNWIND ("+ $propertiestTags +") as row\n" +
       "MATCH (dl:DLUnstructuredDataset {description:'"+DSDatalake_UnStructured["description"]
-/*      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]*/
+      + "',connectionURL:'"+DSDatalake_UnStructured["connectionURL"]
       + "',filenameExtension:'"+DSDatalake_UnStructured["filenameExtension"]
       + "',administrator:'"+DSDatalake_UnStructured["administrator"]
       + "',creationDate:toString(datetime('"+DSDatalake_UnStructured["creationDate"]
       + "')),size:'"+DSDatalake_UnStructured["size"]
       + "',name:'"+DSDatalake_UnStructured["name"]
       + "',type:'"+DSDatalake_UnStructured["type"]
-   /*   + "',location:'"+DSDatalake_UnStructured["location"]*/
+      + "',location:'"+DSDatalake_UnStructured["location"]
       + "',format:'"+DSDatalake_UnStructured["format"]
       + "'})\n" +
       "MATCH (t:Tag {name:row.name})\n" +
@@ -1446,7 +1446,7 @@ module.exports.createDSIngestDSDLECStructured = (DatasetSource_Structured,Ingest
   //cypher for insert  noeud datasetsource
   var query = "CREATE(a:DatasetSource {name:'"+DatasetSource_Structured["name"]
       + "',type:'"+DatasetSource_Structured["type"]
-    /*  + "',location:'"+DatasetSource_Structured["location"]*/
+      + "',location:'"+DatasetSource_Structured["location"]
       + "',owner:'"+DatasetSource_Structured["owner"]
       + "'})<-[:ingestFrom]-(b:Ingest {ingestionMode:'"+Ingest_Structured["ingestionMode"]
       + "',ingestionStartTime:'"+Ingest_Structured["ingestionStartTime"]
@@ -1458,7 +1458,7 @@ module.exports.createDSIngestDSDLECStructured = (DatasetSource_Structured,Ingest
       + "')),size:'"+DSDatalake_Structured["size"]
       + "',name:'"+DSDatalake_Structured["name"]
       + "',type:'"+DSDatalake_Structured["type"]
-/*      + "',location:'"+DSDatalake_Structured["location"]*/
+      + "',location:'"+DSDatalake_Structured["location"]
       + "',uuid:'"+DSDatalake_Structured["uuid"]
       + "'});"
 
@@ -1584,7 +1584,7 @@ module.exports.createHasTagStructured = (DSDatalake_Structured,tags_Structured) 
       + "')),size:'"+DSDatalake_Structured["size"]
       + "',name:'"+DSDatalake_Structured["name"]
       + "',type:'"+DSDatalake_Structured["type"]
-/*      + "',location:'"+DSDatalake_Structured["location"]*/
+      + "',location:'"+DSDatalake_Structured["location"]
       + "'})\n" +
       "MATCH (t:Tag {name:row.name})\n" +
       "call apoc.create.relationship(dl,'hasTag',{},t) yield rel RETURN rel"
@@ -1667,7 +1667,7 @@ module.exports.createWithDatasetDB = (withdataset,DSDatalake_Structured) => {
       + "')),size:'"+DSDatalake_Structured["size"]
       + "',name:'"+DSDatalake_Structured["name"]
       + "',type:'"+DSDatalake_Structured["type"]
-/*      + "',location:'"+DSDatalake_Structured["location"]*/
+      + "',location:'"+DSDatalake_Structured["location"]
       + "',uuid:'"+DSDatalake_Structured["uuid"]
       + "'})\n" +
       "call apoc.create.relationship(ads,'withDataset',{},dl) yield rel RETURN rel"
