@@ -144,7 +144,7 @@ function selectedFileChanged() {
 //get type of dataset source
 function setTypeDS(fileExtName){
   // console.log(fileExtName)
-  var unstructuredExt = ["jpg","png","jpeg","ico","svg","gif","txt","docx","mp3","avi","mp4","bak","zip","pdf"]
+  var unstructuredExt = ["jpg","png","jpeg","ico","svg","gif","txt","docx","mp3","avi","mp4","bak","zip","pdf","doc"]
   var type = "";
   if(fileExtName === "csv" || fileExtName==="json") {
     type = "Semi-Structured dataset";
@@ -190,7 +190,7 @@ function setDSDatalake(){
 
 function setFormat(fileExtName){
   var imageFormat = ["jpg","png","jpeg","gif","ico","svg"]
-  var textFormat = ["txt","docx"]
+  var textFormat = ["txt","docx","doc"]
   var videoFormat = ["avi","mp4"]
   var audioFormat = ["mp3"]
   var backupFormat = ["bak"]
