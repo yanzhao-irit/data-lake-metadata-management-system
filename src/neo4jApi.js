@@ -280,7 +280,6 @@ module.exports.getAnalyses = (study, name, id) => {
         if(record.get('i')==null && record.get('l')==null){
           console.log("shshshshhsh")
           return [new Analysis(record.get('a'))]
-
         }else{
           return [new Analysis(record.get('a')), new Landmarker(record.get('i') || record.get('l')),(record.get('i') || record.get('l')).labels[0]]
         }
@@ -334,11 +333,13 @@ module.exports.getAnalysess = (study, name, id) => {
 
 //Function to get nominal features by analysis
 module.exports.getNominalFeaturesbyAnalysis = (analyseId) => {
+
   var session = driver.session();
   query = 'Match (nf:AnalysisNominalFeatures),(f:AnalysisFeatures),(a:Analysis) WHERE a.uuid = "' + analyseId + '"  AND (a)-[:hasFeaturesAnalysis]->(f)-[:hasNominalFeaturesAnalysis]->(nf) RETURN nf'
+
+  console.log("queryyyyyyyyyyyyyyy"+query)
   return session
-    .run(
-      query)
+    .run(query)
     .then(result => {
       return result.records.map(record => {
         return new NominalFeature(record.get('nf'))
@@ -908,23 +909,6 @@ module.exports.getDatabases = (tags, type = 'defaultValue', creationdate = '0001
   }
   //Cypher query for dates filter
   query = query + ' ) AND (datetime(ds.creationDate) >= datetime("' + creationdate + '")) RETURN distinct ds '
-
-  //Cypher query for the quality filter
-  // if(quality.lenght>0){
-  //   query += "AND (n)-[qv:qualityValue]-(q) AND ("
-  //   for( var i=0; i<quality.length; i++){
-  //     if(i!=quality.length -1){
-  //       query += "toLower(q.name) CONTAINS toLower("+ quality[i][0] +") AND qv.value >= "+ quality[i][1] +" OR" ;
-  //     }else{
-  //       query += "toLower(q.name) CONTAINS toLower("+ quality[i][0] +") AND qv.value >= "+ quality[i][1] +" )  "
-  //     }
-  //   }
-  // }
-
-  //Cyper query for the sensitivity filter
-  // if(sensitivity != 0){
-  //   query += "(n)-[:hasSensitivity]-(s)-[:hasValue]-(sv) AND (sv.value >= "+ sensitivity +" )";
-  // }
 
   //Cypher query for the entity class filter
   if (entityAttributeNames.length > 0) {
