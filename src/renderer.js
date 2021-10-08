@@ -1480,6 +1480,7 @@ $(function () {
 
 
           var relationlist = []
+          var relationlistDes = []
           //Get the relation between this dataset and others
           api
             .getRelationshipDSbyDataset($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], 'RelationshipDS')
@@ -1489,11 +1490,15 @@ $(function () {
               //Create tabs for each relation
               for (var i = 0; i < p.length; i++) {
                 relationlist.push(p[i].name)
+                relationlistDes.push(p[i].description)
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
                 if(!(p[i].name==="Contains")){
                   console.log(p[i].name)
+                  console.log('testttt'+p[i].toString())
+                  // $listContent.append('<p><i>' + p[i].description + '</i></p>')
                   $listContent.append(`
                     <div id='`+ p[i].name + `' class="tab-pane fade">
+                    
                         <table class='relationshiptable'>
                         <tbody id='dataset_` + p[i].name + `'><tbody>
                         </table>
@@ -1503,7 +1508,7 @@ $(function () {
               for (var i = 0; i < relationlist.length; i++) {
                 if(!(relationlist[i]==="Contains")){
                   //for each relation get dataset and relation value
-                  getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i])
+                  getDatasetOfRelationship($(this).attr('id').split('$')[1], $(this).attr('id').split('$')[2], relationlist[i], relationlistDes[i])
                 }
               }
               for (var j = 0; j < relationlist.length; j++) {
@@ -1523,15 +1528,20 @@ $(function () {
             .getRelationshipAttribute($(this).attr('id').split('$')[2], '', 'relation')
             .then(p => {
               var relationlistAtt = []
+              var relationlistAttDes = []
               // console.log(p)
               $listTab = $('#relationshipAttOnglet')
               $listContent = $('#relationshipAttContent')
               for (var i = 0; i < p.length; i++) {
                 relationlistAtt.push(p[i].name)
+                relationlistAttDes.push(p[i].description)
                 console.log(p[i].name)
+                // console.log('testtttttttt'+p[i].description)
                 $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+                // $listContent.append('<p><i>' + p[i].description + '</i></p>')
                 $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
+                    
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>                
@@ -1540,7 +1550,7 @@ $(function () {
 
               for (var i = 0; i < relationlistAtt.length; i++) {
                 // console.log(relationlistAtt[i])
-                getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlistAtt[i]);
+                getAnalyseOfRelationship($(this).attr('id').split('$')[2], relationlistAtt[i], relationlistAttDes[i]);
               }
               for (var j = 0; j < relationlistAtt.length; j++) {
                 /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
@@ -2136,15 +2146,19 @@ $(function () {
               .getRelationshipAttribute($(this).attr('id').split('$')[1], '', 'relation')
               .then(p => {
                 var relationlistAtt = []
+                var relationlistAttDes = []
                 // console.log(p)
                 $listTab = $('#relationshipAttOnglet')
                 $listContent = $('#relationshipAttContent')
                 for (var i = 0; i < p.length; i++) {
                   relationlistAtt.push(p[i].name)
-                  console.log(p[i].name)
+                  relationlistAttDes.push(p[i].name)
+                  console.log('testtttttttt'+p[i])
                   $listTab.append('<li><a data-toggle="tab" href="#' + p[i].name + '" id="a_' + p[i].name + '">' + p[i].name + '</a></li>')
+
                   $listContent.append(`
                 <div id='`+ p[i].name + `' class="tab-pane fade">
+                    
                     <table class='relationshiptable'>
                         <tbody id='attribute_` + p[i].name + `'><tbody>
                     </table>                
@@ -2153,7 +2167,7 @@ $(function () {
 
                 for (var i = 0; i < relationlistAtt.length; i++) {
                   // console.log(relationlistAtt[i])
-                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i]);
+                  getAnalyseOfRelationship($(this).attr('id').split('$')[1], relationlistAtt[i], relationlistAttDes[i]);
                 }
                 for (var j = 0; j < relationlistAtt.length; j++) {
                   /*console.log(document.getElementById("a_"+relationlistAtt[j]))*/
@@ -3309,17 +3323,17 @@ async function getAnalysisRelationshipDS(ds1Uuid, ds2uuid, name, dsName, ds2Name
 }
 
 //Function to get all dataset linked by a relation with the target
-async function getDatasetOfRelationship(dsName, dsId, relationlist) {
+async function getDatasetOfRelationship(dsName, dsId, relationlist,description) {
   var promisesDS = [];
   var mapRelationAttDS = new Map;
   api
     .getRelationshipDSbyDataset(dsName, dsId, 'Dataset', relationlist)
     .then(p => {
       $listHead = $('#dataset_' + relationlist)
+      $listHead.append('<p style="color : grey"><i>' + description + '</i></p>')
       for (var i = 0; i < p.length; i++) {
         if (p[i].uuid != dsId) {
           promisesDS.push(new Promise((resolve, reject) => { getAnalysisRelationshipDS(p[i].uuid, dsId, $listHead.closest('div').attr('id'), dsName, p[i].name, mapRelationAttDS, resolve); }));
-
         }
       }
       Promise.all(promisesDS).then(() => {
@@ -3419,14 +3433,14 @@ async function getAnalysisRelationshipAtt(idsource, nameAtt, relationName, nameA
 }
 
 //Function to get all attribute linked by a relation with the target
-async function getAnalyseOfRelationship(id, relationlist) {
+async function getAnalyseOfRelationship(id, relationlist,description) {
   var promises = [];
   var mapRelationAtt = new Map;
   api
     .getRelationshipAttribute(id, '', 'analyse', relationlist)
     .then(p => {
       $listBody = $('#attribute_' + relationlist)
-
+      $listBody.append('<p style="color : grey"><i>' + description + '</i></p>')
       for (var i = 0; i < p.length; i++) {
         for (var j = i; j < p.length; j++) {
           if (p[j].name != p[i].name) {
@@ -3462,6 +3476,7 @@ async function getAnalyseOfRelationship(id, relationlist) {
         $rangeBody = $('#' + typeRelation)
         var valueMaxRounding = valueMax.toFixed(5)
         var valueMinRounding = valueMin.toFixed(5)
+        //$rangeBody.append('<p><i>' + p[i].description + '</i></p>')
         if(classname==="Database"){
           $rangeBody.append("</br><p><b>Threshold</b>:<span style='padding-left:5px;padding-right:5px' id='seuil_" + typeRelation + "'></span><input class='btn-gradient blue mini' type='button' id='b_" + typeRelation + "' name='blue' value='Show blue part'/></p><input type='range' id='r_" + typeRelation + "' value='" + valueMaxRounding + "' max='" + valueMaxRounding + "' min='" + valueMinRounding + "' step='0.00001'/><div class='row'> <div class='col-md-6'>" + valueMinRounding + "</div><div class='col-md-6' ><div class='text-right'>" + valueMaxRounding + "</div></div></div></br>")
         }else{

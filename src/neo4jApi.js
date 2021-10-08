@@ -1595,7 +1595,7 @@ module.exports.createHasRelationshipDS = (hasRelationshipDS) => {
 
   var query = "UNWIND ("+ $hasRelationshipDS +") as row\n" +
       "MATCH (ads:AnalysisDSRelationship {name:row.analysisDSRelationship})\n" +
-      "MATCH (ds:RelationshipDS {name:'Contains'})\n" +
+      "MATCH (ds:RelationshipDS {name:'Contains', description:'The database is part of a bigger database'})\n" +
       "call apoc.create.relationship(ads,'hasRelationshipDataset',{},ds) yield rel RETURN rel"
 
   console.log(query)
@@ -1758,7 +1758,7 @@ module.exports.ingestFromOracle = (datasetSource, datasetDatalake, eC, attribute
   }
   for (var i = 0; i < datasetDatalake.length; i++) {
     query += `MERGE (dsDl` + i + `:DLStructuredDataset {name: '` + datasetDatalake[i].name + `', uuid: apoc.create.uuid()})
-                CREATE (aDSR`+ i + `:AnalysisDSRelationship {name:'contains'})
+                CREATE (aDSR`+ i + `:AnalysisDSRelationship {name:'contains', description:'The database is part of a bigger database'})
                 CREATE (aDSR`+ i + `)-[:hasRelationshipDataset]->(rds)
                 CREATE (dsDl)<-[:withDataset]-(aDSR`+ i + `)-[:withDataset]->(dsDl` + i + `)`
     for (var j = 0; j < eC.length; j++) {
