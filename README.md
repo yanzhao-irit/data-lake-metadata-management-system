@@ -24,7 +24,12 @@ To prevent a data lake from becoming a data swamp which is invisible, incomprehe
 
 > [Metadata Management for Data Lakes. ADBIS 2019: 37-44 Franck Ravat, Yan Zhao
 ](https://link.springer.com/chapter/10.1007/978-3-030-30278-8_5)
+> 
 > [Metadata Management on Data Processing in Data Lakes. SOFSEM 2021: 553-562 	Imen Megdiche, Franck Ravat, Yan Zhao](https://link.springer.com/chapter/10.1007/978-3-030-67731-2_40)
+>
+> [Analysis-oriented Metadata for Data Lakes. IDEAS 2021: 194–203 Yan Zhao, Franck Ravat, Julien Aligon, Chantal Soule-dupuy, Gabriel Ferrettini, Imen Megdiche](https://dl.acm.org/doi/10.1145/3472163.3472273)
+> 
+> [Metadata Management for Data Lake Governance](https://www.theses.fr/2021TOU10051)
 
 
 ## Metadata management application
